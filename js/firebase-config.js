@@ -27,8 +27,8 @@ const STRIPE_LIVE_HOSTNAMES = new Set([
 const isLiveHostname = STRIPE_LIVE_HOSTNAMES.has(window.location.hostname);
 
 if (isLiveHostname && !STRIPE_PUBLISHABLE_KEY_LIVE) {
-  throw new Error(
-    "Missing live Stripe publishable key for this hostname",
+  console.warn(
+    "Missing live Stripe publishable key for this hostname — Stripe payments will not work",
   );
 }
 
