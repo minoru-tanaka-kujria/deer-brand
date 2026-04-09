@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>案C — ユニクロ型</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans JP', sans-serif; background: #0A0A0B; color: #F5F5F0; }
+
+/* ── ヘッダー ── */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,11,0.9); backdrop-filter: blur(20px);
+  border-bottom: 1px solid #2A2A2E;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 2rem;
+}
+.header-logo { font-size: 0.8rem; font-weight: 700; letter-spacing: 6px; color: #C8A96E; }
+.header-nav { display: flex; gap: 1.5rem; align-items: center; }
+.header-nav a { font-size: 0.82rem; font-weight: 500; color: #B5B5B8; text-decoration: none; }
+.header-btn {
+  background: #C8A96E; color: #0A0A0B;
+  font-size: 0.78rem; font-weight: 700;
+  padding: 0.5rem 1.2rem; border-radius: 8px;
+  text-decoration: none;
+}
+
+/* ── ヒーロー：フルワイドの犬写真 + 大きなテキスト ── */
+.hero {
+  position: relative;
+  height: 75vh; min-height: 500px;
+  overflow: hidden;
+  margin-top: 48px;
+}
+.hero-img {
+  position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=1920&q=85&auto=format&fit=crop') center 30%/cover no-repeat;
+}
+.hero-img::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.15) 50%, rgba(10,10,11,0.85) 100%);
+}
+.hero-text {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+  padding: 2.5rem 3rem;
+  max-width: 1280px; margin: 0 auto;
+}
+.hero-kicker {
+  display: inline-block;
+  background: #C8A96E; color: #0A0A0B;
+  font-size: 0.82rem; font-weight: 700;
+  padding: 0.35rem 1rem; border-radius: 6px;
+  margin-bottom: 1rem;
+}
+.hero-main {
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+  font-weight: 900;
+  line-height: 1.35;
+  margin-bottom: 0.8rem;
+}
+.hero-sub {
+  font-size: 1rem; color: rgba(245,245,240,0.7);
+  font-weight: 400; line-height: 1.8;
+}
+
+/* ── 説明バー ── */
+.explain-bar {
+  background: #141416;
+  border-bottom: 1px solid #2A2A2E;
+  padding: 2rem;
+}
+.explain-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+  text-align: center;
+}
+.explain-item { }
+.explain-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+.explain-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+.explain-desc { font-size: 0.75rem; color: #8A8A8E; line-height: 1.5; }
+
+/* ── 写真→アートのビフォーアフター ── */
+.transform-section {
+  padding: 4rem 2rem;
+  max-width: 1280px; margin: 0 auto;
+}
+.transform-heading {
+  text-align: center; margin-bottom: 2.5rem;
+}
+.transform-heading h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 900; margin-bottom: 0.5rem;
+}
+.transform-heading p { font-size: 0.9rem; color: #8A8A8E; }
+
+.transform-grid {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem;
+  align-items: center;
+}
+.transform-before, .transform-after {
+  border-radius: 16px; overflow: hidden;
+  position: relative; aspect-ratio: 4/3;
+}
+.transform-before img, .transform-after img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.transform-label {
+  position: absolute; top: 0.8rem; left: 0.8rem;
+  background: rgba(10,10,11,0.7); backdrop-filter: blur(8px);
+  color: #F5F5F0; font-size: 0.72rem; font-weight: 700;
+  padding: 0.3rem 0.8rem; border-radius: 6px;
+}
+.transform-after .transform-label { background: rgba(200,169,110,0.8); color: #0A0A0B; }
+
+.transform-arrow {
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+}
+.arrow-icon {
+  width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background: #C8A96E; color: #0A0A0B;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; font-weight: 700;
+}
+.arrow-text { font-size: 0.72rem; color: #C8A96E; font-weight: 600; white-space: nowrap; }
+
+/* ── 商品グリッド ── */
+.products-section {
+  padding: 3rem 2rem 4rem;
+  max-width: 1280px; margin: 0 auto;
+}
+.products-heading {
+  text-align: center; margin-bottom: 2rem;
+}
+.products-heading h2 {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 900; margin-bottom: 0.3rem;
+}
+.products-heading p { font-size: 0.85rem; color: #8A8A8E; }
+
+.products-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+}
+.pcard {
+  background: #141416; border: 1px solid #2A2A2E; border-radius: 12px;
+  overflow: hidden; transition: all 0.3s;
+}
+.pcard:hover { border-color: #C8A96E44; transform: translateY(-3px); }
+.pcard-img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.pcard-info { padding: 1rem 1.1rem 1.2rem; }
+.pcard-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+.pcard-price { font-size: 1.1rem; font-weight: 900; color: #C8A96E; }
+.pcard-price small { font-size: 0.7rem; color: #8A8A8E; font-weight: 400; }
+.pcard-ship { font-size: 0.72rem; color: #5EC26A; margin-top: 0.2rem; font-weight: 500; }
+
+/* ── CTA ── */
+.cta-section {
+  background: #141416; border-top: 1px solid #2A2A2E;
+  padding: 4rem 2rem; text-align: center;
+}
+.cta-section h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 900; margin-bottom: 0.8rem; }
+.cta-section p { font-size: 0.9rem; color: #8A8A8E; margin-bottom: 2rem; line-height: 1.8; }
+.cta-btn {
+  display: inline-block;
+  background: #C8A96E; color: #0A0A0B;
+  font-size: 1.1rem; font-weight: 700;
+  padding: 1rem 3.5rem; border-radius: 14px;
+  border: none; cursor: pointer;
+  transition: all 0.3s;
+}
+.cta-btn:hover { background: #E8D5A8; }
+
+.label { position: fixed; top: 1rem; right: 1rem; background: #C8A96E; color: #0A0A0B; padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; z-index: 200; }
+
+@media (max-width: 768px) {
+  .explain-inner { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .transform-grid { grid-template-columns: 1fr; }
+  .transform-arrow { flex-direction: row; }
+  .header-nav a:not(.header-btn) { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="label">案C：ユニクロ型</div>
+
+<!-- ヘッダー -->
+<header class="header">
+  <div class="header-logo">D E E R</div>
+  <nav class="header-nav">
+    <a href="#">つくり方</a>
+    <a href="#">商品</a>
+    <a href="#">レビュー</a>
+    <a href="#" class="header-btn">はじめる</a>
+  </nav>
+</header>
+
+<!-- ヒーロー -->
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-text">
+    <div class="hero-kicker">愛犬グッズ専門ストア</div>
+    <h1 class="hero-main">うちの子の写真が、<br>アートなTシャツになる。</h1>
+    <p class="hero-sub">写真をアップロード → AIがアートに変換 → Tシャツにして届く。すべて自動。送料無料。</p>
+  </div>
+</section>
+
+<!-- 説明バー -->
+<div class="explain-bar">
+  <div class="explain-inner">
+    <div class="explain-item">
+      <div class="explain-icon">📸</div>
+      <div class="explain-title">写真をアップ</div>
+      <div class="explain-desc">スマホから愛犬の<br>写真を1枚選ぶだけ</div>
+    </div>
+    <div class="explain-item">
+      <div class="explain-icon">🎨</div>
+      <div class="explain-title">スタイルを選ぶ</div>
+      <div class="explain-desc">油絵・水彩画など<br>全8スタイル</div>
+    </div>
+    <div class="explain-item">
+      <div class="explain-icon">🤖</div>
+      <div class="explain-title">AIが自動変換</div>
+      <div class="explain-desc">数秒でプロ級の<br>アート作品に</div>
+    </div>
+    <div class="explain-item">
+      <div class="explain-icon">📦</div>
+      <div class="explain-title">グッズが届く</div>
+      <div class="explain-desc">5〜7日で届く<br>送料無料</div>
+    </div>
+  </div>
+</div>
+
+<!-- ビフォーアフター -->
+<section class="transform-section">
+  <div class="transform-heading">
+    <h2>こうなります。</h2>
+    <p>写真をアップするだけ。AIが自動でアート作品に変えます。</p>
+  </div>
+  <div class="transform-grid">
+    <div class="transform-before">
+      <div class="transform-label">もとの写真</div>
+      <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80&auto=format&fit=crop" alt="元の犬の写真" />
+    </div>
+    <div class="transform-arrow">
+      <div class="arrow-icon">→</div>
+      <div class="arrow-text">AIが変換</div>
+    </div>
+    <div class="transform-after">
+      <div class="transform-label">油絵スタイル</div>
+      <img src="https://images.unsplash.com/photo-1558788353-f76d92427f16?w=800&q=80&auto=format&fit=crop" alt="アート変換後" />
+    </div>
+  </div>
+</section>
+
+<!-- 商品 -->
+<section class="products-section">
+  <div class="products-heading">
+    <h2>えらべるグッズ</h2>
+    <p>すべて送料無料・税込価格</p>
+  </div>
+  <div class="products-grid">
+    <div class="pcard">
+      <img class="pcard-img" src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80&auto=format&fit=crop" alt="Tシャツ" />
+      <div class="pcard-info">
+        <div class="pcard-name">Tシャツ</div>
+        <div class="pcard-price">¥4,980 <small>（税込）</small></div>
+        <div class="pcard-ship">送料無料</div>
+      </div>
+    </div>
+    <div class="pcard">
+      <img class="pcard-img" src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80&auto=format&fit=crop" alt="トートバッグ" />
+      <div class="pcard-info">
+        <div class="pcard-name">トートバッグ</div>
+        <div class="pcard-price">¥3,980 <small>（税込）</small></div>
+        <div class="pcard-ship">送料無料</div>
+      </div>
+    </div>
+    <div class="pcard">
+      <img class="pcard-img" src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80&auto=format&fit=crop" alt="トレーナー" />
+      <div class="pcard-info">
+        <div class="pcard-name">トレーナー</div>
+        <div class="pcard-price">¥6,980 <small>（税込）</small></div>
+        <div class="pcard-ship">送料無料</div>
+      </div>
+    </div>
+    <div class="pcard">
+      <img class="pcard-img" src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80&auto=format&fit=crop" alt="パーカー" />
+      <div class="pcard-info">
+        <div class="pcard-name">パーカー</div>
+        <div class="pcard-price">¥7,980 <small>（税込）</small></div>
+        <div class="pcard-ship">送料無料</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>まずは無料でためしてみよう。</h2>
+  <p>写真をアップロードするだけ。AI変換は何度でも無料です。<br>気に入ったらグッズを注文。お届けは5〜7日。</p>
+  <button class="cta-btn">無料ではじめる →</button>
+</section>
+
+</body>
+</html>

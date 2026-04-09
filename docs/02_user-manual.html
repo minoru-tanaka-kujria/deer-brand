@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ユーザー向け操作マニュアル — Deer Brand</title>
+    <style>
+      :root {
+        --gold: #c4a265;
+        --gold-dark: #b0904f;
+        --bg: #faf7f2;
+        --cream: #f5ede3;
+        --white: #ffffff;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --text-light: #9b9490;
+        --border: #e8dfd5;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.8;
+        font-size: 14px;
+      }
+      .doc-header {
+        background: var(--gold);
+        color: var(--white);
+        padding: 36px 48px;
+      }
+      .doc-header .brand {
+        font-size: 13px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        opacity: 0.8;
+      }
+      .doc-header h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .doc-header .meta {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 48px;
+      }
+      .toc {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 40px;
+      }
+      .toc h2 {
+        font-size: 16px;
+        color: var(--gold);
+        margin-bottom: 16px;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .toc ol {
+        padding-left: 24px;
+      }
+      .toc li {
+        margin-bottom: 8px;
+      }
+      .toc a {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .toc a:hover {
+        color: var(--gold);
+      }
+      .section {
+        margin-bottom: 56px;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--gold);
+      }
+      .section-number {
+        background: var(--gold);
+        color: var(--white);
+        font-size: 13px;
+        font-weight: bold;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .section-header h2 {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .screenshot-block {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 20px 0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      }
+      .screenshot-block .caption {
+        background: var(--bg);
+        padding: 10px 16px;
+        font-size: 12px;
+        color: var(--text-mid);
+        border-top: 1px solid var(--border);
+      }
+      .screenshot-block img {
+        width: 100%;
+        display: block;
+      }
+      .steps {
+        list-style: none;
+        padding: 0;
+        counter-reset: step;
+      }
+      .steps li {
+        counter-increment: step;
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding: 16px 20px;
+        background: var(--white);
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+      }
+      .steps li::before {
+        content: counter(step);
+        background: var(--gold);
+        color: var(--white);
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .step-content {
+        flex: 1;
+      }
+      .step-content strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 15px;
+      }
+      code {
+        background: #f0ebe3;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: "SF Mono", "Courier New", monospace;
+        font-size: 12px;
+        color: #c4534a;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        background: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      }
+      th {
+        background: var(--bg);
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1.5px solid var(--border);
+      }
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .note {
+        border-left: 4px solid var(--gold);
+        background: #fef9f0;
+        color: #7a5c1e;
+        padding: 12px 18px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+        font-size: 13px;
+      }
+      .note strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .flow-diagram {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin: 24px 0;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .flow-step {
+        background: var(--white);
+        border: 2px solid var(--gold);
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: center;
+        min-width: 90px;
+      }
+      .flow-arrow {
+        color: var(--gold);
+        font-size: 20px;
+        font-weight: bold;
+        padding: 0 4px;
+      }
+      @media print {
+        body {
+          background: white;
+          font-size: 12px;
+        }
+        .doc-header {
+          background: var(--gold) !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .section {
+          page-break-inside: avoid;
+        }
+        .screenshot-block {
+          page-break-inside: avoid;
+          border: 1px solid #ccc;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc-header">
+      <div class="brand">Deer Brand</div>
+      <h1>ユーザー向け操作マニュアル</h1>
+      <div class="meta">
+        作成日：2026年4月1日　対象サイト：https://deer-brand.vercel.app/
+      </div>
+    </header>
+
+    <div class="container">
+      <nav class="toc">
+        <h2>目次</h2>
+        <ol>
+          <li><a href="#overview">1. Deer Brandとは</a></li>
+          <li><a href="#top">2. トップページの使い方</a></li>
+          <li><a href="#art-styles">3. アートスタイルの選び方</a></li>
+          <li><a href="#product">4. 商品詳細の確認</a></li>
+          <li><a href="#order">5. オーダーの流れ（全9ステップ）</a></li>
+          <li><a href="#account">6. マイページで注文確認</a></li>
+        </ol>
+      </nav>
+
+      <!-- 1. 概要 -->
+      <section class="section" id="overview">
+        <div class="section-header">
+          <span class="section-number">1</span>
+          <h2>Deer Brandとは</h2>
+        </div>
+        <p>
+          Deer
+          Brandは、愛犬の写真を1枚アップロードするだけで、AIが23種類のアートスタイルに変換し、パーカー・Tシャツ・マグカップなどのオリジナルグッズをお届けするサービスです。
+        </p>
+
+        <table>
+          <tr>
+            <th>特長</th>
+            <th>内容</th>
+          </tr>
+          <tr>
+            <td>アートスタイル</td>
+            <td>23種類（印象派・水彩・ポップアートなど）</td>
+          </tr>
+          <tr>
+            <td>送料</td>
+            <td>全品送料無料</td>
+          </tr>
+          <tr>
+            <td>お届け日数</td>
+            <td>最短5日</td>
+          </tr>
+          <tr>
+            <td>決済</td>
+            <td>Stripe（クレジットカード・各種決済）</td>
+          </tr>
+          <tr>
+            <td>ギフト対応</td>
+            <td>ギフトラッピング対応</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- 2. トップページ -->
+      <section class="section" id="top">
+        <div class="section-header">
+          <span class="section-number">2</span>
+          <h2>トップページの使い方</h2>
+        </div>
+
+        <div class="screenshot-block">
+          <img src="screenshots/top_01.png" alt="トップページ" />
+          <div class="caption">
+            トップページ — 「無料でつくる →」ボタンからオーダーを開始できます
+          </div>
+        </div>
+
+        <p>トップページには以下のナビゲーションがあります。</p>
+        <table>
+          <tr>
+            <th>ボタン/リンク</th>
+            <th>遷移先</th>
+          </tr>
+          <tr>
+            <td>アートスタイル（ナビ）</td>
+            <td>アートスタイル一覧ページ</td>
+          </tr>
+          <tr>
+            <td>グッズ一覧（ナビ）</td>
+            <td>オーダーページ（商品選択）</td>
+          </tr>
+          <tr>
+            <td>ログイン（ナビ）</td>
+            <td>ログイン/新規登録モーダル</td>
+          </tr>
+          <tr>
+            <td>はじめる（ナビ右端）</td>
+            <td>オーダーページ</td>
+          </tr>
+          <tr>
+            <td>無料でつくる →</td>
+            <td>オーダーページ</td>
+          </tr>
+          <tr>
+            <td>スタイルを見る</td>
+            <td>アートスタイル一覧ページ</td>
+          </tr>
+        </table>
+
+        <div class="screenshot-block">
+          <img src="screenshots/top_02.png" alt="トップページ - HOW IT WORKS" />
+          <div class="caption">
+            「3ステップで完成」セクション — 写真アップロード →
+            スタイル・グッズ選択 → お届け
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. アートスタイル -->
+      <section class="section" id="art-styles">
+        <div class="section-header">
+          <span class="section-number">3</span>
+          <h2>アートスタイルの選び方</h2>
+        </div>
+
+        <div class="screenshot-block">
+          <img src="screenshots/art_styles_01.png" alt="アートスタイルページ" />
+          <div class="caption">
+            アートスタイルページ（https://deer-brand.vercel.app/art-styles）—
+            23種類のスタイルを一覧表示
+          </div>
+        </div>
+
+        <p>上部のカテゴリタブで絞り込みができます。</p>
+        <table>
+          <tr>
+            <th>カテゴリ</th>
+            <th>含まれるスタイル例</th>
+          </tr>
+          <tr>
+            <td>すべて</td>
+            <td>全23スタイルを表示</td>
+          </tr>
+          <tr>
+            <td>油絵・クラシック</td>
+            <td>印象派、バロック、ルネサンス、表現主義</td>
+          </tr>
+          <tr>
+            <td>水彩画</td>
+            <td>にじみ水彩、ボタニカル水彩、ウェットオンウェット</td>
+          </tr>
+          <tr>
+            <td>東洋画</td>
+            <td>水墨画、東画</td>
+          </tr>
+          <tr>
+            <td>ポップアート</td>
+            <td>ポップアート、ネオン</td>
+          </tr>
+          <tr>
+            <td>モノクロ</td>
+            <td>デッサン、銅版画</td>
+          </tr>
+          <tr>
+            <td>デジタル</td>
+            <td>ワンライン、シルエット</td>
+          </tr>
+          <tr>
+            <td>コラージュ</td>
+            <td>コラージュ</td>
+          </tr>
+        </table>
+
+        <div class="screenshot-block">
+          <img src="screenshots/art_styles_02.png" alt="アートスタイル詳細" />
+          <div class="caption">
+            各スタイルカードにはサンプル画像・スタイル名・英語名・説明・タグが表示されます
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>スタイル選びのポイント</strong>
+          各カードのタグ（例：「華やか」「温かみ」「鮮烈」）を参考にすると、愛犬の雰囲気に合ったスタイルが見つかりやすいです。
+        </div>
+      </section>
+
+      <!-- 4. 商品詳細 -->
+      <section class="section" id="product">
+        <div class="section-header">
+          <span class="section-number">4</span>
+          <h2>商品詳細の確認</h2>
+        </div>
+
+        <div class="screenshot-block">
+          <img
+            src="screenshots/product_hoodie_01.png"
+            alt="商品詳細ページ（パーカー）"
+          />
+          <div class="caption">
+            商品詳細ページ — プリント配置・カラー・サイズを選択できます
+          </div>
+        </div>
+
+        <p>商品詳細ページでは以下の選択が可能です。</p>
+        <table>
+          <tr>
+            <th>選択項目</th>
+            <th>選択肢</th>
+          </tr>
+          <tr>
+            <td>プリント方法</td>
+            <td>プリント（通常）/ 刺繍（Coming Soon）</td>
+          </tr>
+          <tr>
+            <td>プリント配置</td>
+            <td>
+              左胸ワンポイント / 胸中央プリント / バックプリント（+¥2,000）
+            </td>
+          </tr>
+          <tr>
+            <td>カラー</td>
+            <td>
+              グレー / ネイビー / ブラック / ピンク / ホワイト（商品による）
+            </td>
+          </tr>
+          <tr>
+            <td>サイズ</td>
+            <td>S / M / L / XL / 2XL</td>
+          </tr>
+        </table>
+
+        <div class="screenshot-block">
+          <img
+            src="screenshots/product_hoodie_02.png"
+            alt="商品詳細 - 価格と発注ボタン"
+          />
+          <div class="caption">
+            価格・合計（税込）・「デザインを開始する →」ボタン
+          </div>
+        </div>
+
+        <p>
+          「デザインを開始する
+          →」ボタンをクリックするとオーダーページに移動します。
+        </p>
+      </section>
+
+      <!-- 5. オーダーの流れ -->
+      <section class="section" id="order">
+        <div class="section-header">
+          <span class="section-number">5</span>
+          <h2>オーダーの流れ（全9ステップ）</h2>
+        </div>
+
+        <div class="flow-diagram">
+          <div class="flow-step">①商品選択</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">②配置</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">③カラー</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">④サイズ</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">⑤写真</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">⑥プレビュー</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">⑦お届け先</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">⑧お支払い</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">⑨確認</div>
+        </div>
+
+        <div class="screenshot-block">
+          <img
+            src="screenshots/upload_01.png"
+            alt="オーダーページ - 商品選択"
+          />
+          <div class="caption">
+            ステップ①：商品選択 —
+            モデル着用・使用イメージのカードから商品を選びます
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li>
+            <div class="step-content">
+              <strong>① 商品選択</strong>
+              一覧カードからお気に入りの商品×スタイルの組み合わせをクリックして選択します。パーカー・Tシャツ・マグカップ・スマホケース・ポスターなど多数あります。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>② プリント配置の選択</strong>
+              左胸ワンポイント / 胸中央プリント /
+              バックプリント（+¥2,000）から選択します。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>③ カラーの選択</strong>
+              商品カラーを選択します（グレー・ネイビー・ブラック・ピンク・ホワイトなど）。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>④ サイズの選択</strong>
+              S / M / L / XL / 2XL から選択します。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>⑤ 愛犬の写真アップロード</strong>
+              愛犬の写真を1枚アップロードします。正面からの写真が推奨です。対応形式：JPEG
+              / PNG（最大10MB）。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>⑥ AIプレビューの確認</strong>
+              AIがアートスタイルに変換したプレビュー画像が表示されます。満足したら次に進みます。気に入らない場合は「再生成」ボタンで別の結果を試せます。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>⑦ お届け先の入力</strong>
+              氏名・郵便番号・住所・電話番号を入力します。ギフトラッピング希望の場合はチェックを入れます。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>⑧ お支払い情報の入力</strong>
+              Stripe決済フォームでクレジットカード情報を入力します。クーポンコードがある場合はここで適用できます。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>⑨ 注文確認・完了</strong>
+              注文内容を確認して「注文を確定する」をクリックします。注文完了後、メールで確認メールが届きます。注文IDは
+              <code>DEER-YYYYMMDD-XXXX</code> 形式で発行されます。
+            </div>
+          </li>
+        </ol>
+
+        <div class="screenshot-block">
+          <img
+            src="screenshots/upload_02.png"
+            alt="オーダーページ - 商品一覧下部"
+          />
+          <div class="caption">
+            商品一覧（下部）—
+            マグカップ・スマホケース・ポスター・ボストカード・刺繍キャップ・ステッカーなど
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>写真アップロードのコツ</strong>
+          愛犬の正面を向いた写真、明るい場所で撮影した写真がアートに変換した際に最も美しく仕上がります。
+        </div>
+      </section>
+
+      <!-- 6. マイページ -->
+      <section class="section" id="account">
+        <div class="section-header">
+          <span class="section-number">6</span>
+          <h2>マイページで注文確認</h2>
+        </div>
+
+        <div class="screenshot-block">
+          <img
+            src="screenshots/account_01.png"
+            alt="マイページ - ログイン必要"
+          />
+          <div class="caption">
+            マイページ（https://deer-brand.vercel.app/account）—
+            ログインが必要です
+          </div>
+        </div>
+
+        <p>マイページではログイン後に以下が確認できます。</p>
+        <table>
+          <tr>
+            <th>機能</th>
+            <th>内容</th>
+          </tr>
+          <tr>
+            <td>注文履歴</td>
+            <td>過去の注文一覧（注文ID・商品・金額・ステータス）</td>
+          </tr>
+          <tr>
+            <td>配送状況</td>
+            <td>現在の注文ステータス（受付済み / 制作中 / 発送済み / 完了）</td>
+          </tr>
+          <tr>
+            <td>アカウント設定</td>
+            <td>メールアドレス・パスワードの変更</td>
+          </tr>
+        </table>
+
+        <ol class="steps">
+          <li>
+            <div class="step-content">
+              <strong>ログイン方法</strong>
+              「ログイン / 新規登録」ボタンをクリックしてモーダルを開きます。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>認証方法の選択</strong>
+              メールアドレス＋パスワード、またはGoogleアカウントでログインできます。
+            </div>
+          </li>
+          <li>
+            <div class="step-content">
+              <strong>注文履歴の確認</strong>
+              ログイン後、注文一覧が表示されます。注文IDをクリックすると詳細が確認できます。
+            </div>
+          </li>
+        </ol>
+
+        <div class="note">
+          <strong>注文なしで購入した場合</strong>
+          ゲストとして購入した場合、注文確認メールのみで追跡できます。マイページで確認するにはアカウント作成が必要です。
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

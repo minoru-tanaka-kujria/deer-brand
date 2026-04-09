@@ -1,0 +1,58 @@
+{
+  "breed": "German Shepherd",
+  "brand": "Deer (deer.gift)",
+  "purpose": "Amazon listing sample T-shirt / Tote bag designs",
+  "styles": {
+    "oil-painting": {
+      "label": "油絵風",
+      "compositions": {
+        "front": "A majestic German Shepherd portrait in classical oil painting style, front-facing close-up portrait, direct eye contact, symmetrical composition, rich warm tones, thick impasto brushstrokes, Rembrandt lighting, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint, noble dignified expression, 18th century European portrait composition",
+        "side": "A majestic German Shepherd portrait in classical oil painting style, side profile view, noble silhouette, dramatic rim lighting, rich warm tones, thick impasto brushstrokes, Rembrandt lighting, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint, noble dignified expression",
+        "full-body": "A majestic German Shepherd in classical oil painting style, full body standing pose, alert posture, elegant stance, rich warm tones, thick impasto brushstrokes, Rembrandt lighting, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint",
+        "playful": "A majestic German Shepherd in classical oil painting style, playful expression, tongue out, happy energetic pose, warm lighting, rich warm tones, thick impasto brushstrokes, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint"
+      }
+    },
+    "watercolor": {
+      "label": "水彩風",
+      "compositions": {
+        "front": "A German Shepherd portrait in delicate watercolor painting style, front-facing close-up portrait, direct eye contact, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues, artistic paint drips at edges, white paper texture visible, elegant and refined",
+        "side": "A German Shepherd portrait in delicate watercolor painting style, side profile view, noble silhouette, dramatic rim lighting, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues, artistic paint drips at edges, white paper texture visible",
+        "full-body": "A German Shepherd in delicate watercolor painting style, full body standing pose, alert posture, elegant stance, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues, artistic paint drips at edges, white paper texture visible",
+        "playful": "A German Shepherd in delicate watercolor painting style, playful expression, tongue out, happy energetic pose, warm lighting, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues"
+      }
+    },
+    "pop-art": {
+      "label": "ポップアート",
+      "compositions": {
+        "front": "A German Shepherd portrait in bold Andy Warhol pop art style, front-facing close-up, direct eye contact, vibrant neon colors, high contrast, screen print aesthetic, four-color separation look, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel, striking and eye-catching",
+        "side": "A German Shepherd portrait in bold Andy Warhol pop art style, side profile view, noble silhouette, vibrant neon colors, high contrast, screen print aesthetic, four-color separation look, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel",
+        "full-body": "A German Shepherd in bold Andy Warhol pop art style, full body standing pose, alert posture, vibrant neon colors, high contrast, screen print aesthetic, four-color separation look, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel",
+        "playful": "A German Shepherd in bold Andy Warhol pop art style, playful expression, tongue out, happy energetic pose, vibrant neon colors, high contrast, screen print aesthetic, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel"
+      }
+    },
+    "line-art": {
+      "label": "線画風",
+      "compositions": {
+        "front": "A German Shepherd portrait in elegant minimal line art style, front-facing close-up, direct eye contact, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines capturing the breed's noble profile, subtle line weight variation, modern minimalist aesthetic, suitable for printing on apparel",
+        "side": "A German Shepherd portrait in elegant minimal line art style, side profile view, noble silhouette, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines, subtle line weight variation, modern minimalist aesthetic",
+        "full-body": "A German Shepherd in elegant minimal line art style, full body standing pose, alert posture, elegant stance, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines, subtle line weight variation, modern minimalist aesthetic",
+        "playful": "A German Shepherd in elegant minimal line art style, playful expression, tongue out, happy energetic pose, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines, subtle line weight variation, modern minimalist aesthetic"
+      }
+    },
+    "embroidery": {
+      "label": "刺繍風",
+      "compositions": {
+        "front": "A German Shepherd portrait in realistic embroidery style, front-facing close-up, direct eye contact, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors for the fur, subtle thread direction following fur growth pattern, elegant craftsman quality",
+        "side": "A German Shepherd portrait in realistic embroidery style, side profile view, noble silhouette, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors",
+        "full-body": "A German Shepherd in realistic embroidery style, full body standing pose, alert posture, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors",
+        "playful": "A German Shepherd in realistic embroidery style, playful expression, tongue out, happy energetic pose, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors"
+      }
+    }
+  },
+  "compositionLabels": {
+    "front": "正面",
+    "side": "横顔",
+    "full-body": "全身",
+    "playful": "遊び"
+  }
+}

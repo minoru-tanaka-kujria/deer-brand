@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>全23アートスタイル — Deer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta
+      name="description"
+      content="23種類のアートスタイルから選べます。ウォーターカラー・油絵・ポップアート・水墨画など。あなたのペットに合ったスタイルを見つけて。"
+    />
+    <meta property="og:title" content="アートスタイル一覧 | Deer Brand" />
+    <meta
+      property="og:url"
+      content="https://custom.deer.gift/art-styles"
+    />
+    <link rel="canonical" href="https://custom.deer.gift/art-styles" />
+    <style>
+      :root {
+        --ivory: #faf7f2;
+        --cream: #f5ede3;
+        --warm: #ede4d8;
+        --gold: #c4a265;
+        --gold-light: #d4b87a;
+        --terracotta: #c4836a;
+        --terracotta-soft: #d9a28e;
+        --charcoal: #2c2824;
+        --charcoal-light: #4a453f;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --text-light: #9b9490;
+        --white: #ffffff;
+        --border: #e8dfd5;
+        --serif: "Cormorant Garamond", "Georgia", serif;
+        --sans: "Zen Maru Gothic", sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: var(--sans);
+        background: var(--ivory);
+        color: var(--text);
+        line-height: 1.8;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      /* NAV */
+      .nav {
+        background: var(--charcoal);
+        padding: 0 2rem;
+        height: 3.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-logo {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        font-weight: 300;
+        letter-spacing: 6px;
+        color: var(--cream);
+        text-transform: uppercase;
+      }
+      .nav-back {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: color 0.3s;
+      }
+      .nav-back:hover {
+        color: var(--cream);
+      }
+
+      /* HERO */
+      .page-hero {
+        background: linear-gradient(
+          180deg,
+          var(--charcoal) 0%,
+          var(--charcoal-light) 40%,
+          var(--warm) 100%
+        );
+        padding: 4rem 2rem 3rem;
+        text-align: center;
+      }
+      .page-hero h1 {
+        font-family: var(--serif);
+        font-size: 2.4rem;
+        font-weight: 300;
+        color: var(--cream);
+        letter-spacing: 4px;
+        margin-bottom: 0.5rem;
+      }
+      .page-hero p {
+        font-size: 0.88rem;
+        color: var(--text-light);
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      /* FILTER */
+      .filter-bar {
+        background: var(--cream);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .filter-btn {
+        padding: 0.45rem 1.1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 100px;
+        background: var(--white);
+        font-family: var(--sans);
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-mid);
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+      .filter-btn:hover {
+        border-color: var(--gold-light);
+        color: var(--charcoal);
+      }
+      .filter-btn.active {
+        background: var(--charcoal);
+        border-color: var(--charcoal);
+        color: var(--white);
+      }
+
+      /* GRID */
+      .styles-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2.5rem 2rem 4rem;
+      }
+      .category-title {
+        font-family: var(--serif);
+        font-size: 1.4rem;
+        font-weight: 400;
+        color: var(--charcoal);
+        letter-spacing: 2px;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .category-title .cat-num {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--white);
+        background: var(--terracotta);
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .category-section {
+        margin-bottom: 3rem;
+      }
+
+      .styles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.2rem;
+      }
+      .style-card {
+        background: var(--white);
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        transition: all 0.4s;
+        cursor: pointer;
+        position: relative;
+      }
+      .style-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(44, 40, 36, 0.1);
+        border-color: var(--gold-light);
+      }
+      .style-card .card-img {
+        width: 100%;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+      .style-card:hover .card-img {
+        transform: scale(1.03);
+      }
+      .card-dual-imgs {
+        display: flex;
+        aspect-ratio: 4/3;
+        overflow: hidden;
+      }
+      .card-dual-imgs .dual-img {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+      .card-dual-imgs .dual-img + .dual-img {
+        border-left: 1.5px solid rgba(255,255,255,0.5);
+      }
+      .card-dual-imgs .dual-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+        display: block;
+      }
+      .style-card:hover .card-dual-imgs .dual-img img {
+        transform: scale(1.04);
+      }
+      .dual-img-label {
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.55rem;
+        font-weight: 600;
+        color: #fff;
+        background: rgba(0,0,0,0.52);
+        padding: 0.15rem 0.5rem;
+        border-radius: 100px;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+        pointer-events: none;
+      }
+      .style-card .card-img-wrap {
+        overflow: hidden;
+        position: relative;
+      }
+      .style-card .card-img-wrap .overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 50%,
+          rgba(44, 40, 36, 0.5) 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .style-card:hover .card-img-wrap .overlay {
+        opacity: 1;
+      }
+      .style-card .select-btn {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%) translateY(8px);
+        opacity: 0;
+        padding: 0.5rem 1.5rem;
+        background: var(--terracotta);
+        color: var(--white);
+        border: none;
+        border-radius: 100px;
+        font-family: var(--sans);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+      .style-card:hover .select-btn {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .card-body {
+        padding: 1rem 1.2rem 1.2rem;
+      }
+      .card-body .style-name {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--charcoal);
+        margin-bottom: 0.1rem;
+      }
+      .card-body .style-name-en {
+        font-size: 0.7rem;
+        color: var(--text-light);
+        font-style: italic;
+        font-family: var(--serif);
+        letter-spacing: 0.5px;
+      }
+      .card-body .style-desc {
+        font-size: 0.74rem;
+        color: var(--text-mid);
+        margin-top: 0.5rem;
+        line-height: 1.6;
+      }
+      .card-body .tags {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .card-body .tag {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.5rem;
+        background: rgba(196, 162, 101, 0.12);
+        color: var(--gold);
+        border-radius: 100px;
+        font-weight: 500;
+      }
+
+      /* CTA */
+      .bottom-cta {
+        background: var(--charcoal);
+        text-align: center;
+        padding: 3rem 2rem;
+      }
+      .bottom-cta h2 {
+        font-family: var(--serif);
+        font-size: 1.6rem;
+        font-weight: 300;
+        color: var(--cream);
+        margin-bottom: 0.5rem;
+      }
+      .bottom-cta p {
+        font-size: 0.82rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+      }
+      .bottom-cta .cta-btn {
+        display: inline-block;
+        padding: 0.9rem 2.5rem;
+        background: var(--terracotta);
+        color: var(--white);
+        border-radius: 100px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+      }
+      .bottom-cta .cta-btn:hover {
+        background: #b3725c;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(196, 131, 106, 0.3);
+      }
+
+      /* FADE */
+      .fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s,
+          transform 0.6s;
+      }
+      .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 640px) {
+        .nav {
+          padding: 0 1rem;
+        }
+        .page-hero {
+          padding: 3rem 1.2rem 2rem;
+        }
+        .page-hero h1 {
+          font-size: 1.6rem;
+        }
+        .filter-bar {
+          padding: 0.8rem 1rem;
+          gap: 0.4rem;
+        }
+        .filter-btn {
+          font-size: 0.68rem;
+          padding: 0.35rem 0.8rem;
+        }
+        .styles-container {
+          padding: 1.5rem 1rem 3rem;
+        }
+        .styles-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.8rem;
+        }
+        .card-body {
+          padding: 0.7rem 0.8rem 0.9rem;
+        }
+        .card-body .style-desc {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="index.html" class="nav-back">&larr; トップに戻る</a>
+      <a href="index.html" class="nav-logo"
+        ><img
+          src="img/logo.svg"
+          alt="Deer"
+          style="height: 1.8rem; filter: brightness(0) invert(0.85)"
+      /></a>
+    </nav>
+
+    <div class="page-hero">
+      <h1>23 Art Styles</h1>
+      <p>
+        愛犬の写真を23種類のアートスタイルに変換。<br />
+        お好みのスタイルを選んで、世界にひとつのアートグッズを作りましょう
+      </p>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">すべて</button>
+      <button class="filter-btn" data-filter="oil">油絵・クラシック</button>
+      <button class="filter-btn" data-filter="wc">水彩画</button>
+      <button class="filter-btn" data-filter="ink">東洋画</button>
+      <button class="filter-btn" data-filter="pop">ポップアート</button>
+      <button class="filter-btn" data-filter="mono">モノクロ</button>
+      <button class="filter-btn" data-filter="future">デジタル</button>
+      <button class="filter-btn" data-filter="collage">コラージュ</button>
+      <button class="filter-btn" data-filter="line">ライン</button>
+      <button class="filter-btn" data-filter="silhouette">シルエット</button>
+    </div>
+
+    <div class="styles-container" id="stylesContainer">
+      <!-- Built by JS -->
+    </div>
+
+    <div class="bottom-cta">
+      <h2>Create Your Art</h2>
+      <p>お好みのスタイルが見つかりましたか？</p>
+      <a href="upload" class="cta-btn">オーダーをはじめる</a>
+    </div>
+
+    <script>
+      const STYLES = [
+        {
+          category: "oil",
+          catLabel: "油絵・クラシック",
+          items: [
+            {
+              id: "oil-impressionism",
+              name: "印象派",
+              nameEn: "Impressionism",
+              img: "img/styles/oil-impressionism.png",
+              modelImg: "img/lookbook/hoodie-gray-impressionism.png",
+              desc: "モネやルノワールを思わせる柔らかな光と色彩。筆触が織りなす温かな雰囲気",
+              tags: ["華やか", "温かみ"],
+              artist: "モネ / ルノワール",
+            },
+            {
+              id: "oil-baroque",
+              name: "バロック",
+              nameEn: "Baroque",
+              img: "img/styles/oil-baroque.png",
+              modelImg: "img/lookbook/mug-baroque.png",
+              desc: "レンブラントのような劇的な明暗表現。高貴で荘厳な肖像画風",
+              tags: ["重厚", "高級感"],
+              artist: "レンブラント",
+            },
+            {
+              id: "oil-renaissance",
+              name: "ルネサンス",
+              nameEn: "Renaissance",
+              img: "img/styles/oil-renaissance.png",
+              modelImg: "img/lookbook/poster-expressionism.png",
+              desc: "ダ・ヴィンチの繊細な描写。古典的な美しさと品格を演出",
+              tags: ["古典", "優雅"],
+              artist: "ダ・ヴィンチ",
+            },
+            {
+              id: "oil-expressionism",
+              name: "表現主義",
+              nameEn: "Expressionism",
+              img: "img/styles/oil-expressionism.png",
+              modelImg: "img/lookbook/tote-black-impressionism.png",
+              desc: "ゴッホのような力強い筆致と鮮やかな色彩。感情を色に込めた表現",
+              tags: ["鮮烈", "個性的"],
+              artist: "ゴッホ",
+            },
+          ],
+        },
+        {
+          category: "wc",
+          catLabel: "水彩画",
+          items: [
+            {
+              id: "wc-loose",
+              name: "にじみ水彩",
+              nameEn: "Loose Watercolor",
+              img: "img/styles/wc-loose.png",
+              modelImg: "img/lookbook/hoodie-navy-watercolor.png",
+              desc: "絵の具が水に溶け出すような柔らかなにじみ。透明感あふれる表現",
+              tags: ["透明感", "やわらかい"],
+            },
+            {
+              id: "wc-botanical",
+              name: "ボタニカル水彩",
+              nameEn: "Botanical Watercolor",
+              img: "img/styles/wc-botanical.png",
+              modelImg: "img/lookbook/tshirt-pink-botanical.png",
+              desc: "花や植物と一緒に描かれる繊細なボタニカルアート",
+              tags: ["繊細", "ナチュラル"],
+            },
+            {
+              id: "wc-wet",
+              name: "ウェットオンウェット",
+              nameEn: "Wet-on-Wet",
+              img: "img/styles/wc-wet.png",
+              modelImg: "img/lookbook/postcard-watercolor.png",
+              desc: "濡れた紙の上に色を重ねる幻想的な技法。ドリーミーな仕上がり",
+              tags: ["幻想的", "ドリーミー"],
+            },
+          ],
+        },
+        {
+          category: "ink",
+          catLabel: "東洋画",
+          items: [
+            {
+              id: "ink-sumie",
+              name: "水墨画",
+              nameEn: "Sumi-e",
+              img: "img/styles/ink-sumie.png",
+              modelImg: "img/lookbook/tote-natural-sumie.png",
+              desc: "墨の濃淡だけで描く日本の伝統画。余白の美しさが際立つ",
+              tags: ["和風", "静謐"],
+            },
+            {
+              id: "ink-nanga",
+              name: "南画",
+              nameEn: "Nanga",
+              img: "img/styles/ink-nanga.png",
+              modelImg: "img/lookbook/tote-black-impressionism.png",
+              desc: "文人画の優雅さを取り入れた東洋的な表現",
+              tags: ["文人画", "風雅"],
+            },
+          ],
+        },
+        {
+          category: "pop",
+          catLabel: "ポップアート",
+          items: [
+            {
+              id: "pop-warhol",
+              name: "ウォーホル風",
+              nameEn: "Warhol Style",
+              img: "img/styles/pop-warhol.png",
+              modelImg: "img/lookbook/tshirt-white-popart.png",
+              desc: "4分割の大胆な配色で愛犬をポップアイコンに変身",
+              tags: ["大胆", "カラフル"],
+              artist: "ウォーホル",
+            },
+            {
+              id: "pop-comic",
+              name: "アメコミ風",
+              nameEn: "Comic / Lichtenstein",
+              img: "img/styles/pop-comic.png",
+              modelImg: "img/lookbook/hoodie-pink-charcoal.png",
+              desc: "ドットパターンと太い輪郭線。コミック風のインパクトある表現",
+              tags: ["インパクト", "レトロ"],
+              artist: "リキテンスタイン",
+            },
+            {
+              id: "pop-graffiti",
+              name: "グラフィティ",
+              nameEn: "Graffiti / Street Art",
+              img: "img/styles/pop-graffiti.png",
+              modelImg: "img/lookbook/case-neon.png",
+              desc: "ストリートアートのエネルギッシュな表現。自由で大胆なスタイル",
+              tags: ["ストリート", "エネルギッシュ"],
+            },
+          ],
+        },
+        {
+          category: "mono",
+          catLabel: "モノクロ",
+          items: [
+            {
+              id: "mono-hicon",
+              name: "ハイコントラスト",
+              nameEn: "High Contrast B&W",
+              img: "img/styles/mono-hicon.png",
+              modelImg: "img/lookbook/tshirt-gray-oneline.png",
+              desc: "白と黒だけで構成された力強いコントラスト表現",
+              tags: ["モノクロ", "シャープ"],
+            },
+            {
+              id: "mono-charcoal",
+              name: "木炭デッサン",
+              nameEn: "Charcoal Drawing",
+              img: "img/styles/mono-charcoal.png",
+              modelImg: "img/lookbook/hoodie-pink-charcoal.png",
+              desc: "木炭の柔らかなグラデーションで描くリアルなデッサン",
+              tags: ["素描", "リアル"],
+            },
+            {
+              id: "mono-noir",
+              name: "フィルム・ノワール",
+              nameEn: "Film Noir",
+              img: "img/styles/mono-noir.png",
+              modelImg: "img/lookbook/mug-baroque.png",
+              desc: "映画のような劇的なライティングとモノクロの陰影",
+              tags: ["映画的", "ドラマティック"],
+            },
+          ],
+        },
+        {
+          category: "future",
+          catLabel: "デジタル・フューチャー",
+          items: [
+            {
+              id: "future-cyber",
+              name: "サイバーパンク",
+              nameEn: "Cyberpunk",
+              img: "img/styles/future-cyber.png",
+              modelImg: "img/lookbook/case-neon.png",
+              desc: "ネオンカラーが輝く近未来的なデジタルアート",
+              tags: ["SF", "近未来"],
+            },
+            {
+              id: "future-neon",
+              name: "ネオンアート",
+              nameEn: "Neon Art",
+              img: "img/styles/future-neon.png",
+              modelImg: "img/lookbook/poster-expressionism.png",
+              desc: "ネオンサインのように光る輪郭線。暗闇に浮かぶ幻想的な表現",
+              tags: ["光", "幻想"],
+            },
+            {
+              id: "future-glitch",
+              name: "グリッチアート",
+              nameEn: "Glitch Art",
+              img: "img/styles/future-glitch.png",
+              modelImg: "img/lookbook/tshirt-white-popart.png",
+              desc: "デジタルノイズとバグが生み出すユニークなビジュアル",
+              tags: ["デジタル", "実験的"],
+            },
+          ],
+        },
+        {
+          category: "line",
+          catLabel: "ライン・ドローイング",
+          items: [
+            {
+              id: "line-oneline",
+              name: "一筆描き",
+              nameEn: "One-Line Drawing",
+              img: "img/styles/line-oneline.png",
+              modelImg: "img/lookbook/tshirt-gray-oneline.png",
+              desc: "一本の線だけで愛犬の姿を描き出すミニマルアート",
+              tags: ["ミニマル", "洗練"],
+            },
+            {
+              id: "line-minimal",
+              name: "ミニマルライン",
+              nameEn: "Minimal Line Art",
+              img: "img/styles/line-minimal.png",
+              modelImg: "img/lookbook/tote-natural-sumie.png",
+              desc: "最小限の線で本質を捉える。シンプルで洗練された表現",
+              tags: ["シンプル", "モダン"],
+            },
+          ],
+        },
+        {
+          category: "collage",
+          catLabel: "コラージュ",
+          items: [
+            {
+              id: "collage-mixed",
+              name: "ミクストメディア",
+              nameEn: "Mixed Media Collage",
+              img: "img/styles/collage-mixed.png",
+              modelImg: "img/lookbook/poster-expressionism.png",
+              desc: "写真・イラスト・テクスチャを組み合わせた多層的な表現",
+              tags: ["レイヤー", "実験的"],
+            },
+            {
+              id: "collage-papercut",
+              name: "ペーパーカット",
+              nameEn: "Paper Cut Art",
+              img: "img/styles/collage-papercut.png",
+              modelImg: "img/lookbook/postcard-watercolor.png",
+              desc: "切り絵のような平面的でグラフィカルなスタイル",
+              tags: ["グラフィック", "手作り感"],
+            },
+          ],
+        },
+        {
+          category: "silhouette",
+          catLabel: "シルエット",
+          items: [
+            {
+              id: "silhouette",
+              name: "シルエット",
+              nameEn: "Silhouette",
+              img: "img/styles/mono-hicon.png",
+              modelImg: "img/lookbook/tote-black-impressionism.png",
+              desc: "愛犬の輪郭を美しいシルエットで表現するミニマルなスタイル",
+              tags: ["ミニマル", "モダン"],
+            },
+          ],
+        },
+      ];
+
+      // Build page
+      function buildStyles(filterCat) {
+        const container = document.getElementById("stylesContainer");
+        const filtered =
+          filterCat === "all"
+            ? STYLES
+            : STYLES.filter((s) => s.category === filterCat);
+
+        container.innerHTML = filtered
+          .map(
+            (cat, ci) => `
+          <section class="category-section" data-cat="${cat.category}">
+            <h2 class="category-title fade-up">
+              <span class="cat-num">${ci + 1}</span>
+              ${cat.catLabel}
+            </h2>
+            <div class="styles-grid">
+              ${cat.items
+                .map(
+                  (item, ii) => `
+                <div class="style-card fade-up" style="transition-delay:${ii * 0.08}s" onclick="location.href='upload?style=${item.id}'">
+                  <div class="card-img-wrap">
+                    <div class="card-dual-imgs">
+                      <div class="dual-img">
+                        <img src="${item.modelImg}" alt="着用イメージ" loading="lazy">
+                        <span class="dual-img-label">着用イメージ</span>
+                      </div>
+                      <div class="dual-img">
+                        <img src="${item.img}" alt="${item.name}" loading="lazy">
+                        <span class="dual-img-label">アートスタイル</span>
+                      </div>
+                    </div>
+                    <div class="overlay"></div>
+                    <button class="select-btn">このスタイルで作る</button>
+                  </div>
+                  <div class="card-body">
+                    <div class="style-name">${item.name}</div>
+                    <div class="style-name-en">${item.nameEn}</div>
+                    <p class="style-desc">${item.desc}</p>
+                    <div class="tags">
+                      ${item.tags.map((t) => `<span class="tag">${t}</span>`).join("")}
+                    </div>
+                  </div>
+                </div>`,
+                )
+                .join("")}
+            </div>
+          </section>`,
+          )
+          .join("");
+
+        // Trigger animations
+        requestAnimationFrame(() => {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.05, rootMargin: "0px 0px 100px 0px" },
+          );
+          document
+            .querySelectorAll(".fade-up")
+            .forEach((el) => observer.observe(el));
+        });
+      }
+
+      // Filter buttons
+      document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          buildStyles(btn.dataset.filter);
+        });
+      });
+
+      // Init
+      buildStyles("all");
+    </script>
+  </body>
+</html>

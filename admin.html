@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Deer Brand 管理者パネル</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        background: #faf7f2;
+        color: #2c2824;
+        min-height: 100vh;
+      }
+
+      /* ログイン画面 */
+      #login-screen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      .login-card {
+        background: white;
+        border-radius: 16px;
+        padding: 48px 40px;
+        width: 380px;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
+      }
+      .login-card h1 {
+        color: #c4a265;
+        font-size: 28px;
+        margin-bottom: 4px;
+      }
+      .login-card p {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 32px;
+      }
+      .login-card label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      .login-card input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #e0d9cf;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .login-card input:focus {
+        border-color: #c4a265;
+      }
+      .login-card button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 13px;
+        background: #c4a265;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .login-card button:hover {
+        background: #b0904f;
+      }
+      #login-error {
+        color: #e05050;
+        font-size: 13px;
+        margin-top: 12px;
+        display: none;
+      }
+
+      /* ダッシュボード */
+      #dashboard {
+        display: none;
+      }
+      header {
+        background: white;
+        border-bottom: 1px solid #e0d9cf;
+        padding: 16px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      header h1 {
+        color: #c4a265;
+        font-size: 22px;
+      }
+      header span {
+        color: #888;
+        font-size: 13px;
+      }
+      .logout-btn {
+        background: none;
+        border: 1.5px solid #e0d9cf;
+        color: #555;
+        padding: 7px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+      }
+      .logout-btn:hover {
+        border-color: #c4a265;
+        color: #c4a265;
+      }
+
+      main {
+        padding: 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* フィルタバー */
+      .filter-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+      }
+      .filter-bar label {
+        font-size: 13px;
+        color: #888;
+        font-weight: 600;
+      }
+      .filter-bar select,
+      .filter-bar input {
+        padding: 8px 12px;
+        border: 1.5px solid #e0d9cf;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        background: white;
+        cursor: pointer;
+      }
+      .filter-bar select:focus,
+      .filter-bar input:focus {
+        border-color: #c4a265;
+      }
+      .refresh-btn {
+        margin-left: auto;
+        background: #c4a265;
+        color: white;
+        border: none;
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .refresh-btn:hover {
+        background: #b0904f;
+      }
+      .refresh-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      /* 統計カード */
+      .stats-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px 24px;
+        flex: 1;
+        min-width: 140px;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+      }
+      .stat-card .label {
+        font-size: 12px;
+        color: #888;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .stat-card .value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #c4a265;
+        margin-top: 4px;
+      }
+      .stat-card .sub {
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 2px;
+      }
+
+      /* テーブル */
+      .table-wrapper {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      thead {
+        background: #faf7f2;
+      }
+      th {
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+      td {
+        padding: 14px 16px;
+        border-top: 1px solid #f0ebe3;
+        vertical-align: middle;
+      }
+      tr:hover td {
+        background: #fdfbf8;
+      }
+
+      .order-id {
+        font-family: monospace;
+        font-size: 12px;
+        color: #c4a265;
+        font-weight: 600;
+      }
+      .date {
+        color: #888;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .user-id {
+        font-family: monospace;
+        font-size: 11px;
+        color: #aaa;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .product-info {
+        max-width: 160px;
+      }
+      .product-info .main {
+        font-weight: 600;
+      }
+      .product-info .sub {
+        color: #888;
+        font-size: 11px;
+      }
+      .total {
+        font-weight: bold;
+        color: #2c2824;
+        white-space: nowrap;
+      }
+
+      /* ステータスバッジ */
+      .status-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .status-preparing {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .status-printing {
+        background: #ede9fe;
+        color: #5b21b6;
+      }
+      .status-shipped {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .status-delivered {
+        background: #e0e7ff;
+        color: #3730a3;
+      }
+      .status-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .status-select {
+        padding: 6px 10px;
+        border: 1.5px solid #e0d9cf;
+        border-radius: 8px;
+        font-size: 12px;
+        outline: none;
+        cursor: pointer;
+        background: white;
+        transition: border-color 0.2s;
+      }
+      .status-select:focus {
+        border-color: #c4a265;
+      }
+
+      .save-btn {
+        margin-left: 8px;
+        padding: 6px 14px;
+        background: #c4a265;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      .save-btn:hover {
+        background: #b0904f;
+      }
+      .save-btn:disabled {
+        background: #ddd;
+        color: #aaa;
+        cursor: not-allowed;
+      }
+      .save-btn.saved {
+        background: #22c55e;
+      }
+
+      /* ローディング・空状態 */
+      #loading {
+        text-align: center;
+        padding: 60px;
+        color: #aaa;
+        font-size: 15px;
+      }
+      #empty {
+        text-align: center;
+        padding: 60px;
+        color: #aaa;
+        font-size: 15px;
+        display: none;
+      }
+      #error-msg {
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        display: none;
+        font-size: 13px;
+      }
+
+      /* Printful発注ボタン */
+      .printful-btn {
+        padding: 6px 12px;
+        background: #7c3aed;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s;
+      }
+      .printful-btn:hover {
+        background: #6d28d9;
+      }
+      .printful-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      .printful-link {
+        font-size: 11px;
+        color: #7c3aed;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .printful-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Printful発注モーダル */
+      #printful-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+      }
+      #printful-modal-overlay.open {
+        display: flex;
+      }
+      #printful-modal {
+        background: white;
+        border-radius: 16px;
+        padding: 36px 32px;
+        width: 460px;
+        max-width: 95vw;
+        box-shadow: 0 8px 48px rgba(0, 0, 0, 0.18);
+      }
+      #printful-modal h2 {
+        font-size: 18px;
+        color: #2c2824;
+        margin-bottom: 4px;
+      }
+      #printful-modal .modal-sub {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 24px;
+      }
+      #printful-modal label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      #printful-modal input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #e0d9cf;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        margin-bottom: 20px;
+        transition: border-color 0.2s;
+      }
+      #printful-modal input:focus {
+        border-color: #7c3aed;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+      #modal-cancel-btn {
+        padding: 10px 20px;
+        background: none;
+        border: 1.5px solid #e0d9cf;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        color: #555;
+        transition: all 0.2s;
+      }
+      #modal-cancel-btn:hover {
+        border-color: #c4a265;
+        color: #c4a265;
+      }
+      #modal-submit-btn {
+        padding: 10px 24px;
+        background: #7c3aed;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      #modal-submit-btn:hover {
+        background: #6d28d9;
+      }
+      #modal-submit-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      #modal-error {
+        color: #e05050;
+        font-size: 12px;
+        margin-bottom: 12px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ログイン画面 -->
+    <div id="login-screen">
+      <div class="login-card">
+        <h1>Deer Brand</h1>
+        <p>管理者パネル</p>
+        <!-- Step 1: 管理者キー -->
+        <div id="login-step1">
+          <label for="admin-key-input">管理者キー</label>
+          <input
+            type="password"
+            id="admin-key-input"
+            placeholder="ADMIN_SECRET_KEY を入力"
+            autocomplete="current-password"
+          />
+        </div>
+        <!-- Step 2: TOTP (2段階認証) -->
+        <div id="login-step2" style="display: none">
+          <label for="totp-input">認証コード（Google Authenticator）</label>
+          <input
+            type="text"
+            id="totp-input"
+            placeholder="6桁のコードを入力"
+            maxlength="6"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            style="letter-spacing: 0.2em; font-size: 1.2em; text-align: center"
+          />
+        </div>
+        <button id="login-btn" onclick="doLogin()">ログイン</button>
+        <div id="login-error">認証に失敗しました</div>
+      </div>
+    </div>
+
+    <!-- Printful発注モーダル -->
+    <div id="printful-modal-overlay">
+      <div id="printful-modal">
+        <h2>Printfulに発注</h2>
+        <div class="modal-sub" id="modal-order-label">注文ID: -</div>
+        <label for="art-image-url-input">アート画像URL</label>
+        <input
+          type="url"
+          id="art-image-url-input"
+          placeholder="https://storage.googleapis.com/.../art.jpg"
+        />
+        <div id="modal-error"></div>
+        <div class="modal-actions">
+          <button id="modal-cancel-btn" onclick="closePrintfulModal()">
+            キャンセル
+          </button>
+          <button id="modal-submit-btn" onclick="submitPrintfulOrder()">
+            Printfulに発注
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ダッシュボード -->
+    <div id="dashboard">
+      <header>
+        <h1>Deer Brand 管理者パネル</h1>
+        <span id="header-info"></span>
+        <button class="logout-btn" onclick="doLogout()">ログアウト</button>
+      </header>
+      <main>
+        <div id="error-msg"></div>
+
+        <!-- 統計カード -->
+        <div class="stats-row" id="stats-row">
+          <div class="stat-card">
+            <div class="label">総注文数</div>
+            <div class="value" id="stat-total">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">保留中</div>
+            <div class="value" id="stat-pending">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">制作中</div>
+            <div class="value" id="stat-preparing">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">発送済み</div>
+            <div class="value" id="stat-shipped">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">売上合計</div>
+            <div class="value" id="stat-revenue">-</div>
+            <div class="sub">（表示件数）</div>
+          </div>
+        </div>
+
+        <!-- フィルタバー -->
+        <div class="filter-bar">
+          <label>ステータス</label>
+          <select id="filter-status" onchange="loadOrders()">
+            <option value="">すべて</option>
+            <option value="pending">pending（保留）</option>
+            <option value="preparing">preparing（制作中）</option>
+            <option value="shipped">shipped（発送済み）</option>
+            <option value="delivered">delivered（配達完了）</option>
+            <option value="cancelled">cancelled（キャンセル）</option>
+          </select>
+          <label>件数</label>
+          <select id="filter-limit" onchange="loadOrders()">
+            <option value="20">20件</option>
+            <option value="50" selected>50件</option>
+            <option value="100">100件</option>
+          </select>
+          <button class="refresh-btn" id="refresh-btn" onclick="loadOrders()">
+            更新
+          </button>
+        </div>
+
+        <!-- テーブル -->
+        <div class="table-wrapper">
+          <div id="loading">読み込み中...</div>
+          <div id="empty">注文がありません</div>
+          <table id="orders-table" style="display: none">
+            <thead>
+              <tr>
+                <th>注文ID</th>
+                <th>日時</th>
+                <th>ユーザーID</th>
+                <th>商品</th>
+                <th>スタイル</th>
+                <th>合計</th>
+                <th>現在のステータス</th>
+                <th>ステータス変更</th>
+                <th>Printful</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const API_BASE = ""; // 同一オリジン想定
+      let adminKey = "";
+      let allOrders = [];
+      let totpRequired = false; // TOTP二段階認証が必要か
+
+      // --- ログイン（2段階認証対応）---
+      document
+        .getElementById("admin-key-input")
+        .addEventListener("keydown", (e) => {
+          if (e.key === "Enter") doLogin();
+        });
+      document.getElementById("totp-input").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doLogin();
+      });
+
+      async function doLogin() {
+        const key = document.getElementById("admin-key-input").value.trim();
+        const totpCode = document.getElementById("totp-input").value.trim();
+        if (!key) return;
+
+        const errEl = document.getElementById("login-error");
+        errEl.style.display = "none";
+
+        try {
+          const res = await fetch("/api/admin-api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "get-orders",
+              adminKey: key,
+              totpCode: totpCode || undefined,
+              limit: 1,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (res.status === 429) {
+            // アカウントロック
+            errEl.textContent =
+              data.error || "アカウントがロックされています。";
+            errEl.style.display = "block";
+            return;
+          }
+
+          if (res.status === 401) {
+            if (data.requiresTOTP || totpRequired) {
+              // TOTP入力ステップを表示
+              totpRequired = true;
+              document.getElementById("login-step2").style.display = "block";
+              document.getElementById("totp-input").focus();
+              errEl.textContent =
+                data.error || "認証コードが正しくありません。";
+              errEl.style.display = totpCode ? "block" : "none";
+              document.getElementById("login-btn").textContent = "確認";
+            } else {
+              errEl.textContent = data.error || "認証に失敗しました。";
+              errEl.style.display = "block";
+            }
+            return;
+          }
+
+          if (!res.ok) throw new Error(data.error || "サーバーエラー");
+
+          // ログイン成功
+          adminKey = key;
+          totpRequired = false;
+          document.getElementById("login-screen").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+          loadOrders();
+        } catch (err) {
+          errEl.textContent = "エラーが発生しました。再試行してください。";
+          errEl.style.display = "block";
+        }
+      }
+
+      function doLogout() {
+        adminKey = "";
+        allOrders = [];
+        totpRequired = false;
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("login-screen").style.display = "flex";
+        document.getElementById("admin-key-input").value = "";
+        document.getElementById("totp-input").value = "";
+        document.getElementById("login-step2").style.display = "none";
+        document.getElementById("login-btn").textContent = "ログイン";
+        document.getElementById("login-error").style.display = "none";
+      }
+
+      // --- 注文取得 ---
+      async function loadOrders() {
+        const status = document.getElementById("filter-status").value;
+        const limit = document.getElementById("filter-limit").value;
+        const refreshBtn = document.getElementById("refresh-btn");
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = "読み込み中...";
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("orders-table").style.display = "none";
+        document.getElementById("empty").style.display = "none";
+        document.getElementById("error-msg").style.display = "none";
+
+        try {
+          const body = { action: "get-orders", adminKey, limit: Number(limit) };
+          if (status) body.status = status;
+          const res = await fetch("/api/admin-api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "エラー");
+          allOrders = data.orders || [];
+          renderOrders(allOrders);
+          updateStats(allOrders);
+          document.getElementById("header-info").textContent =
+            `${allOrders.length}件表示`;
+        } catch (err) {
+          document.getElementById("error-msg").textContent =
+            "エラー: " + err.message;
+          document.getElementById("error-msg").style.display = "block";
+        } finally {
+          document.getElementById("loading").style.display = "none";
+          refreshBtn.disabled = false;
+          refreshBtn.textContent = "更新";
+        }
+      }
+
+      // --- 統計更新 ---
+      function updateStats(orders) {
+        document.getElementById("stat-total").textContent = orders.length;
+        document.getElementById("stat-pending").textContent = orders.filter(
+          (o) => o.status === "pending",
+        ).length;
+        document.getElementById("stat-preparing").textContent = orders.filter(
+          (o) => o.status === "preparing",
+        ).length;
+        document.getElementById("stat-shipped").textContent = orders.filter(
+          (o) => o.status === "shipped",
+        ).length;
+        const revenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+        document.getElementById("stat-revenue").textContent =
+          "¥" + revenue.toLocaleString();
+      }
+
+      // --- テーブル描画 ---
+      function renderOrders(orders) {
+        const tbody = document.getElementById("orders-tbody");
+        tbody.innerHTML = "";
+        if (orders.length === 0) {
+          document.getElementById("empty").style.display = "block";
+          return;
+        }
+        document.getElementById("orders-table").style.display = "table";
+        orders.forEach((order) => {
+          const tr = document.createElement("tr");
+          const dateStr = order.createdAt
+            ? new Date(order.createdAt).toLocaleString("ja-JP", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-";
+          const statusClass = "status-" + (order.status || "pending");
+          const statusLabels = {
+            pending: "保留中",
+            preparing: "制作中",
+            printing: "印刷中",
+            shipped: "発送済み",
+            delivered: "配達完了",
+            cancelled: "キャンセル",
+          };
+          const statusLabel = statusLabels[order.status] || order.status || "-";
+          const petInfo = order.petCount ? `${order.petCount}頭` : "-";
+          const sizeInfo = order.size || "-";
+
+          // Printfulセル: preparing → 発注ボタン、printing → 確認リンク
+          let printfulCell = "<td>-</td>";
+          if (order.status === "preparing") {
+            printfulCell = `<td><button class="printful-btn" onclick="openPrintfulModal('${escapeHtml(order.orderId)}')">Printfulに送る</button></td>`;
+          } else if (order.status === "printing" && order.printfulOrderUrl) {
+            printfulCell = `<td><a class="printful-link" href="${escapeHtml(order.printfulOrderUrl)}" target="_blank" rel="noopener">Printfulで確認</a></td>`;
+          } else if (order.status === "printing") {
+            printfulCell = `<td><span style="font-size:11px;color:#7C3AED;">印刷中</span></td>`;
+          }
+
+          tr.innerHTML = `
+        <td><span class="order-id">${escapeHtml(order.orderId || "-")}</span></td>
+        <td><span class="date">${dateStr}</span></td>
+        <td><span class="user-id" title="${escapeHtml(order.userId || "")}">${escapeHtml((order.userId || "-").substring(0, 16))}…</span></td>
+        <td>
+          <div class="product-info">
+            <div class="main">${escapeHtml(order.product || "-")}</div>
+            <div class="sub">${escapeHtml(sizeInfo)} / ${escapeHtml(petInfo)}</div>
+          </div>
+        </td>
+        <td>${escapeHtml(order.style || "-")}</td>
+        <td><span class="total">¥${(order.total || 0).toLocaleString()}</span></td>
+        <td><span class="status-badge ${statusClass}" id="badge-${escapeHtml(order.orderId)}">${escapeHtml(statusLabel)}</span></td>
+        <td>
+          <select class="status-select" id="sel-${escapeHtml(order.orderId)}">
+            <option value="pending"   ${order.status === "pending" ? "selected" : ""}>pending（保留）</option>
+            <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>preparing（制作中）</option>
+            <option value="shipped"   ${order.status === "shipped" ? "selected" : ""}>shipped（発送済み）</option>
+            <option value="delivered" ${order.status === "delivered" ? "selected" : ""}>delivered（配達完了）</option>
+            <option value="cancelled" ${order.status === "cancelled" ? "selected" : ""}>cancelled（キャンセル）</option>
+          </select>
+          <button class="save-btn" id="btn-${escapeHtml(order.orderId)}" onclick="updateStatus('${escapeHtml(order.orderId)}')">保存</button>
+        </td>
+        ${printfulCell}
+      `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // --- ステータス更新 ---
+      async function updateStatus(orderId) {
+        const sel = document.getElementById("sel-" + orderId);
+        const btn = document.getElementById("btn-" + orderId);
+        const newStatus = sel.value;
+        btn.disabled = true;
+        btn.textContent = "保存中...";
+        try {
+          const res = await fetch("/api/admin-api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "update-status",
+              orderId,
+              status: newStatus,
+              adminKey,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "エラー");
+          btn.textContent = "完了";
+          btn.classList.add("saved");
+          // allOrders内も更新
+          const order = allOrders.find((o) => o.orderId === orderId);
+          if (order) order.status = newStatus;
+          // バッジを更新
+          const tr = btn.closest("tr");
+          const badge = tr.querySelector(".status-badge");
+          const statusLabels = {
+            pending: "保留中",
+            preparing: "制作中",
+            shipped: "発送済み",
+            delivered: "配達完了",
+            cancelled: "キャンセル",
+          };
+          badge.textContent = statusLabels[newStatus] || newStatus;
+          badge.className = "status-badge status-" + newStatus;
+          updateStats(allOrders);
+          setTimeout(() => {
+            btn.textContent = "保存";
+            btn.classList.remove("saved");
+            btn.disabled = false;
+          }, 2000);
+        } catch (err) {
+          btn.textContent = "エラー";
+          btn.style.background = "#e05050";
+          setTimeout(() => {
+            btn.textContent = "保存";
+            btn.style.background = "";
+            btn.disabled = false;
+          }, 2500);
+          alert("更新失敗: " + err.message);
+        }
+      }
+
+      function escapeHtml(str) {
+        if (str == null) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      // ---------------------------------------------------------------------------
+      // Printful発注モーダル制御
+      // ---------------------------------------------------------------------------
+      let printfulTargetOrderId = null;
+
+      /** preparing ステータスの行の「Printfulに送る」ボタンからモーダルを開く */
+      function openPrintfulModal(orderId) {
+        printfulTargetOrderId = orderId;
+        document.getElementById("modal-order-label").textContent =
+          "注文ID: " + orderId;
+        document.getElementById("art-image-url-input").value = "";
+        document.getElementById("modal-error").style.display = "none";
+        document.getElementById("modal-error").textContent = "";
+        document.getElementById("modal-submit-btn").disabled = false;
+        document.getElementById("modal-submit-btn").textContent =
+          "Printfulに発注";
+        document.getElementById("printful-modal-overlay").classList.add("open");
+      }
+
+      /** モーダルを閉じる */
+      function closePrintfulModal() {
+        document
+          .getElementById("printful-modal-overlay")
+          .classList.remove("open");
+        printfulTargetOrderId = null;
+      }
+
+      // オーバーレイクリックで閉じる
+      document
+        .getElementById("printful-modal-overlay")
+        .addEventListener("click", (e) => {
+          if (e.target === document.getElementById("printful-modal-overlay")) {
+            closePrintfulModal();
+          }
+        });
+
+      /** Printful発注を実行する */
+      async function submitPrintfulOrder() {
+        const artImageUrl = document
+          .getElementById("art-image-url-input")
+          .value.trim();
+        const modalError = document.getElementById("modal-error");
+        const submitBtn = document.getElementById("modal-submit-btn");
+
+        // バリデーション
+        if (!artImageUrl) {
+          modalError.textContent = "アート画像URLを入力してください";
+          modalError.style.display = "block";
+          return;
+        }
+        if (!artImageUrl.startsWith("http")) {
+          modalError.textContent =
+            "有効なURLを入力してください（http:// または https://）";
+          modalError.style.display = "block";
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "発注中...";
+        modalError.style.display = "none";
+
+        try {
+          const res = await fetch("/api/admin-api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "create-printful-order",
+              orderId: printfulTargetOrderId,
+              artImageUrl,
+              adminKey,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) {
+            throw new Error(data.error || "Printful発注に失敗しました");
+          }
+
+          // 発注成功 → allOrders のステータスを更新してUI再描画
+          const order = allOrders.find(
+            (o) => o.orderId === printfulTargetOrderId,
+          );
+          if (order) {
+            order.status = "printing";
+            order.printfulOrderId = data.printfulOrderId;
+            order.printfulOrderUrl = data.printfulOrderUrl;
+          }
+
+          // バッジを直接更新
+          const badge = document.getElementById(
+            "badge-" + printfulTargetOrderId,
+          );
+          if (badge) {
+            badge.textContent = "印刷中";
+            badge.className = "status-badge status-printing";
+          }
+
+          // Printfulセルを確認リンクに更新
+          const pfBtn = document.querySelector(
+            `button.printful-btn[onclick*="${printfulTargetOrderId}"]`,
+          );
+          if (pfBtn) {
+            const td = pfBtn.parentElement;
+            if (data.printfulOrderUrl) {
+              td.innerHTML = `<a class="printful-link" href="${escapeHtml(data.printfulOrderUrl)}" target="_blank" rel="noopener">Printfulで確認</a>`;
+            } else {
+              td.innerHTML = `<span style="font-size:11px;color:#7C3AED;">印刷中</span>`;
+            }
+          }
+
+          updateStats(allOrders);
+          closePrintfulModal();
+          console.log(
+            "[admin] Printful発注成功: printfulOrderId=" + data.printfulOrderId,
+          );
+        } catch (err) {
+          modalError.textContent = "エラー: " + err.message;
+          modalError.style.display = "block";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Printfulに発注";
+        }
+      }
+    </script>
+  </body>
+</html>

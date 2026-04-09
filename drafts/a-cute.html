@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deer — うちの子をアートにしよう</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #FFF9F5;
+  --bg-warm: #FFF3EC;
+  --card: #FFFFFF;
+  --border: #F0E6DE;
+  --accent: #E8956D;
+  --accent-soft: #F4B89A;
+  --accent-deep: #D4764E;
+  --pink: #E8A0B4;
+  --pink-light: #FDEEF3;
+  --brown: #8B6F5E;
+  --brown-light: #B5998A;
+  --text: #3D2E24;
+  --text-light: #8B7B72;
+  --gold: #C8A96E;
+  --cream: #FDF6F0;
+  --font: 'Zen Maru Gothic', 'Noto Sans JP', sans-serif;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+::selection { background: var(--pink); color: #fff; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0.9rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,249,245,0.9); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(240,230,222,0.6);
+}
+.nav-logo {
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 4px;
+  color: var(--accent);
+}
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-links a { font-size: 0.8rem; font-weight: 500; color: var(--brown-light); transition: color 0.3s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-btn {
+  font-size: 0.75rem !important; font-weight: 700 !important;
+  color: #fff !important; background: var(--accent);
+  padding: 0.5rem 1.3rem; border-radius: 100px;
+  transition: all 0.3s !important;
+}
+.nav-btn:hover { background: var(--accent-deep) !important; transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hero-img {
+  position: absolute; inset: 0;
+  background: url('img/hero-dog.jpg') center 25%/cover no-repeat;
+}
+.hero-img::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(255,249,245,0.55) 0%,
+      rgba(255,249,245,0.35) 30%,
+      rgba(255,249,245,0.3) 60%,
+      rgba(255,249,245,0.92) 100%
+    );
+}
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 5rem 1.5rem 3rem;
+  max-width: 700px;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(232,149,109,0.12); border: 1px solid rgba(232,149,109,0.25);
+  border-radius: 100px; padding: 0.4rem 1.1rem;
+  font-size: 0.72rem; color: var(--accent-deep); font-weight: 700;
+  letter-spacing: 1px; margin-bottom: 1.5rem;
+}
+.hero-tag-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+.hero-main {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.4;
+  margin-bottom: 1.2rem;
+  color: var(--text);
+  text-shadow: 0 2px 30px rgba(255,249,245,0.9), 0 0px 60px rgba(255,249,245,0.5);
+}
+.hero-main .pop {
+  color: var(--accent);
+  position: relative;
+}
+.hero-main .pop::after {
+  content: '';
+  position: absolute; bottom: 2px; left: 0; right: 0;
+  height: 8px; background: rgba(232,149,109,0.2);
+  border-radius: 4px; z-index: -1;
+}
+.hero-sub {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: var(--brown);
+  line-height: 2;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  text-shadow: 0 1px 20px rgba(255,249,245,0.95), 0 0 40px rgba(255,249,245,0.6);
+}
+.hero-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--accent); color: #fff;
+  font-family: var(--font); font-size: 1rem; font-weight: 700;
+  padding: 1rem 2.8rem; border-radius: 100px;
+  border: none; cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(232,149,109,0.3);
+}
+.hero-btn:hover { background: var(--accent-deep); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,149,109,0.4); }
+.hero-note { font-size: 0.78rem; color: var(--brown-light); margin-top: 1rem; }
+
+/* ── TRUST ── */
+.trust {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1.2rem 1.5rem;
+}
+.trust-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+}
+.trust-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--brown); font-weight: 500; }
+
+/* ── SECTION ── */
+.section {
+  padding: 5rem 1.5rem;
+  max-width: 960px; margin: 0 auto;
+}
+.section-head { text-align: center; margin-bottom: 3rem; }
+.section-tag {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 2px;
+  color: var(--accent); margin-bottom: 0.6rem;
+}
+.section-title {
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-weight: 900; line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+.section-desc { font-size: 0.9rem; color: var(--text-light); max-width: 500px; margin: 0 auto; line-height: 1.8; }
+
+/* ── STEPS ── */
+.steps-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.step-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+}
+.step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(139,111,94,0.08); }
+.step-num {
+  width: 2.5rem; height: 2.5rem;
+  background: var(--accent); color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 800;
+  margin: 0 auto 1rem;
+}
+.step-img {
+  width: 5rem; height: 5rem; border-radius: 50%; object-fit: cover;
+  margin: 0 auto 1rem;
+  border: 3px solid var(--border);
+}
+.step-title { font-size: 1rem; font-weight: 800; margin-bottom: 0.3rem; }
+.step-desc { font-size: 0.8rem; color: var(--text-light); line-height: 1.6; }
+
+/* ── GALLERY ── */
+.gallery-section { background: var(--bg-warm); padding: 5rem 1.5rem; }
+.gallery-inner { max-width: 960px; margin: 0 auto; }
+.gallery-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 1rem; margin-top: 2.5rem;
+}
+.gallery-card {
+  border-radius: 16px; overflow: hidden;
+  position: relative; aspect-ratio: 1;
+  transition: transform 0.4s;
+}
+.gallery-card:hover { transform: scale(1.02); }
+.gallery-card img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(61,46,36,0.7));
+  padding: 2rem 1rem 1rem;
+  color: #fff;
+}
+.gallery-label-style {
+  display: inline-block;
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+  padding: 0.2rem 0.7rem; border-radius: 6px;
+  font-size: 0.68rem; font-weight: 700; margin-bottom: 0.3rem;
+}
+.gallery-label-text { font-size: 0.85rem; font-weight: 600; }
+
+/* ── PRODUCTS ── */
+.products-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.prod-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden; transition: all 0.3s;
+}
+.prod-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(139,111,94,0.08); border-color: var(--accent-soft); }
+.prod-img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.prod-info { padding: 1rem; }
+.prod-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+.prod-price { font-size: 1.1rem; font-weight: 900; color: var(--accent-deep); }
+.prod-price small { font-size: 0.68rem; color: var(--text-light); font-weight: 400; }
+.prod-ship { font-size: 0.7rem; color: #5BA865; margin-top: 0.2rem; font-weight: 600; }
+
+/* ── REVIEWS ── */
+.reviews-section { background: var(--bg-warm); padding: 5rem 1.5rem; }
+.reviews-inner { max-width: 960px; margin: 0 auto; }
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.5rem; }
+.review-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem;
+}
+.review-stars { color: #F5A623; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 0.8rem; }
+.review-text { font-size: 0.82rem; color: var(--brown); line-height: 1.8; margin-bottom: 1rem; }
+.review-author { display: flex; align-items: center; gap: 0.6rem; }
+.review-avatar {
+  width: 2.2rem; height: 2.2rem; border-radius: 50%; overflow: hidden;
+}
+.review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.review-name { font-size: 0.78rem; font-weight: 600; }
+.review-pet { font-size: 0.68rem; color: var(--text-light); }
+
+/* ── CTA ── */
+.cta-section {
+  position: relative;
+  padding: 5rem 1.5rem;
+  text-align: center;
+  overflow: hidden;
+  background: var(--cream);
+}
+.cta-section .section-title { margin-bottom: 0.8rem; }
+.cta-desc { font-size: 0.9rem; color: var(--brown); line-height: 1.8; margin-bottom: 2rem; }
+.cta-checks {
+  display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap;
+}
+.cta-check { display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; color: var(--brown); font-weight: 500; }
+.cta-check-icon { color: #5BA865; font-weight: 800; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 1.5rem; text-align: center;
+  background: var(--card);
+}
+.footer-logo { font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; color: var(--accent-soft); margin-bottom: 0.8rem; }
+.footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.footer-links a { font-size: 0.72rem; color: var(--text-light); transition: color 0.3s; }
+.footer-links a:hover { color: var(--accent); }
+.footer-copy { font-size: 0.65rem; color: #C5B8B0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-links a:not(.nav-btn) { display: none; }
+  .steps-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .trust-inner { gap: 1rem; }
+}
+@media (max-width: 480px) {
+  .products-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">D E E R</div>
+  <div class="nav-links">
+    <a href="#steps">つくり方</a>
+    <a href="#products">グッズ</a>
+    <a href="#reviews">レビュー</a>
+    <a href="#" class="nav-btn">はじめる</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="hero-tag-dot"></span>愛犬グッズ専門</div>
+    <h1 class="hero-main">
+      うちの子の写真が<br>
+      <span class="pop">かわいいグッズ</span>に<br>
+      なっちゃう。
+    </h1>
+    <p class="hero-sub">
+      スマホで写真を送るだけ。<br>
+      AIが油絵・水彩画・ポップアートに自動変換。<br>
+      Tシャツやトートバッグにして、おうちに届けます。
+    </p>
+    <button class="hero-btn" onclick="location.href='#steps'">無料でためしてみる ♡</button>
+    <p class="hero-note">AI変換は無料。お支払いは注文のときだけ。</p>
+  </div>
+</section>
+
+<!-- TRUST -->
+<div class="trust">
+  <div class="trust-inner">
+    <div class="trust-item">🎨 AI変換 無料</div>
+    <div class="trust-item">🚚 送料無料</div>
+    <div class="trust-item">📦 5〜7日でお届け</div>
+    <div class="trust-item">🇯🇵 国内プリント・発送</div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<section class="section" id="steps">
+  <div class="section-head">
+    <div class="section-tag">つくり方</div>
+    <div class="section-title">かんたん3ステップ</div>
+    <div class="section-desc">スマホだけでOK。むずかしい操作はありません。</div>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <img class="step-img" src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&q=80&auto=format&fit=crop" alt="" />
+      <div class="step-title">写真をえらぶ</div>
+      <div class="step-desc">スマホのカメラロールから<br>お気に入りの1枚をアップ</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <img class="step-img" src="https://images.unsplash.com/photo-1558788353-f76d92427f16?w=300&q=80&auto=format&fit=crop" alt="" />
+      <div class="step-title">スタイルをえらぶ</div>
+      <div class="step-desc">油絵・水彩画・ポップアートなど<br>8種類から好きなものを</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <img class="step-img" src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&q=80&auto=format&fit=crop" alt="" />
+      <div class="step-title">グッズが届く！</div>
+      <div class="step-desc">Tシャツやトートバッグにして<br>5〜7日でおうちにお届け</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-inner">
+    <div class="section-head">
+      <div class="section-tag">できあがりイメージ</div>
+      <div class="section-title">こんなふうに仕上がります</div>
+      <div class="section-desc">写真をアップするだけで、AIがアート作品に変えます。</div>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1591160690555-5debfba0c36a?w=800&q=80&auto=format&fit=crop" alt="トイプードル" loading="lazy" />
+        <div class="gallery-label">
+          <div class="gallery-label-style">油絵スタイル</div>
+          <div class="gallery-label-text">トイプードル × 油絵</div>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1583337130417-13104dec14a5?w=800&q=80&auto=format&fit=crop" alt="チワワ" loading="lazy" />
+        <div class="gallery-label">
+          <div class="gallery-label-style">水彩画スタイル</div>
+          <div class="gallery-label-text">チワワ × 水彩画</div>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=800&q=80&auto=format&fit=crop" alt="柴犬" loading="lazy" />
+        <div class="gallery-label">
+          <div class="gallery-label-style">ポップアート</div>
+          <div class="gallery-label-text">柴犬 × ポップアート</div>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?w=800&q=80&auto=format&fit=crop" alt="ポメラニアン" loading="lazy" />
+        <div class="gallery-label">
+          <div class="gallery-label-style">モノクロ</div>
+          <div class="gallery-label-text">ポメラニアン × モノクロ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="section-head">
+    <div class="section-tag">グッズ</div>
+    <div class="section-title">えらべるグッズ</div>
+    <div class="section-desc">すべて送料無料。税込価格です。</div>
+  </div>
+  <div class="products-grid">
+    <div class="prod-card">
+      <img class="prod-img" src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80&auto=format&fit=crop" alt="Tシャツ" loading="lazy" />
+      <div class="prod-info">
+        <div class="prod-name">Tシャツ</div>
+        <div class="prod-price">¥4,980 <small>（税込）</small></div>
+        <div class="prod-ship">送料無料</div>
+      </div>
+    </div>
+    <div class="prod-card">
+      <img class="prod-img" src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80&auto=format&fit=crop" alt="トートバッグ" loading="lazy" />
+      <div class="prod-info">
+        <div class="prod-name">トートバッグ</div>
+        <div class="prod-price">¥3,980 <small>（税込）</small></div>
+        <div class="prod-ship">送料無料</div>
+      </div>
+    </div>
+    <div class="prod-card">
+      <img class="prod-img" src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80&auto=format&fit=crop" alt="トレーナー" loading="lazy" />
+      <div class="prod-info">
+        <div class="prod-name">トレーナー</div>
+        <div class="prod-price">¥6,980 <small>（税込）</small></div>
+        <div class="prod-ship">送料無料</div>
+      </div>
+    </div>
+    <div class="prod-card">
+      <img class="prod-img" src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80&auto=format&fit=crop" alt="パーカー" loading="lazy" />
+      <div class="prod-info">
+        <div class="prod-name">パーカー</div>
+        <div class="prod-price">¥7,980 <small>（税込）</small></div>
+        <div class="prod-ship">送料無料</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="reviews-inner">
+    <div class="section-head">
+      <div class="section-tag">レビュー</div>
+      <div class="section-title">みんなの声</div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">うちのトイプーの油絵Tシャツ、友達に見せたら「どこで作ったの！？」って大騒ぎ。AI変換すごすぎます。何度も無料でためせるのもうれしい。</div>
+        <div class="review-author">
+          <div class="review-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80&auto=format&fit=crop" alt="" /></div>
+          <div><div class="review-name">みかさん</div><div class="review-pet">トイプードル「モカ」</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">柴犬×水墨画の組み合わせが最高でした。トートバッグにしてお散歩に使ってます。プリントもきれいで洗っても全然大丈夫！</div>
+        <div class="review-author">
+          <div class="review-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80&auto=format&fit=crop" alt="" /></div>
+          <div><div class="review-name">ゆきさん</div><div class="review-pet">柴犬「こむぎ」</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <div class="review-text">チワワのポップアートパーカー、かわいすぎて自慢しまくってます。注文からすぐ届いたし、梱包もていねいでした♡</div>
+        <div class="review-author">
+          <div class="review-avatar"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80&auto=format&fit=crop" alt="" /></div>
+          <div><div class="review-name">あいさん</div><div class="review-pet">チワワ「マロン」</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-tag">はじめよう</div>
+  <div class="section-title">うちの子を、アートにしよう。</div>
+  <p class="cta-desc">写真1枚でOK。AI変換は何度でも無料です。<br>気に入ったらグッズにして、おうちに届けます。</p>
+  <div class="cta-checks">
+    <span class="cta-check"><span class="cta-check-icon">✓</span> AI変換 無料</span>
+    <span class="cta-check"><span class="cta-check-icon">✓</span> 送料無料</span>
+    <span class="cta-check"><span class="cta-check-icon">✓</span> 5〜7日でお届け</span>
+  </div>
+  <button class="hero-btn" style="font-size:1.05rem;padding:1.1rem 3rem">無料ではじめる ♡</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">D E E R</div>
+  <div class="footer-links">
+    <a href="#">特定商取引法に基づく表示</a>
+    <a href="#">プライバシーポリシー</a>
+    <a href="#">お問い合わせ</a>
+  </div>
+  <div class="footer-copy">© 2026 Deer (deer.gift)</div>
+</footer>
+
+</body>
+</html>

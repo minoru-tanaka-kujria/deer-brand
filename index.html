@@ -1,0 +1,1834 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deer — 愛犬をアートに。世界にひとつのオリジナルグッズ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta
+      name="description"
+      content="愛犬・愛猫の写真をプロのアートに変換。ウォーターカラー・油絵・ポップアートなど23スタイルから選べるオリジナルグッズ。フォトキャンバス・Tシャツ・マグカップ。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://custom.deer.gift/" />
+    <meta
+      property="og:title"
+      content="Deer — 愛犬をアートに。世界にひとつのオリジナルグッズ"
+    />
+    <meta
+      property="og:description"
+      content="愛犬・愛猫の写真をプロのアートに変換。23スタイルから選べるオリジナルグッズ。"
+    />
+    <meta
+      property="og:image"
+      content="https://custom.deer.gift/images/og-image.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Deer — 愛犬をアートに。" />
+    <meta
+      name="twitter:description"
+      content="愛犬・愛猫の写真をプロのアートに変換。23スタイルから選べるオリジナルグッズ。"
+    />
+    <meta
+      name="twitter:image"
+      content="https://custom.deer.gift/images/og-image.jpg"
+    />
+    <link rel="canonical" href="https://custom.deer.gift/" />
+    <style>
+      :root {
+        --ivory: #faf7f2;
+        --cream: #f5ede3;
+        --warm: #ede4d8;
+        --gold: #c4a265;
+        --gold-light: #d4b87a;
+        --terracotta: #c4836a;
+        --terracotta-soft: #d9a28e;
+        --charcoal: #2c2824;
+        --charcoal-light: #4a453f;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --text-light: #9b9490;
+        --white: #ffffff;
+        --serif: "Cormorant Garamond", "Georgia", serif;
+        --sans: "Zen Maru Gothic", sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: var(--sans);
+        background: var(--ivory);
+        color: var(--text);
+        line-height: 1.8;
+        overflow-x: hidden;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      /* ==================== NAV ==================== */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(250, 247, 242, 0.88);
+        backdrop-filter: blur(20px) saturate(1.2);
+        border-bottom: 1px solid rgba(196, 162, 101, 0.15);
+        padding: 0 3rem;
+        height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.4s;
+      }
+      .nav.scrolled {
+        box-shadow: 0 4px 30px rgba(44, 40, 36, 0.06);
+      }
+      .nav-logo {
+        font-family: var(--serif);
+        font-size: 1.6rem;
+        font-weight: 300;
+        letter-spacing: 8px;
+        color: var(--charcoal);
+        text-transform: uppercase;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        color: var(--text-mid);
+        transition: color 0.3s;
+      }
+      .nav-links a:hover {
+        color: var(--terracotta);
+      }
+      .nav-cta {
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 0.6rem 1.6rem;
+        background: linear-gradient(135deg, var(--terracotta) 0%, #e07a5f 100%);
+        color: #fff;
+        border-radius: 100px;
+        transition: all 0.25s;
+        box-shadow: 0 3px 12px rgba(196, 131, 106, 0.45), 0 1px 3px rgba(196, 131, 106, 0.3);
+        position: relative;
+        animation: navCtaPulse 2.5s ease-in-out infinite;
+      }
+      @keyframes navCtaPulse {
+        0%, 100% { box-shadow: 0 3px 12px rgba(196, 131, 106, 0.45), 0 1px 3px rgba(196, 131, 106, 0.3); }
+        50% { box-shadow: 0 4px 20px rgba(196, 131, 106, 0.7), 0 1px 6px rgba(196, 131, 106, 0.4); }
+      }
+      .nav-cta:hover {
+        background: linear-gradient(135deg, #d4705a 0%, #c45a40 100%);
+        transform: translateY(-1px) scale(1.04);
+        box-shadow: 0 6px 20px rgba(196, 131, 106, 0.6);
+        animation: none;
+      }
+      .nav-login-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+        color: var(--text-mid);
+        cursor: pointer;
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 100px;
+        padding: 0.45rem 1rem;
+        font-family: var(--sans);
+        transition: all 0.3s;
+      }
+      .nav-login-btn:hover {
+        border-color: var(--gold);
+        color: var(--charcoal);
+      }
+      .nav-account-btn {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-mid);
+        text-decoration: none;
+        border: 1.5px solid var(--border);
+        border-radius: 100px;
+        padding: 0.4rem 1rem;
+        transition: all 0.3s;
+      }
+      .nav-account-btn:hover {
+        border-color: var(--gold);
+        color: var(--charcoal);
+      }
+      .nav-account-avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: var(--warm);
+      }
+
+      /* ==================== HERO ==================== */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 6rem 3rem 4rem;
+        position: relative;
+        background: linear-gradient(
+          135deg,
+          var(--ivory) 0%,
+          var(--cream) 50%,
+          rgba(196, 162, 101, 0.08) 100%
+        );
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 60vw;
+        height: 60vw;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(196, 162, 101, 0.06) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+      }
+      .hero-text {
+        position: relative;
+        z-index: 2;
+      }
+      .hero-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .hero-label::before {
+        content: "";
+        width: 2rem;
+        height: 1px;
+        background: var(--gold);
+      }
+      .hero-title {
+        font-family: var(--serif);
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 300;
+        line-height: 1.3;
+        color: var(--charcoal);
+        margin-bottom: 1.5rem;
+      }
+      .hero-title em {
+        font-style: italic;
+        color: var(--terracotta);
+        font-weight: 400;
+      }
+      .hero-desc {
+        font-size: 0.95rem;
+        color: var(--text-mid);
+        line-height: 2;
+        margin-bottom: 2.5rem;
+        max-width: 440px;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1rem 2.2rem;
+        background: var(--charcoal);
+        color: var(--ivory);
+        font-family: var(--sans);
+        font-size: 0.88rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.4s;
+        letter-spacing: 0.5px;
+      }
+      .btn-primary:hover {
+        background: var(--terracotta);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(196, 131, 106, 0.25);
+      }
+      .btn-secondary {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-mid);
+        padding: 0.8rem 1.5rem;
+        border: 1.5px solid var(--warm);
+        border-radius: 100px;
+        transition: all 0.3s;
+        cursor: pointer;
+        background: transparent;
+        white-space: nowrap;
+      }
+      .btn-secondary:hover {
+        border-color: var(--terracotta);
+        color: var(--terracotta);
+      }
+
+      .hero-gallery {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .hero-art {
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        box-shadow: 0 8px 40px rgba(44, 40, 36, 0.1);
+        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .hero-art:hover {
+        transform: scale(1.03) rotate(-1deg);
+      }
+      .hero-art:nth-child(2) {
+        transform: translateY(2rem);
+      }
+      .hero-art:nth-child(2):hover {
+        transform: translateY(2rem) scale(1.03) rotate(1deg);
+      }
+      .hero-art:nth-child(3) {
+        transform: translateY(-1rem);
+      }
+      .hero-art:nth-child(3):hover {
+        transform: translateY(-1rem) scale(1.03) rotate(-1deg);
+      }
+      .hero-art:nth-child(4) {
+        transform: translateY(1rem);
+      }
+      .hero-art:nth-child(4):hover {
+        transform: translateY(1rem) scale(1.03) rotate(1deg);
+      }
+      .hero-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* ==================== TRUST ==================== */
+      .trust {
+        padding: 2rem 3rem;
+        background: var(--white);
+        border-top: 1px solid rgba(196, 162, 101, 0.12);
+        border-bottom: 1px solid rgba(196, 162, 101, 0.12);
+      }
+      .trust-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+      }
+      .trust-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.78rem;
+        color: var(--text-mid);
+        font-weight: 500;
+      }
+      .trust-item span {
+        display: flex;
+        align-items: center;
+      }
+      .trust-item span svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* ==================== SECTION COMMON ==================== */
+      .section {
+        padding: 6rem 3rem;
+      }
+      .section-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        text-align: center;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+      }
+      .section-label::before,
+      .section-label::after {
+        content: "";
+        width: 2rem;
+        height: 1px;
+        background: var(--gold-light);
+      }
+      .section-title {
+        font-family: var(--serif);
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        font-weight: 300;
+        text-align: center;
+        color: var(--charcoal);
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
+      }
+      .section-desc {
+        font-size: 0.9rem;
+        color: var(--text-mid);
+        text-align: center;
+        max-width: 520px;
+        margin: 0 auto 3.5rem;
+      }
+
+      /* ==================== HOW IT WORKS ==================== */
+      .how {
+        background: var(--white);
+      }
+      .how-grid {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+      }
+      .how-step {
+        text-align: center;
+        position: relative;
+      }
+      .how-num {
+        font-family: var(--serif);
+        font-size: 3.5rem;
+        font-weight: 300;
+        color: rgba(196, 162, 101, 0.2);
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+      .how-icon {
+        margin-bottom: 0.8rem;
+      }
+      .how-icon img {
+        width: 100%;
+        max-width: 180px;
+        height: auto;
+        border-radius: 12px;
+      }
+      .how-name {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+      }
+      .how-desc {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+        line-height: 1.8;
+      }
+      .how-step::after {
+        content: "→";
+        position: absolute;
+        top: 3rem;
+        right: -1.5rem;
+        font-size: 1.2rem;
+        color: var(--gold-light);
+      }
+      .how-step:last-child::after {
+        display: none;
+      }
+
+      /* ==================== ART STYLES GALLERY ==================== */
+      .styles-gallery {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.2rem;
+      }
+      .style-item {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(44, 40, 36, 0.08);
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .style-item:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px rgba(44, 40, 36, 0.15);
+      }
+      .style-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s;
+      }
+      .style-item:hover img {
+        transform: scale(1.08);
+      }
+      .style-item .overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 40%,
+          rgba(44, 40, 36, 0.85) 100%
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1.2rem;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .style-item:hover .overlay {
+        opacity: 1;
+      }
+      .style-item .overlay .s-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--white);
+      }
+      .style-item .overlay .s-desc {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 0.2rem;
+      }
+
+      /* ==================== LOOKBOOK ==================== */
+      .lookbook {
+        background: var(--white);
+      }
+      .lookbook-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+      .lookbook-item {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s;
+        box-shadow: 0 4px 20px rgba(44, 40, 36, 0.06);
+      }
+      .lookbook-item:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px rgba(44, 40, 36, 0.12);
+      }
+      .lookbook-item img {
+        width: 100%;
+        aspect-ratio: 3/4;
+        object-fit: cover;
+        transition: transform 0.6s;
+      }
+      .lookbook-item:hover img {
+        transform: scale(1.04);
+      }
+      .lookbook-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 2rem 1.2rem 1.2rem;
+        background: linear-gradient(transparent, rgba(44, 40, 36, 0.7));
+        color: #fff;
+      }
+      .lookbook-product {
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+      .lookbook-style {
+        font-size: 0.78rem;
+        opacity: 0.85;
+        margin-top: 0.2rem;
+      }
+      .lookbook-price {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-top: 0.3rem;
+      }
+
+      /* ==================== PRODUCTS ==================== */
+      .products {
+        background: var(--white);
+      }
+      .products-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+      }
+      .product-card {
+        background: var(--ivory);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+      .product-card:hover {
+        border-color: var(--gold-light);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(44, 40, 36, 0.08);
+      }
+      .product-card img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+      .product-info {
+        padding: 1.2rem 1.4rem;
+      }
+      .product-name {
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+      .product-price {
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--terracotta);
+        margin-top: 0.3rem;
+      }
+      .product-colors {
+        display: flex;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+      }
+      .color-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(44, 40, 36, 0.15);
+      }
+      .product-tag {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--gold);
+        margin-top: 0.4rem;
+        text-transform: uppercase;
+      }
+      .product-card.coming-soon {
+        position: relative;
+        cursor: default;
+        opacity: 0.85;
+      }
+      .product-card.coming-soon img {
+        filter: grayscale(0.15);
+      }
+      .coming-soon-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--terracotta);
+        color: #fff;
+        font-family: var(--serif);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        padding: 0.35rem 0.8rem;
+        border-radius: 2rem;
+        text-transform: uppercase;
+        z-index: 2;
+      }
+      .placement-card.coming-soon {
+        position: relative;
+        cursor: default;
+      }
+      .placement-card.coming-soon .coming-soon-badge {
+        position: absolute;
+        top: 0.8rem;
+        right: 0.8rem;
+      }
+
+      /* ==================== LIFESTYLE BANNER ==================== */
+      .lifestyle {
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        background: var(--charcoal);
+      }
+      .lifestyle-bg {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        opacity: 0.25;
+      }
+      .lifestyle-bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .lifestyle-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+        padding: 5rem 3rem;
+      }
+      .lifestyle-title {
+        font-family: var(--serif);
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        font-weight: 300;
+        color: var(--ivory);
+        line-height: 1.4;
+        margin-bottom: 1rem;
+      }
+      .lifestyle-title em {
+        font-style: italic;
+        color: var(--gold-light);
+      }
+      .lifestyle-desc {
+        font-size: 0.9rem;
+        color: rgba(250, 247, 242, 0.6);
+        max-width: 500px;
+        margin: 0 auto 2rem;
+        line-height: 2;
+      }
+
+      /* ==================== REVIEWS ==================== */
+      .reviews-grid {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+      .review-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(196, 162, 101, 0.1);
+        transition: all 0.3s;
+      }
+      .review-card:hover {
+        box-shadow: 0 8px 30px rgba(44, 40, 36, 0.06);
+      }
+      .review-stars {
+        color: var(--gold);
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        margin-bottom: 0.8rem;
+      }
+      .review-text {
+        font-size: 0.85rem;
+        color: var(--text-mid);
+        line-height: 1.9;
+        margin-bottom: 1.2rem;
+        font-style: italic;
+      }
+      .review-author {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .review-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--cream);
+      }
+      .review-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .review-pet {
+        font-size: 0.7rem;
+        color: var(--text-light);
+      }
+
+      /* ==================== FINAL CTA ==================== */
+      .final-cta {
+        background: linear-gradient(
+          135deg,
+          var(--cream) 0%,
+          rgba(196, 162, 101, 0.1) 100%
+        );
+        text-align: center;
+        padding: 6rem 3rem;
+      }
+      .final-cta .section-title {
+        margin-bottom: 1rem;
+      }
+      .final-cta .section-desc {
+        margin-bottom: 2rem;
+      }
+
+      /* ==================== FOOTER ==================== */
+      .footer {
+        background: var(--charcoal);
+        color: rgba(250, 247, 242, 0.5);
+        padding: 3rem;
+        text-align: center;
+      }
+      .footer-logo {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        font-weight: 300;
+        letter-spacing: 8px;
+        color: rgba(250, 247, 242, 0.8);
+        margin-bottom: 1rem;
+      }
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      .footer-links a {
+        font-size: 0.75rem;
+        transition: color 0.3s;
+      }
+      .footer-links a:hover {
+        color: var(--gold-light);
+      }
+      .footer-copy {
+        font-size: 0.68rem;
+      }
+
+      /* ==================== ANIMATIONS ==================== */
+      .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+      .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ==================== RESPONSIVE ==================== */
+      @media (max-width: 900px) {
+        .nav {
+          padding: 0 1.5rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .hero {
+          padding: 5rem 1.5rem 3rem;
+        }
+        .hero-inner {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+          text-align: center;
+        }
+        .hero-desc {
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .hero-actions {
+          justify-content: center;
+        }
+        .hero-gallery {
+          max-width: 360px;
+          margin: 0 auto;
+        }
+        .hero-art:nth-child(2) {
+          transform: translateY(1rem);
+        }
+        .hero-art:nth-child(3) {
+          transform: translateY(-0.5rem);
+        }
+        .hero-art:nth-child(4) {
+          transform: translateY(0.5rem);
+        }
+        .section {
+          padding: 4rem 1.5rem;
+        }
+        .how-grid {
+          grid-template-columns: 1fr;
+          gap: 1.2rem;
+        }
+        .how-step {
+          display: grid;
+          grid-template-columns: 100px 1fr;
+          grid-template-rows: auto auto;
+          gap: 0 1rem;
+          text-align: left;
+          background: white;
+          border-radius: 16px;
+          padding: 0.8rem;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .how-step .how-num {
+          display: none;
+        }
+        .how-step .how-icon {
+          grid-column: 1;
+          grid-row: 1;
+          margin-bottom: 0;
+        }
+        .how-step .how-icon img {
+          width: 100px;
+          max-width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 12px;
+        }
+        .how-step .how-name {
+          grid-column: 1 / -1;
+          grid-row: 1;
+          align-self: end;
+          font-size: 0.85rem;
+          margin-bottom: 0;
+          background: linear-gradient(transparent 0%, rgba(0,0,0,0.55) 100%);
+          color: white;
+          padding: 0.5rem 0.5rem 0.35rem;
+          border-radius: 0 0 12px 12px;
+          width: 100px;
+          text-align: center;
+          line-height: 1.3;
+        }
+        .how-step .how-desc {
+          grid-column: 2;
+          grid-row: 1;
+          font-size: 0.82rem;
+          line-height: 1.7;
+          align-self: center;
+        }
+        .how-step::after {
+          display: none;
+        }
+        .styles-gallery {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.8rem;
+        }
+        .lookbook-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+        }
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+        }
+        .reviews-grid {
+          grid-template-columns: 1fr;
+        }
+        .trust-inner {
+          gap: 1.5rem;
+        }
+        .lifestyle-bg {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 480px) {
+        .hero-title {
+          font-size: 2rem;
+        }
+        .hero-gallery {
+          gap: 0.6rem;
+        }
+        .products-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 0.8rem;
+        }
+        .product-info {
+          padding: 0.8rem 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+      <a href="index.html" class="nav-logo"
+        ><img src="img/logo.svg" alt="Deer" style="height: 2rem"
+      /></a>
+      <!-- PC用リンク（モバイルでは非表示） -->
+      <div class="nav-links">
+        <a href="#styles">アートスタイル</a>
+        <a href="#products">グッズ一覧</a>
+      </div>
+      <!-- ログイン・CTAボタン（常時表示） -->
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <!-- ログインボタン（未ログイン時） -->
+        <button
+          class="nav-login-btn"
+          id="navLoginBtn"
+          onclick="DeerAuth.openModal()"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
+          ログイン
+        </button>
+        <!-- マイページボタン（ログイン後） -->
+        <a href="account" class="nav-account-btn" id="navAccountBtn">
+          <img class="nav-account-avatar" id="navUserAvatar" src="" alt="" />
+          <span id="navUserName">マイページ</span>
+        </a>
+        <a href="upload" class="nav-cta">はじめる</a>
+      </div>
+    </nav>
+    <script type="module" src="js/auth-config.js"></script>
+    <script src="js/auth-modal.js"></script>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-text fade-up">
+          <div class="hero-label">Premium Pet Art</div>
+          <h1 class="hero-title">
+            愛犬の写真を<br /><em>アート作品</em>に変える
+          </h1>
+          <p class="hero-desc">
+            お気に入りの1枚をアップロードするだけ。<br />
+            AIが23種類のアートスタイルで変換し、<br />
+            パーカーやマグカップなど<br />
+            世界にひとつだけのグッズをお届けします。
+          </p>
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="location.href = 'upload.html'">
+              無料でつくる →
+            </button>
+            <button
+              class="btn-secondary"
+              onclick="
+                document
+                  .getElementById('styles')
+                  .scrollIntoView({ behavior: 'smooth' })
+              "
+            >
+              スタイルを見る
+            </button>
+          </div>
+        </div>
+        <div class="hero-gallery fade-up" style="transition-delay: 0.2s">
+          <div class="hero-art">
+            <img src="img/styles/hero-chihuahua.png" alt="チワワ・印象派" />
+          </div>
+          <div class="hero-art">
+            <img src="img/styles/hero-shiba.png" alt="柴犬・水彩画" />
+          </div>
+          <div class="hero-art">
+            <img
+              src="img/styles/hero-pomeranian.png"
+              alt="ポメラニアン・ポップアート"
+            />
+          </div>
+          <div class="hero-art">
+            <img
+              src="img/styles/hero-dachshund.png"
+              alt="ダックスフンド・水墨画"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <div class="trust">
+      <div class="trust-inner">
+        <div class="trust-item">
+          <span
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M8 12l2 10 6-14" /></svg
+          ></span>
+          23種類のアートスタイル
+        </div>
+        <div class="trust-item">
+          <span
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+            >
+              <path d="M3 8h18v11a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+              <path d="M3 8l3-4h12l3 4" /></svg
+          ></span>
+          全品送料無料
+        </div>
+        <div class="trust-item">
+          <span
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="12 7 12 12 15 15" /></svg
+          ></span>
+          最短5日でお届け
+        </div>
+        <div class="trust-item">
+          <span
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+            >
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 018 0v4" /></svg
+          ></span>
+          Stripe安全決済
+        </div>
+        <div class="trust-item">
+          <span
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+            >
+              <path d="M20 7l-8 5-8-5" />
+              <rect x="4" y="5" width="16" height="14" rx="2" /></svg
+          ></span>
+          ギフトラッピング対応
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how">
+      <div class="section-label fade-up">How It Works</div>
+      <h2 class="section-title fade-up">3ステップで完成</h2>
+      <p class="section-desc fade-up">
+        写真1枚から、あなただけのアートグッズができあがります
+      </p>
+      <div class="how-grid">
+        <div class="how-step fade-up">
+          <div class="how-num">01</div>
+          <div class="how-icon">
+            <img src="img/how-step1.png" alt="写真を撮影" />
+          </div>
+          <div class="how-name">写真をアップロード</div>
+          <div class="how-desc">
+            愛犬のお気に入りの1枚を選んでアップロード。正面からの写真がおすすめです。
+          </div>
+        </div>
+        <div class="how-step fade-up" style="transition-delay: 0.15s">
+          <div class="how-num">02</div>
+          <div class="how-icon">
+            <img src="img/how-step2.png" alt="スタイルを選ぶ" />
+          </div>
+          <div class="how-name">スタイルとグッズを選ぶ</div>
+          <div class="how-desc">
+            印象派、水彩画、ポップアートなど23種類のスタイルと多彩なグッズから選べます。
+          </div>
+        </div>
+        <div class="how-step fade-up" style="transition-delay: 0.3s">
+          <div class="how-num">03</div>
+          <div class="how-icon">
+            <img src="img/how-step3.png" alt="お届け" />
+          </div>
+          <div class="how-name">おうちにお届け</div>
+          <div class="how-desc">
+            高品質プリントでお届け。ギフトラッピングも対応。世界にひとつだけの作品です。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ART STYLES -->
+    <section class="section" id="styles">
+      <div class="section-label fade-up">Art Styles</div>
+      <h2 class="section-title fade-up">23種類のアートスタイル</h2>
+      <p class="section-desc fade-up">
+        印象派からポップアートまで。愛犬にぴったりのスタイルが見つかります
+      </p>
+      <div class="styles-gallery">
+        <div
+          class="style-item fade-up"
+          onclick="location.href = 'upload?style=oil-impressionism'"
+        >
+          <img src="img/styles/oil-impressionism.png" alt="印象派" />
+          <div class="overlay">
+            <div class="s-name">印象派</div>
+            <div class="s-desc">モネ風の柔らかな光</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.05s"
+          onclick="location.href = 'upload?style=oil-baroque'"
+        >
+          <img src="img/styles/oil-baroque.png" alt="バロック" />
+          <div class="overlay">
+            <div class="s-name">バロック</div>
+            <div class="s-desc">レンブラント風の荘厳さ</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.1s"
+          onclick="location.href = 'upload?style=wc-loose'"
+        >
+          <img src="img/styles/wc-loose.png" alt="ルーズ水彩" />
+          <div class="overlay">
+            <div class="s-name">ルーズ水彩</div>
+            <div class="s-desc">ふんわり柔らかなにじみ</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.15s"
+          onclick="location.href = 'upload?style=wc-botanical'"
+        >
+          <img src="img/styles/wc-botanical.png" alt="ボタニカル" />
+          <div class="overlay">
+            <div class="s-name">ボタニカル水彩</div>
+            <div class="s-desc">図鑑のような精密さ</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.05s"
+          onclick="location.href = 'upload?style=ink-sumie'"
+        >
+          <img src="img/styles/ink-sumie.png" alt="水墨画" />
+          <div class="overlay">
+            <div class="s-name">水墨画</div>
+            <div class="s-desc">和の余白の美</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.1s"
+          onclick="location.href = 'upload?style=pop-warhol'"
+        >
+          <img src="img/styles/pop-warhol.png" alt="ウォーホル風" />
+          <div class="overlay">
+            <div class="s-name">ウォーホル風</div>
+            <div class="s-desc">カラフルなポップアート</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.15s"
+          onclick="location.href = 'upload?style=oil-expressionism'"
+        >
+          <img src="img/styles/oil-expressionism.png" alt="表現主義" />
+          <div class="overlay">
+            <div class="s-name">表現主義</div>
+            <div class="s-desc">ゴッホ「星月夜」風</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.2s"
+          onclick="location.href = 'upload?style=future-neon'"
+        >
+          <img src="img/styles/future-neon.png" alt="ネオン" />
+          <div class="overlay">
+            <div class="s-name">ネオングロウ</div>
+            <div class="s-desc">光のアウトライン</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.05s"
+          onclick="location.href = 'upload?style=pop-comic'"
+        >
+          <img src="img/styles/pop-comic.png" alt="コミック" />
+          <div class="overlay">
+            <div class="s-name">コミック風</div>
+            <div class="s-desc">アメコミのBen-Day dots</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.1s"
+          onclick="location.href = 'upload?style=mono-charcoal'"
+        >
+          <img src="img/styles/mono-charcoal.png" alt="チャコール" />
+          <div class="overlay">
+            <div class="s-name">チャコール画</div>
+            <div class="s-desc">温かみのあるモノクロ</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.15s"
+          onclick="location.href = 'upload?style=line-oneline'"
+        >
+          <img src="img/styles/line-oneline.png" alt="ワンライン" />
+          <div class="overlay">
+            <div class="s-name">ワンライン</div>
+            <div class="s-desc">一筆書きのシンプルさ</div>
+          </div>
+        </div>
+        <div
+          class="style-item fade-up"
+          style="transition-delay: 0.2s"
+          onclick="location.href = 'upload?style=collage-papercut'"
+        >
+          <img src="img/styles/collage-papercut.png" alt="ペーパーカット" />
+          <div class="overlay">
+            <div class="s-name">ペーパーカット</div>
+            <div class="s-desc">立体的な切り紙アート</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 2rem">
+        <button
+          class="btn-primary"
+          onclick="location.href = 'art-styles'"
+          style="transition-delay: 0.2s"
+        >
+          全23スタイルを見る →
+        </button>
+      </div>
+    </section>
+
+    <!-- LOOKBOOK: プリント配置イメージから選ぶ -->
+    <section class="section lookbook" id="lookbook">
+      <div class="section-label fade-up">Placement Gallery</div>
+      <h2 class="section-title fade-up">プリント配置イメージから選ぶ</h2>
+      <p class="section-desc fade-up">
+        配置によって印象が変わります。気になるスタイルをクリックして詳細を見る
+      </p>
+      <p
+        class="section-desc fade-up"
+        style="font-size: 0.7rem; color: var(--text-light); margin-top: -0.5rem"
+      >
+        ※画像はイメージです。実際のプリントサイズは配置・商品により異なります。
+      </p>
+      <div class="lookbook-grid">
+        <div
+          class="lookbook-item fade-up"
+          onclick="
+            location.href =
+              'placement-detail?product=hoodie&placement=left-chest'
+          "
+        >
+          <img
+            src="img/placement/hoodie-leftchest.png"
+            alt="パーカー 左胸ワンポイント"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">パーカー</div>
+            <div class="lookbook-style">左胸ワンポイント</div>
+            <div class="lookbook-price">¥7,980</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          style="transition-delay: 0.1s"
+          onclick="
+            location.href = 'placement-detail?product=hoodie&placement=center'
+          "
+        >
+          <img
+            src="img/placement/hoodie-center.png"
+            alt="パーカー 胸中央プリント"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">パーカー</div>
+            <div class="lookbook-style">胸中央プリント</div>
+            <div class="lookbook-price">¥7,980</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          style="transition-delay: 0.2s"
+          onclick="
+            location.href = 'placement-detail?product=hoodie&placement=back'
+          "
+        >
+          <img
+            src="img/placement/hoodie-back.png"
+            alt="パーカー バックプリント"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">パーカー</div>
+            <div class="lookbook-style">バックプリント</div>
+            <div class="lookbook-price">¥9,980</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          onclick="
+            location.href =
+              'placement-detail?product=tshirt&placement=left-chest'
+          "
+        >
+          <img
+            src="img/placement/tshirt-leftchest.png"
+            alt="Tシャツ 左胸ワンポイント"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">Tシャツ</div>
+            <div class="lookbook-style">左胸ワンポイント</div>
+            <div class="lookbook-price">¥4,980</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          style="transition-delay: 0.1s"
+          onclick="
+            location.href = 'placement-detail?product=tshirt&placement=center'
+          "
+        >
+          <img
+            src="img/placement/tshirt-center.png"
+            alt="Tシャツ 胸中央プリント"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">Tシャツ</div>
+            <div class="lookbook-style">胸中央プリント</div>
+            <div class="lookbook-price">¥4,980</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          style="transition-delay: 0.2s"
+          onclick="
+            location.href = 'placement-detail?product=tshirt&placement=back'
+          "
+        >
+          <img
+            src="img/placement/tshirt-back.png"
+            alt="Tシャツ バックプリント"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">Tシャツ</div>
+            <div class="lookbook-style">バックプリント</div>
+            <div class="lookbook-price">¥6,480</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          style="transition-delay: 0.1s"
+          onclick="
+            location.href = 'placement-detail?product=mug&placement=wrap'
+          "
+        >
+          <img src="img/placement/mug-wrap.png" alt="マグカップ" />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">マグカップ</div>
+            <div class="lookbook-style">ラップアラウンド</div>
+            <div class="lookbook-price">¥2,980</div>
+          </div>
+        </div>
+        <div
+          class="lookbook-item fade-up"
+          style="transition-delay: 0.2s"
+          onclick="
+            location.href = 'placement-detail?product=case&placement=back'
+          "
+        >
+          <img src="img/placement/case-back.png" alt="スマホケース" />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">スマホケース</div>
+            <div class="lookbook-style">背面プリント</div>
+            <div class="lookbook-price">¥4,980</div>
+          </div>
+        </div>
+        <div class="lookbook-item coming-soon fade-up">
+          <span class="coming-soon-badge">Coming Soon</span>
+          <img
+            src="img/placement/embroidery-hoodie-leftchest.png"
+            alt="刺繍パーカー"
+          />
+          <div class="lookbook-caption">
+            <div class="lookbook-product">刺繍パーカー</div>
+            <div class="lookbook-style">胸ワンポイント刺繍</div>
+            <div class="lookbook-price">¥12,800〜</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 2rem">
+        <button
+          class="btn-primary fade-up"
+          onclick="location.href = 'upload.html'"
+        >
+          自分でカスタマイズする →
+        </button>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="section products" id="products">
+      <div class="section-label fade-up">Products</div>
+      <h2 class="section-title fade-up">お散歩が楽しくなるグッズ</h2>
+      <p class="section-desc fade-up">
+        愛犬のアートをプリント＆刺繍した、オリジナルグッズ
+      </p>
+      <div class="products-grid">
+        <div
+          class="product-card fade-up"
+          onclick="location.href = 'product-detail?product=hoodie'"
+        >
+          <img src="img/product-hoodie.png" alt="パーカー" />
+          <div class="product-info">
+            <div class="product-name">パーカー</div>
+            <div class="product-price">¥7,980</div>
+            <div class="product-colors">
+              <div
+                class="color-dot"
+                style="background: #6b6b6b"
+                title="グレー"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #1a1a2e"
+                title="ネイビー"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #2c2824"
+                title="ブラック"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #e8a0b4"
+                title="ピンク"
+              ></div>
+            </div>
+            <div class="product-tag">送料無料</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          style="transition-delay: 0.08s"
+          onclick="location.href = 'product-detail?product=tshirt'"
+        >
+          <img src="img/product-tshirt.png" alt="Tシャツ" />
+          <div class="product-info">
+            <div class="product-name">Tシャツ</div>
+            <div class="product-price">¥4,980</div>
+            <div class="product-colors">
+              <div
+                class="color-dot"
+                style="background: #ffffff; border-color: #ccc"
+                title="ホワイト"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #2c2824"
+                title="ブラック"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #6b6b6b"
+                title="グレー"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #e8a0b4"
+                title="ピンク"
+              ></div>
+            </div>
+            <div class="product-tag">送料無料</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          style="transition-delay: 0.24s"
+          onclick="location.href = 'product-detail?product=mug'"
+        >
+          <img src="img/product-mug.png" alt="マグカップ" />
+          <div class="product-info">
+            <div class="product-name">マグカップ</div>
+            <div class="product-price">¥2,980</div>
+            <div class="product-tag">送料無料</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          onclick="location.href = 'product-detail?product=case'"
+        >
+          <img src="img/product-case.png" alt="スマホケース" />
+          <div class="product-info">
+            <div class="product-name">スマホケース</div>
+            <div class="product-price">¥4,980</div>
+            <div class="product-tag">iPhone / Samsung対応</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          style="transition-delay: 0.08s"
+          onclick="location.href = 'product-detail?product=poster'"
+        >
+          <img src="img/product-poster.png" alt="アートポスター" />
+          <div class="product-info">
+            <div class="product-name">アートポスター</div>
+            <div class="product-price">¥4,480</div>
+            <div class="product-tag">A3 / A4サイズ</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          style="transition-delay: 0.16s"
+          onclick="location.href = 'product-detail?product=postcard'"
+        >
+          <img src="img/product-postcard.png" alt="ポストカード" />
+          <div class="product-info">
+            <div class="product-name">ポストカードセット</div>
+            <div class="product-price">¥1,980</div>
+            <div class="product-tag">5枚セット</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          style="transition-delay: 0.24s"
+          onclick="location.href = 'product-detail?product=emb-cap'"
+        >
+          <img src="img/product-cap.png" alt="刺繍キャップ" />
+          <div class="product-info">
+            <div class="product-name">刺繍キャップ</div>
+            <div class="product-price">¥4,980</div>
+            <div class="product-colors">
+              <div
+                class="color-dot"
+                style="background: #2c2824"
+                title="ブラック"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #1a1a2e"
+                title="ネイビー"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #ffffff; border-color: #ccc"
+                title="ホワイト"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #8b7d5a"
+                title="カーキ"
+              ></div>
+            </div>
+            <div class="product-tag">刺繍</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          onclick="location.href = 'product-detail?product=emb-hoodie'"
+        >
+          <img src="img/product-embroidery-hoodie.png" alt="刺繍パーカー" />
+          <div class="product-info">
+            <div class="product-name">刺繍パーカー</div>
+            <div class="product-price">¥12,980</div>
+            <div class="product-colors">
+              <div
+                class="color-dot"
+                style="background: #2c2824"
+                title="ブラック"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #1a1a2e"
+                title="ネイビー"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #6b6b6b"
+                title="グレー"
+              ></div>
+              <div
+                class="color-dot"
+                style="background: #ffffff; border-color: #ccc"
+                title="ホワイト"
+              ></div>
+            </div>
+            <div class="product-tag">刺繍</div>
+          </div>
+        </div>
+
+        <div
+          class="product-card fade-up"
+          style="transition-delay: 0.08s"
+          onclick="location.href = 'product-detail?product=sticker'"
+        >
+          <img src="img/product-sticker.png" alt="カッティングステッカー" />
+          <div class="product-info">
+            <div class="product-name">カッティングステッカー</div>
+            <div class="product-price">¥1,480</div>
+            <div class="product-tag">耐候性ビニール</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIFESTYLE BANNER -->
+    <section class="lifestyle">
+      <div class="lifestyle-bg">
+        <img src="img/styles/wc-botanical.png" alt="" />
+        <img src="img/styles/oil-baroque.png" alt="" />
+        <img src="img/styles/pop-graffiti.png" alt="" />
+        <img src="img/styles/mono-noir.png" alt="" />
+        <img src="img/styles/future-cyber.png" alt="" />
+        <img src="img/styles/collage-mixed.png" alt="" />
+      </div>
+      <div class="lifestyle-content">
+        <h2 class="lifestyle-title fade-up">
+          お散歩がもっと<em>特別</em>になる
+        </h2>
+        <p class="lifestyle-desc fade-up">
+          愛犬のアートをまとって出かける。公園で「かわいい！」と声をかけられる。<br />
+          Deerのグッズは、あなたと愛犬の毎日をちょっと特別にします。
+        </p>
+        <button
+          class="btn-primary fade-up"
+          onclick="location.href = 'upload.html'"
+          style="background: var(--gold)"
+        >
+          いますぐつくる →
+        </button>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta">
+      <div class="section-label fade-up">Get Started</div>
+      <h2 class="section-title fade-up">愛犬を、<br>アートにしよう</h2>
+      <p class="section-desc fade-up">
+        写真1枚から、世界にひとつだけのグッズが生まれます。<br />
+        大切な家族の姿を、ずっと残るかたちに。
+      </p>
+      <button
+        class="btn-primary fade-up"
+        onclick="location.href = 'upload.html'"
+        style="font-size: 1rem; padding: 1.1rem 3rem"
+      >
+        無料でつくる →
+      </button>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-logo">
+        <img
+          src="img/logo.svg"
+          alt="Deer"
+          style="
+            height: 2.5rem;
+            filter: brightness(0) invert(0.85);
+            margin: 0 auto;
+          "
+        />
+      </div>
+      <div class="footer-links">
+        <a href="terms">利用規約</a>
+        <a href="privacy">プライバシーポリシー</a>
+        <a href="tokushoho">特定商取引法</a>
+        <a href="mailto:info@deer.gift">お問い合わせ</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Deer. All rights reserved. — deer.gift
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        // Nav scroll effect
+        const nav = document.getElementById("nav");
+        window.addEventListener("scroll", () => {
+          nav.classList.toggle("scrolled", window.scrollY > 50);
+        });
+
+        // Hero elements: show immediately with staggered delay
+        document.querySelectorAll(".hero .fade-up").forEach((el, i) => {
+          setTimeout(() => el.classList.add("visible"), 200 + i * 200);
+        });
+
+        // Intersection Observer for remaining fade-up elements
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: "0px 0px -40px 0px" },
+        );
+
+        document
+          .querySelectorAll(".fade-up:not(.visible)")
+          .forEach((el) => observer.observe(el));
+
+        // Fallback: ensure everything is visible after 1.5s
+        setTimeout(() => {
+          document
+            .querySelectorAll(".fade-up:not(.visible)")
+            .forEach((el) => el.classList.add("visible"));
+        }, 1500);
+      })();
+    </script>
+  </body>
+</html>

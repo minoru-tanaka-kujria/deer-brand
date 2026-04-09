@@ -1,0 +1,32 @@
+{
+  "cleanUrls": true,
+  "functions": {
+    "api/generate-art.js": { "maxDuration": 60 },
+    "api/stamp/generate.js": { "maxDuration": 60 }
+  },
+  "rewrites": [
+    { "source": "/stamp", "destination": "/stamp/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+.vercel
+.claude/
+.DS_Store
+*.pdf
+.admin_key_backup.txt
+node_modules/
+package-lock.json
+.env*.local
+server.py

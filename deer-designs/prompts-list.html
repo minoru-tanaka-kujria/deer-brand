@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>German Shepherd Design Prompts — Deer Brand</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", sans-serif; background: #0d1117; color: #e6edf3; padding: 1rem; line-height: 1.6; }
+  h1 { font-size: 1.3rem; text-align: center; margin-bottom: .3rem; }
+  .subtitle { text-align: center; color: #7d8590; font-size: .85rem; margin-bottom: 1.5rem; }
+  .style-section { margin-bottom: 2rem; }
+  .style-header { background: #161b22; padding: .8rem 1rem; border-radius: 8px 8px 0 0; border: 1px solid #30363d; border-bottom: none; }
+  .style-header h2 { font-size: 1.05rem; color: #58a6ff; }
+  .style-header .desc { font-size: .75rem; color: #7d8590; margin-top: .2rem; }
+  .prompt-card { background: #161b22; border: 1px solid #30363d; border-top: none; padding: .8rem 1rem; }
+  .prompt-card:last-child { border-radius: 0 0 8px 8px; }
+  .prompt-card .comp-label { font-size: .8rem; font-weight: 600; color: #f0883e; margin-bottom: .3rem; }
+  .prompt-text { font-size: .78rem; color: #c9d1d9; background: #0d1117; padding: .6rem .8rem; border-radius: 6px; word-break: break-word; position: relative; cursor: pointer; border: 1px solid #21262d; transition: border-color .2s; }
+  .prompt-text:hover { border-color: #58a6ff; }
+  .prompt-text:active { background: #1a2332; }
+  .copy-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #238636; color: #fff; padding: .5rem 1.2rem; border-radius: 8px; font-size: .85rem; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 100; }
+  .copy-toast.show { opacity: 1; }
+  .nav { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; margin-bottom: 1.2rem; }
+  .nav a { font-size: .75rem; padding: .3rem .7rem; background: #21262d; color: #58a6ff; text-decoration: none; border-radius: 20px; border: 1px solid #30363d; }
+  .nav a:hover { background: #30363d; }
+  .tip { text-align: center; font-size: .7rem; color: #7d8590; margin-bottom: 1rem; padding: .5rem; background: #161b22; border-radius: 6px; border: 1px solid #30363d; }
+</style>
+</head>
+<body>
+
+<h1>German Shepherd Design Prompts</h1>
+<p class="subtitle">Deer Brand (deer.gift) — 5 Styles × 4 Compositions = 20 Prompts</p>
+
+<div class="tip">タップでプロンプトをコピー → Gemini / ChatGPT / NanoBanana に貼り付けて画像生成</div>
+
+<nav class="nav">
+  <a href="#oil-painting">油絵風</a>
+  <a href="#watercolor">水彩風</a>
+  <a href="#pop-art">ポップアート</a>
+  <a href="#line-art">線画風</a>
+  <a href="#embroidery">刺繍風</a>
+</nav>
+
+<!-- Oil Painting -->
+<section class="style-section" id="oil-painting">
+  <div class="style-header">
+    <h2>🎨 油絵風 (Oil Painting)</h2>
+    <div class="desc">古典的な油絵風 — レンブラント照明、重厚なインパスト筆致</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">正面 (Front)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A majestic German Shepherd portrait in classical oil painting style, front-facing close-up portrait, direct eye contact, symmetrical composition, rich warm tones, thick impasto brushstrokes, Rembrandt lighting, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint, noble dignified expression, 18th century European portrait composition</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">横顔 (Side)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A majestic German Shepherd portrait in classical oil painting style, side profile view, noble silhouette, dramatic rim lighting, rich warm tones, thick impasto brushstrokes, Rembrandt lighting, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint, noble dignified expression</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">全身 (Full Body)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A majestic German Shepherd in classical oil painting style, full body standing pose, alert posture, elegant stance, rich warm tones, thick impasto brushstrokes, Rembrandt lighting, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">遊び (Playful)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A majestic German Shepherd in classical oil painting style, playful expression, tongue out, happy energetic pose, warm lighting, rich warm tones, thick impasto brushstrokes, dark moody background with subtle golden highlights, museum-quality fine art, photorealistic fur texture rendered in oil paint</div>
+  </div>
+</section>
+
+<!-- Watercolor -->
+<section class="style-section" id="watercolor">
+  <div class="style-header">
+    <h2>💧 水彩風 (Watercolor)</h2>
+    <div class="desc">繊細な水彩画風 — ウェット・オン・ウェット技法、にじみと透明感</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">正面 (Front)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in delicate watercolor painting style, front-facing close-up portrait, direct eye contact, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues, artistic paint drips at edges, white paper texture visible, elegant and refined</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">横顔 (Side)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in delicate watercolor painting style, side profile view, noble silhouette, dramatic rim lighting, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues, artistic paint drips at edges, white paper texture visible</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">全身 (Full Body)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in delicate watercolor painting style, full body standing pose, alert posture, elegant stance, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues, artistic paint drips at edges, white paper texture visible</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">遊び (Playful)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in delicate watercolor painting style, playful expression, tongue out, happy energetic pose, warm lighting, soft wet-on-wet technique, beautiful color bleeding and gradients, light ethereal background with subtle paint splashes, professional watercolor illustration, gentle warm earth tones mixed with soft blues</div>
+  </div>
+</section>
+
+<!-- Pop Art -->
+<section class="style-section" id="pop-art">
+  <div class="style-header">
+    <h2>🎯 ポップアート (Pop Art)</h2>
+    <div class="desc">ウォーホル風ポップアート — ネオンカラー、ハーフトーン、スクリーンプリント</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">正面 (Front)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in bold Andy Warhol pop art style, front-facing close-up, direct eye contact, vibrant neon colors, high contrast, screen print aesthetic, four-color separation look, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel, striking and eye-catching</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">横顔 (Side)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in bold Andy Warhol pop art style, side profile view, noble silhouette, vibrant neon colors, high contrast, screen print aesthetic, four-color separation look, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">全身 (Full Body)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in bold Andy Warhol pop art style, full body standing pose, alert posture, vibrant neon colors, high contrast, screen print aesthetic, four-color separation look, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">遊び (Playful)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in bold Andy Warhol pop art style, playful expression, tongue out, happy energetic pose, vibrant neon colors, high contrast, screen print aesthetic, electric blue and hot pink and bright yellow color scheme, graphic bold outlines, halftone dot pattern overlay, retro 1960s pop culture feel</div>
+  </div>
+</section>
+
+<!-- Line Art -->
+<section class="style-section" id="line-art">
+  <div class="style-header">
+    <h2>✏️ 線画風 (Line Art)</h2>
+    <div class="desc">ミニマル線画 — 連続した一筆書き、黒インク、モダン</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">正面 (Front)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in elegant minimal line art style, front-facing close-up, direct eye contact, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines capturing the breed's noble profile, subtle line weight variation, modern minimalist aesthetic, suitable for printing on apparel</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">横顔 (Side)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in elegant minimal line art style, side profile view, noble silhouette, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines, subtle line weight variation, modern minimalist aesthetic</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">全身 (Full Body)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in elegant minimal line art style, full body standing pose, alert posture, elegant stance, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines, subtle line weight variation, modern minimalist aesthetic</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">遊び (Playful)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in elegant minimal line art style, playful expression, tongue out, happy energetic pose, single continuous line drawing, clean black ink on white background, professional illustration, graceful flowing lines, subtle line weight variation, modern minimalist aesthetic</div>
+  </div>
+</section>
+
+<!-- Embroidery -->
+<section class="style-section" id="embroidery">
+  <div class="style-header">
+    <h2>🧵 刺繍風 (Embroidery)</h2>
+    <div class="desc">リアルな刺繍風 — サテンステッチ、リネン生地、糸のテクスチャ</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">正面 (Front)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in realistic embroidery style, front-facing close-up, direct eye contact, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors for the fur, subtle thread direction following fur growth pattern, elegant craftsman quality</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">横顔 (Side)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd portrait in realistic embroidery style, side profile view, noble silhouette, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">全身 (Full Body)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in realistic embroidery style, full body standing pose, alert posture, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors</div>
+  </div>
+  <div class="prompt-card">
+    <div class="comp-label">遊び (Playful)</div>
+    <div class="prompt-text" onclick="copyPrompt(this)">A German Shepherd in realistic embroidery style, playful expression, tongue out, happy energetic pose, detailed thread texture, satin stitch and long-short stitch techniques visible, rich colored threads on natural linen fabric background, professional machine embroidery look, warm brown and black thread colors</div>
+  </div>
+</section>
+
+<div class="copy-toast" id="toast">コピーしました!</div>
+
+<script>
+function copyPrompt(el) {
+  const text = el.textContent.trim();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast());
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  }
+}
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+</script>
+</body>
+</html>

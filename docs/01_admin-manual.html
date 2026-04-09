@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>管理者向け操作マニュアル — Deer Brand</title>
+    <style>
+      /* ===== 基本スタイル ===== */
+      :root {
+        --gold: #c4a265;
+        --gold-dark: #b0904f;
+        --bg: #faf7f2;
+        --white: #ffffff;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --border: #e8dfd5;
+        --blue: #1e40af;
+        --green: #166534;
+        --red: #991b1b;
+        --yellow-bg: #fef3c7;
+        --yellow-text: #92400e;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.8;
+        font-size: 14px;
+      }
+      /* ===== ヘッダー ===== */
+      .doc-header {
+        background: var(--text);
+        color: var(--white);
+        padding: 32px 48px;
+        border-bottom: 4px solid var(--gold);
+      }
+      .doc-header .brand {
+        color: var(--gold);
+        font-size: 13px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .doc-header h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .doc-header .meta {
+        color: #aaa;
+        font-size: 12px;
+      }
+      /* ===== コンテナ ===== */
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 48px;
+      }
+      /* ===== 目次 ===== */
+      .toc {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 40px;
+      }
+      .toc h2 {
+        font-size: 16px;
+        color: var(--gold);
+        margin-bottom: 16px;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .toc ol {
+        padding-left: 24px;
+      }
+      .toc li {
+        margin-bottom: 8px;
+      }
+      .toc a {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .toc a:hover {
+        color: var(--gold);
+        text-decoration: underline;
+      }
+      /* ===== セクション ===== */
+      .section {
+        margin-bottom: 56px;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--gold);
+      }
+      .section-number {
+        background: var(--gold);
+        color: var(--white);
+        font-size: 13px;
+        font-weight: bold;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .section-header h2 {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      /* ===== スクリーンショット ===== */
+      .screenshot-block {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 20px 0;
+      }
+      .screenshot-block .caption {
+        background: var(--bg);
+        padding: 10px 16px;
+        font-size: 12px;
+        color: var(--text-mid);
+        border-top: 1px solid var(--border);
+      }
+      .screenshot-block img {
+        width: 100%;
+        display: block;
+      }
+      /* ===== ステップ ===== */
+      .steps {
+        list-style: none;
+        padding: 0;
+        counter-reset: step;
+      }
+      .steps li {
+        counter-increment: step;
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding: 16px 20px;
+        background: var(--white);
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+      }
+      .steps li::before {
+        content: counter(step);
+        background: var(--gold);
+        color: var(--white);
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      /* ===== コードブロック ===== */
+      code {
+        background: #f0ebe3;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: "SF Mono", "Courier New", monospace;
+        font-size: 13px;
+        color: #c4534a;
+      }
+      pre {
+        background: var(--text);
+        color: #e8e0d8;
+        padding: 20px 24px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-family: "SF Mono", "Courier New", monospace;
+        overflow-x: auto;
+        margin: 16px 0;
+      }
+      /* ===== テーブル ===== */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        background: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      }
+      th {
+        background: var(--bg);
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1.5px solid var(--border);
+      }
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        vertical-align: top;
+      }
+      /* ===== バッジ ===== */
+      .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .badge-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-preparing {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .badge-shipped {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-completed {
+        background: #e0e7ff;
+        color: #3730a3;
+      }
+      .badge-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      /* ===== 注意ボックス ===== */
+      .note {
+        border-left: 4px solid var(--gold);
+        background: var(--yellow-bg);
+        color: var(--yellow-text);
+        padding: 12px 18px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+        font-size: 13px;
+      }
+      .note strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .warning {
+        border-left: 4px solid #dc2626;
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 12px 18px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+        font-size: 13px;
+      }
+      /* ===== 印刷用スタイル ===== */
+      @media print {
+        body {
+          background: white;
+          font-size: 12px;
+        }
+        .doc-header {
+          background: #2c2824 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .section {
+          page-break-inside: avoid;
+        }
+        .screenshot-block {
+          page-break-inside: avoid;
+          border: 1px solid #ccc;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc-header">
+      <div class="brand">Deer Brand</div>
+      <h1>管理者向け操作マニュアル</h1>
+      <div class="meta">
+        作成日：2026年4月1日　対象システム：https://deer-brand.vercel.app/admin.html
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- 目次 -->
+      <nav class="toc">
+        <h2>目次</h2>
+        <ol>
+          <li><a href="#access">1. 管理者パネルへのアクセス方法</a></li>
+          <li><a href="#login">2. ログイン手順</a></li>
+          <li><a href="#dashboard">3. ダッシュボードの見方</a></li>
+          <li><a href="#orders">4. 注文一覧の確認</a></li>
+          <li><a href="#status">5. ステータス更新手順</a></li>
+          <li><a href="#printful">6. Printful発注手順</a></li>
+          <li><a href="#security">7. セキュリティ仕様</a></li>
+        </ol>
+      </nav>
+
+      <!-- セクション1: アクセス方法 -->
+      <section class="section" id="access">
+        <div class="section-header">
+          <span class="section-number">1</span>
+          <h2>管理者パネルへのアクセス方法</h2>
+        </div>
+        <p>
+          管理者パネルはDeer Brandの注文管理・Printful発注を行う専用ページです。
+        </p>
+
+        <table>
+          <tr>
+            <th>項目</th>
+            <th>内容</th>
+          </tr>
+          <tr>
+            <td>URL</td>
+            <td><code>https://deer-brand.vercel.app/admin.html</code></td>
+          </tr>
+          <tr>
+            <td>アクセス制限</td>
+            <td>管理者キー（ADMIN_SECRET_KEY）＋ TOTP二段階認証が必要</td>
+          </tr>
+          <tr>
+            <td>推奨ブラウザ</td>
+            <td>Google Chrome（最新版）</td>
+          </tr>
+        </table>
+
+        <div class="note">
+          <strong>注意</strong>
+          管理者パネルのURLは公開しないでください。アクセスキーは必ず秘密に保管してください。
+        </div>
+      </section>
+
+      <!-- セクション2: ログイン手順 -->
+      <section class="section" id="login">
+        <div class="section-header">
+          <span class="section-number">2</span>
+          <h2>ログイン手順</h2>
+        </div>
+
+        <div class="screenshot-block">
+          <img src="screenshots/admin_01.png" alt="管理者ログイン画面" />
+          <div class="caption">
+            管理者ログイン画面 — ADMIN_SECRET_KEY を入力してログインします
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li>
+            ブラウザで
+            <code>https://deer-brand.vercel.app/admin.html</code> にアクセスする
+          </li>
+          <li>
+            「管理者キー」フィールドに
+            <code>ADMIN_SECRET_KEY</code> を入力する（環境変数の値）
+          </li>
+          <li>「ログイン」ボタンをクリックする</li>
+          <li>TOTP認証が有効な場合は、認証アプリの6桁コードを追加入力する</li>
+          <li>ダッシュボードが表示されればログイン成功</li>
+        </ol>
+
+        <div class="warning">
+          <strong>ブルートフォース対策</strong>
+          ログイン失敗が10回連続すると、アカウントは30分間ロックされます。キーを忘れた場合はVercel環境変数を確認してください。
+        </div>
+
+        <table>
+          <tr>
+            <th>エラーメッセージ</th>
+            <th>原因</th>
+            <th>対処法</th>
+          </tr>
+          <tr>
+            <td>「認証に失敗しました」</td>
+            <td>管理者キーが間違っている</td>
+            <td>Vercel環境変数 ADMIN_SECRET_KEY を確認</td>
+          </tr>
+          <tr>
+            <td>「アカウントがロックされています」</td>
+            <td>10回連続失敗</td>
+            <td>30分待つかFirestore adminMeta/loginAttempts を手動リセット</td>
+          </tr>
+          <tr>
+            <td>「TOTPコードが無効です」</td>
+            <td>認証アプリの時刻がずれている</td>
+            <td>デバイスの時刻を同期する</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- セクション3: ダッシュボード -->
+      <section class="section" id="dashboard">
+        <div class="section-header">
+          <span class="section-number">3</span>
+          <h2>ダッシュボードの見方</h2>
+        </div>
+        <p>ログイン後、以下の統計カードが表示されます。</p>
+
+        <table>
+          <tr>
+            <th>カード名</th>
+            <th>内容</th>
+          </tr>
+          <tr>
+            <td>総注文数</td>
+            <td>システム内の全注文件数</td>
+          </tr>
+          <tr>
+            <td>未処理</td>
+            <td>ステータスが「pending（受付済み）」の注文数</td>
+          </tr>
+          <tr>
+            <td>発送済み</td>
+            <td>ステータスが「shipped（発送済み）」の注文数</td>
+          </tr>
+          <tr>
+            <td>完了</td>
+            <td>ステータスが「completed（完了）」の注文数</td>
+          </tr>
+          <tr>
+            <td>売上合計</td>
+            <td>全完了注文の合計金額（円）</td>
+          </tr>
+        </table>
+
+        <p>ダッシュボード上部のフィルタバーで以下の絞り込みが可能です。</p>
+        <table>
+          <tr>
+            <th>フィルタ</th>
+            <th>選択肢</th>
+          </tr>
+          <tr>
+            <td>ステータス</td>
+            <td>すべて / 受付済み / 制作中 / 発送済み / 完了 / キャンセル</td>
+          </tr>
+          <tr>
+            <td>表示件数</td>
+            <td>20件 / 50件 / 100件</td>
+          </tr>
+          <tr>
+            <td>注文ID検索</td>
+            <td>DEER-YYYYMMDD-XXXX 形式で検索</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- セクション4: 注文一覧 -->
+      <section class="section" id="orders">
+        <div class="section-header">
+          <span class="section-number">4</span>
+          <h2>注文一覧の確認</h2>
+        </div>
+        <p>注文テーブルには以下の列が表示されます。</p>
+
+        <table>
+          <tr>
+            <th>列名</th>
+            <th>内容</th>
+            <th>例</th>
+          </tr>
+          <tr>
+            <td>注文ID</td>
+            <td>システムが自動生成する一意のID</td>
+            <td><code>DEER-20260401-ABCD</code></td>
+          </tr>
+          <tr>
+            <td>日時</td>
+            <td>注文受付日時</td>
+            <td>2026/04/01 19:30</td>
+          </tr>
+          <tr>
+            <td>ユーザーID</td>
+            <td>FirebaseのユーザーUID（短縮表示）</td>
+            <td>abc123...</td>
+          </tr>
+          <tr>
+            <td>商品</td>
+            <td>商品名・スタイル名・サイズ・カラー</td>
+            <td>パーカー / 印象派 / M / グレー</td>
+          </tr>
+          <tr>
+            <td>合計</td>
+            <td>税込み合計金額</td>
+            <td>¥7,980</td>
+          </tr>
+          <tr>
+            <td>ステータス</td>
+            <td>現在の処理状況（バッジ表示）</td>
+            <td><span class="badge badge-pending">受付済み</span></td>
+          </tr>
+          <tr>
+            <td>操作</td>
+            <td>ステータス更新・Printful発注ボタン</td>
+            <td>—</td>
+          </tr>
+        </table>
+
+        <h3 style="font-size: 16px; margin: 20px 0 12px; color: #2c2824">
+          ステータスバッジの色
+        </h3>
+        <table>
+          <tr>
+            <th>ステータス</th>
+            <th>バッジ</th>
+            <th>意味</th>
+          </tr>
+          <tr>
+            <td>pending</td>
+            <td><span class="badge badge-pending">受付済み</span></td>
+            <td>注文受付・決済完了。まだ処理開始前</td>
+          </tr>
+          <tr>
+            <td>preparing</td>
+            <td><span class="badge badge-preparing">制作中</span></td>
+            <td>Printful発注済み・制作進行中</td>
+          </tr>
+          <tr>
+            <td>shipped</td>
+            <td><span class="badge badge-shipped">発送済み</span></td>
+            <td>Printfulから発送完了</td>
+          </tr>
+          <tr>
+            <td>completed</td>
+            <td><span class="badge badge-completed">完了</span></td>
+            <td>配送完了・注文終了</td>
+          </tr>
+          <tr>
+            <td>cancelled</td>
+            <td><span class="badge badge-cancelled">キャンセル</span></td>
+            <td>キャンセル処理済み</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- セクション5: ステータス更新 -->
+      <section class="section" id="status">
+        <div class="section-header">
+          <span class="section-number">5</span>
+          <h2>ステータス更新手順</h2>
+        </div>
+
+        <ol class="steps">
+          <li>注文テーブルで対象の注文行を確認する</li>
+          <li>「操作」列の「ステータス変更」ドロップダウンをクリックする</li>
+          <li>
+            変更先のステータスを選択する（preparing / shipped / completed /
+            cancelled）
+          </li>
+          <li>確認ダイアログが表示されたら「OK」をクリックする</li>
+          <li>ステータスバッジが更新されることを確認する</li>
+        </ol>
+
+        <div class="note">
+          <strong>ステータス遷移の推奨順序</strong>
+          pending（受付済み）→ preparing（制作中）→ shipped（発送済み）→
+          completed（完了）
+        </div>
+
+        <h3 style="font-size: 16px; margin: 20px 0 12px">
+          APIエンドポイント（参考）
+        </h3>
+        <pre>
+POST /api/admin-api
+{
+  "action": "update-status",
+  "adminKey": "YOUR_ADMIN_SECRET_KEY",
+  "orderId": "DEER-20260401-ABCD",
+  "status": "preparing"
+}</pre
+        >
+      </section>
+
+      <!-- セクション6: Printful発注 -->
+      <section class="section" id="printful">
+        <div class="section-header">
+          <span class="section-number">6</span>
+          <h2>Printful発注手順</h2>
+        </div>
+        <p>
+          Printfulはオンデマンド印刷・発送サービスです。注文ごとにPrintful
+          APIを通じて発注します。
+        </p>
+
+        <ol class="steps">
+          <li>
+            注文テーブルでステータスが
+            <span class="badge badge-pending">受付済み</span> の注文を見つける
+          </li>
+          <li>対象行の「Printful発注」ボタンをクリックする</li>
+          <li>
+            確認ダイアログが表示される（注文ID・商品情報・アート画像URLを確認）
+          </li>
+          <li>「発注する」をクリックするとAPIが呼び出される</li>
+          <li>
+            成功すると注文ステータスが自動で
+            <span class="badge badge-preparing">制作中</span> に変わる
+          </li>
+          <li>Printfulの管理画面でも注文が確認できることを確認する</li>
+        </ol>
+
+        <div class="note">
+          <strong>発注に必要な条件</strong>
+          アート画像URL（artImageUrl）がFirestoreの注文データに保存されている必要があります。画像URLが存在しない場合は発注ボタンが無効になります。
+        </div>
+
+        <h3 style="font-size: 16px; margin: 20px 0 12px">
+          APIエンドポイント（参考）
+        </h3>
+        <pre>
+POST /api/admin-api
+{
+  "action": "create-printful-order",
+  "adminKey": "YOUR_ADMIN_SECRET_KEY",
+  "orderId": "DEER-20260401-ABCD",
+  "artImageUrl": "https://storage.example.com/art/abc.png"
+}</pre
+        >
+
+        <table>
+          <tr>
+            <th>エラー</th>
+            <th>原因</th>
+            <th>対処</th>
+          </tr>
+          <tr>
+            <td>artImageUrl が空</td>
+            <td>AI生成画像が未保存</td>
+            <td>Firebaseストレージでアート画像を確認</td>
+          </tr>
+          <tr>
+            <td>Printful API エラー</td>
+            <td>APIキーまたは商品ID不正</td>
+            <td>環境変数 PRINTFUL_API_KEY・商品マッピングを確認</td>
+          </tr>
+          <tr>
+            <td>重複発注エラー</td>
+            <td>同じ注文で2回発注</td>
+            <td>ステータスが「preparing」以降は発注ボタンが無効になる</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- セクション7: セキュリティ -->
+      <section class="section" id="security">
+        <div class="section-header">
+          <span class="section-number">7</span>
+          <h2>セキュリティ仕様</h2>
+        </div>
+
+        <table>
+          <tr>
+            <th>仕様</th>
+            <th>詳細</th>
+          </tr>
+          <tr>
+            <td>認証方式</td>
+            <td>管理者キー（ADMIN_SECRET_KEY） + TOTP二段階認証（RFC 6238）</td>
+          </tr>
+          <tr>
+            <td>ブルートフォース対策</td>
+            <td>
+              10回連続失敗で30分ロック（Firestore: adminMeta/loginAttempts）
+            </td>
+          </tr>
+          <tr>
+            <td>セッション管理</td>
+            <td>sessionStorage に adminKey を保存（タブを閉じると消去）</td>
+          </tr>
+          <tr>
+            <td>APIセキュリティ</td>
+            <td>全APIリクエストに adminKey が必須。サーバーサイドで検証</td>
+          </tr>
+          <tr>
+            <td>ログ</td>
+            <td>ログイン試行・発注操作はFirestoreに記録</td>
+          </tr>
+        </table>
+
+        <div class="warning">
+          <strong>定期的なキーローテーション推奨</strong>
+          ADMIN_SECRET_KEY
+          は3ヶ月ごとにVercel環境変数で更新することを推奨します。
+        </div>
+      </section>
+    </div>
+    <!-- /container -->
+  </body>
+</html>

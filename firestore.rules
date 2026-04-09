@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedInOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function userWritableFields() {
+      return ["displayName", "photoURL", "phone"];
+    }
+
+    // ユーザーデータ: 本人のみ読取可。書込は許可フィールドのみ
+    match /users/{userId} {
+      allow read: if isSignedInOwner(userId);
+      allow create: if isSignedInOwner(userId)
+        && request.resource.data.keys().hasOnly(userWritableFields());
+      allow update: if isSignedInOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(userWritableFields());
+      allow delete: if false;
+    }
+
+    // 注文: 本人のみ読み可、書き込みはサーバーAPIのみ（Admin SDK）
+    match /orders/{orderId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if false; // Admin SDKのみ
+    }
+
+    // クーポン: Admin SDKのみ
+    match /coupons/{code} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // クーポン使用履歴: Admin SDKのみ
+    match /couponUsage/{docId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if false;
+    }
+  }
+}

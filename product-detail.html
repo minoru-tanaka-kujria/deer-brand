@@ -1,0 +1,1703 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>商品詳細 — Deer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta
+      name="description"
+      content="ペットのオリジナルグッズを選んでオーダー。フォトキャンバス・Tシャツ・マグカップなど豊富なアイテムからお選びいただけます。"
+    />
+    <meta property="og:title" content="商品詳細 | Deer Brand" />
+    <meta
+      property="og:url"
+      content="https://deer-brand.vercel.app/product-detail"
+    />
+    <link rel="canonical" href="https://deer-brand.vercel.app/product-detail" />
+    <style>
+      :root {
+        --ivory: #faf7f2;
+        --cream: #f5ede3;
+        --warm: #ede4d8;
+        --gold: #c4a265;
+        --gold-light: #d4b87a;
+        --terracotta: #c4836a;
+        --terracotta-soft: #d9a28e;
+        --charcoal: #2c2824;
+        --charcoal-light: #4a453f;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --text-light: #9b9490;
+        --white: #ffffff;
+        --border: #e8dfd5;
+        --green: #5ba865;
+        --serif: "Cormorant Garamond", "Georgia", serif;
+        --sans: "Zen Maru Gothic", sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: var(--sans);
+        background: var(--ivory);
+        color: var(--text);
+        line-height: 1.8;
+        overflow-x: hidden;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      /* ==================== NAV ==================== */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(250, 247, 242, 0.92);
+        backdrop-filter: blur(20px) saturate(1.2);
+        border-bottom: 1px solid rgba(196, 162, 101, 0.15);
+        padding: 0 3rem;
+        height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.4s;
+      }
+      .nav.scrolled {
+        box-shadow: 0 4px 30px rgba(44, 40, 36, 0.06);
+      }
+      .nav-logo {
+        font-family: var(--serif);
+        font-size: 1.6rem;
+        font-weight: 300;
+        letter-spacing: 8px;
+        color: var(--charcoal);
+        text-transform: uppercase;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      .nav-links a {
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        color: var(--text-mid);
+        transition: color 0.3s;
+      }
+      .nav-links a:hover {
+        color: var(--terracotta);
+      }
+      .nav-cta {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 0.55rem 1.5rem;
+        background: var(--charcoal);
+        color: var(--ivory);
+        border-radius: 100px;
+        transition: all 0.3s;
+      }
+      .nav-cta:hover {
+        background: var(--terracotta);
+      }
+
+      /* ==================== BREADCRUMB ==================== */
+      .breadcrumb {
+        padding: 5.5rem 3rem 0.8rem;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .breadcrumb-list {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        color: var(--text-light);
+      }
+      .breadcrumb-list a {
+        color: var(--text-mid);
+        transition: color 0.3s;
+      }
+      .breadcrumb-list a:hover {
+        color: var(--terracotta);
+      }
+      .breadcrumb-list .sep {
+        margin: 0 0.2rem;
+        color: var(--text-light);
+      }
+      .breadcrumb-list .current {
+        color: var(--charcoal);
+        font-weight: 500;
+      }
+
+      /* ==================== PRODUCT DETAIL LAYOUT ==================== */
+      .product-detail {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 1.5rem 3rem 4rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+      }
+
+      /* LEFT: Gallery */
+      .gallery {
+        display: grid;
+        grid-template-columns: 80px 1fr;
+        gap: 1rem;
+        position: sticky;
+        top: 5.5rem;
+      }
+      .gallery-thumbs {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .gallery-thumb {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+        background: var(--cream);
+      }
+      .gallery-thumb:hover {
+        border-color: var(--gold-light);
+      }
+      .gallery-thumb.active {
+        border-color: var(--terracotta);
+        box-shadow: 0 0 0 1px var(--terracotta-soft);
+      }
+      .gallery-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .gallery-main {
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--cream);
+        aspect-ratio: 1;
+        position: relative;
+      }
+      .gallery-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.3s ease;
+      }
+
+      /* RIGHT: Info Panel */
+      .info-panel {
+        padding-top: 0.5rem;
+      }
+      .info-panel .product-title {
+        font-family: var(--serif);
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        font-weight: 400;
+        color: var(--charcoal);
+        line-height: 1.3;
+        margin-bottom: 0.3rem;
+      }
+      .info-panel .product-subtitle {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+      }
+
+      /* Manufacturing tabs (Print / Embroidery) */
+      .manufacture-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 1.8rem;
+        border-bottom: 2px solid var(--border);
+      }
+      .manufacture-tab {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--text-mid);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.3s;
+        background: none;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        font-family: var(--sans);
+      }
+      .manufacture-tab:hover {
+        color: var(--charcoal);
+      }
+      .manufacture-tab.active {
+        color: var(--terracotta);
+        border-bottom-color: var(--terracotta);
+        font-weight: 700;
+      }
+      .manufacture-tab.disabled {
+        color: var(--text-light);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      .manufacture-tab .coming-tag {
+        font-size: 0.6rem;
+        background: var(--terracotta);
+        color: #fff;
+        padding: 0.15rem 0.4rem;
+        border-radius: 1rem;
+        margin-left: 0.4rem;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        vertical-align: middle;
+      }
+
+      /* Option Group */
+      .option-group {
+        margin-bottom: 1.8rem;
+      }
+      .option-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--charcoal);
+        margin-bottom: 0.7rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .option-label .selected-name {
+        font-weight: 400;
+        color: var(--text-mid);
+      }
+
+      /* Placement Selection */
+      .placement-options {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+      .placement-btn {
+        padding: 0.55rem 1.2rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: var(--white);
+        cursor: pointer;
+        font-family: var(--sans);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .placement-btn:hover {
+        border-color: var(--gold-light);
+        background: var(--cream);
+      }
+      .placement-btn.selected {
+        border-color: var(--terracotta);
+        background: rgba(196, 131, 106, 0.06);
+        color: var(--terracotta);
+      }
+      .placement-btn .extra-price {
+        font-size: 0.7rem;
+        color: var(--terracotta);
+        font-weight: 600;
+      }
+
+      /* Color Swatches */
+      .color-options {
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+      }
+      .color-swatch {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s;
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+      .color-swatch:hover {
+        transform: scale(1.1);
+      }
+      .color-swatch.selected {
+        border-color: var(--terracotta);
+        box-shadow:
+          0 0 0 2px var(--terracotta-soft),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+      .color-swatch .color-name {
+        position: absolute;
+        bottom: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.6rem;
+        color: var(--text-mid);
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .color-swatch:hover .color-name,
+      .color-swatch.selected .color-name {
+        opacity: 1;
+      }
+
+      /* Size Buttons */
+      .size-options {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .size-btn {
+        min-width: 52px;
+        padding: 0.5rem 1rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: var(--white);
+        cursor: pointer;
+        font-family: var(--sans);
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        text-align: center;
+        transition: all 0.3s;
+      }
+      .size-btn:hover {
+        border-color: var(--gold-light);
+        background: var(--cream);
+      }
+      .size-btn.selected {
+        border-color: var(--terracotta);
+        background: rgba(196, 131, 106, 0.08);
+        color: var(--terracotta);
+      }
+
+      /* Price + Shipping Box */
+      .price-shipping-box {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.6rem;
+      }
+      .price-row:last-child {
+        margin-bottom: 0;
+      }
+      .price-label {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+      }
+      .price-value {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--charcoal);
+      }
+      .price-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0.8rem 0;
+      }
+      .price-total .price-label {
+        font-weight: 700;
+        color: var(--charcoal);
+        font-size: 0.9rem;
+      }
+      .price-total .price-value {
+        font-size: 1.5rem;
+        color: var(--terracotta);
+        font-weight: 600;
+      }
+      .shipping-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.8rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+      }
+      .shipping-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--green);
+        background: rgba(91, 168, 101, 0.08);
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+      }
+      .shipping-text {
+        font-size: 0.72rem;
+        color: var(--text-mid);
+      }
+
+      /* CTA Button */
+      .cta-button {
+        width: 100%;
+        padding: 1.1rem;
+        background: var(--charcoal);
+        color: var(--ivory);
+        font-family: var(--sans);
+        font-size: 1rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.4s;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+      }
+      .cta-button:hover {
+        background: var(--terracotta);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(196, 131, 106, 0.25);
+      }
+
+      /* Features list */
+      .features-list {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem 1.5rem;
+        margin-top: 0.5rem;
+      }
+      .features-list li {
+        font-size: 0.75rem;
+        color: var(--text-mid);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .features-list li span {
+        font-size: 0.9rem;
+      }
+
+      /* Sticky CTA (mobile + scroll) */
+      .sticky-cta {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(250, 247, 242, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+        padding: 0.8rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        z-index: 90;
+        transform: translateY(100%);
+        transition: transform 0.4s ease;
+      }
+      .sticky-cta.visible {
+        transform: translateY(0);
+      }
+      .sticky-cta .sticky-info {
+        display: flex;
+        align-items: baseline;
+        gap: 0.8rem;
+      }
+      .sticky-cta .sticky-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--charcoal);
+      }
+      .sticky-cta .sticky-price {
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--terracotta);
+      }
+      .sticky-cta .sticky-btn {
+        padding: 0.7rem 2rem;
+        background: var(--charcoal);
+        color: var(--ivory);
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+      }
+      .sticky-cta .sticky-btn:hover {
+        background: var(--terracotta);
+      }
+
+      /* Product Details Accordion */
+      .details-section {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 3rem 4rem;
+      }
+      .detail-accordion {
+        border-top: 1px solid var(--border);
+      }
+      .detail-accordion-item {
+        border-bottom: 1px solid var(--border);
+      }
+      .detail-accordion-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.2rem 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: var(--sans);
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--charcoal);
+      }
+      .detail-accordion-header .icon {
+        font-size: 1.1rem;
+        color: var(--text-mid);
+        transition: transform 0.3s;
+      }
+      .detail-accordion-item.open .detail-accordion-header .icon {
+        transform: rotate(45deg);
+      }
+      .detail-accordion-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease;
+      }
+      .detail-accordion-item.open .detail-accordion-body {
+        max-height: 500px;
+      }
+      .detail-accordion-content {
+        padding: 0 0 1.5rem;
+        font-size: 0.82rem;
+        color: var(--text-mid);
+        line-height: 2;
+      }
+      .detail-accordion-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.5rem;
+      }
+      .detail-accordion-content th,
+      .detail-accordion-content td {
+        text-align: left;
+        padding: 0.5rem 0.8rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.8rem;
+      }
+      .detail-accordion-content th {
+        color: var(--charcoal);
+        font-weight: 600;
+        width: 35%;
+      }
+
+      /* ==================== FOOTER ==================== */
+      .footer {
+        background: var(--charcoal);
+        color: rgba(250, 247, 242, 0.5);
+        padding: 3rem;
+        text-align: center;
+      }
+      .footer-logo {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        font-weight: 300;
+        letter-spacing: 8px;
+        color: rgba(250, 247, 242, 0.8);
+        margin-bottom: 1rem;
+      }
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      .footer-links a {
+        font-size: 0.75rem;
+        transition: color 0.3s;
+      }
+      .footer-links a:hover {
+        color: var(--gold-light);
+      }
+      .footer-copy {
+        font-size: 0.68rem;
+      }
+
+      /* ==================== RESPONSIVE ==================== */
+      @media (max-width: 960px) {
+        .nav {
+          padding: 0 1.5rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .breadcrumb {
+          padding: 5rem 1.5rem 0.5rem;
+        }
+        .product-detail {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          padding: 1rem 1.5rem 2rem;
+        }
+        .gallery {
+          position: static;
+          grid-template-columns: 1fr;
+          gap: 0.8rem;
+        }
+        .gallery-thumbs {
+          flex-direction: row;
+          order: 2;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          padding-bottom: 0.3rem;
+        }
+        .gallery-thumbs::-webkit-scrollbar {
+          display: none;
+        }
+        .gallery-thumb {
+          width: 64px;
+          height: 64px;
+          flex-shrink: 0;
+        }
+        .gallery-main {
+          order: 1;
+        }
+        .details-section {
+          padding: 0 1.5rem 3rem;
+        }
+      }
+      @media (max-width: 480px) {
+        .gallery-thumb {
+          width: 56px;
+          height: 56px;
+        }
+        .sticky-cta {
+          padding: 0.6rem 1rem;
+        }
+        .sticky-cta .sticky-name {
+          font-size: 0.78rem;
+        }
+        .sticky-cta .sticky-price {
+          font-size: 1rem;
+        }
+        .sticky-cta .sticky-btn {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.78rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+      <a href="index.html" class="nav-logo"
+        ><img src="img/logo.svg" alt="Deer" style="height: 2rem"
+      /></a>
+      <div class="nav-links">
+        <a href="index.html#styles">アートスタイル</a>
+        <a href="index.html#products">グッズ一覧</a>
+        <a href="upload.html" class="nav-cta">はじめる</a>
+      </div>
+    </nav>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <ul class="breadcrumb-list" id="breadcrumb">
+        <li><a href="index.html">ホーム</a></li>
+        <li class="sep">/</li>
+        <li><a href="index.html#products">グッズ一覧</a></li>
+        <li class="sep">/</li>
+        <li class="current" id="breadcrumb-product">パーカー</li>
+      </ul>
+    </div>
+
+    <!-- PRODUCT DETAIL -->
+    <div class="product-detail">
+      <!-- LEFT: Gallery -->
+      <div class="gallery">
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+        <div class="gallery-main">
+          <img id="galleryMain" src="" alt="商品画像" />
+        </div>
+      </div>
+
+      <!-- RIGHT: Info Panel -->
+      <div class="info-panel">
+        <h1 class="product-title" id="productTitle">パーカー</h1>
+        <p class="product-subtitle" id="productSubtitle">
+          愛犬のアートをプリントした、世界にひとつだけのパーカー
+        </p>
+
+        <!-- Manufacture Tabs -->
+        <div class="manufacture-tabs" id="manufactureTabs"></div>
+
+        <!-- Placement Selection -->
+        <div class="option-group" id="placementGroup" style="display: none">
+          <div class="option-label">
+            プリント配置
+            <span class="selected-name" id="placementSelectedName"></span>
+          </div>
+          <div class="placement-options" id="placementOptions"></div>
+        </div>
+
+        <!-- Color Selection -->
+        <div class="option-group" id="colorGroup" style="display: none">
+          <div class="option-label">
+            カラー
+            <span class="selected-name" id="colorSelectedName"></span>
+          </div>
+          <div class="color-options" id="colorOptions"></div>
+        </div>
+
+        <!-- Size Selection -->
+        <div class="option-group" id="sizeGroup" style="display: none">
+          <div class="option-label">
+            サイズ
+            <span class="selected-name" id="sizeSelectedName"></span>
+          </div>
+          <div class="size-options" id="sizeOptions"></div>
+        </div>
+
+        <!-- Price + Shipping Box -->
+        <div class="price-shipping-box">
+          <div class="price-row">
+            <span class="price-label">商品価格</span>
+            <span class="price-value" id="basePrice">¥7,980</span>
+          </div>
+          <div class="price-row" id="placementPriceRow" style="display: none">
+            <span class="price-label" id="placementPriceLabel"
+              >バックプリント追加</span
+            >
+            <span class="price-value" id="placementPrice">+¥2,000</span>
+          </div>
+          <hr class="price-divider" />
+          <div class="price-row price-total">
+            <span class="price-label">合計（税込）</span>
+            <span class="price-value" id="totalPrice">¥7,980</span>
+          </div>
+          <div class="shipping-info">
+            <span class="shipping-badge"
+              ><svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                style="vertical-align: -2px; margin-right: 3px"
+              >
+                <path d="M3 8h18v11a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                <path d="M3 8l3-4h12l3 4" /></svg
+              >送料無料</span
+            >
+            <span class="shipping-text">最短5日でお届け</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <button class="cta-button" id="ctaButton" onclick="goToOrder()">
+          デザインを開始する →
+        </button>
+
+        <!-- Features -->
+        <ul class="features-list">
+          <li>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+              style="vertical-align: -2px; margin-right: 4px"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M8 12l2 10 6-14" /></svg
+            >23種類のアートスタイル
+          </li>
+          <li>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+              style="vertical-align: -2px; margin-right: 4px"
+            >
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 018 0v4" /></svg
+            >Stripe安全決済
+          </li>
+          <li>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+              style="vertical-align: -2px; margin-right: 4px"
+            >
+              <path d="M20 7l-8 5-8-5" />
+              <rect x="4" y="5" width="16" height="14" rx="2" /></svg
+            >ギフトラッピング対応
+          </li>
+          <li>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#C4A265"
+              stroke-width="1.5"
+              style="vertical-align: -2px; margin-right: 4px"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="12 7 12 12 15 15" /></svg
+            >最短5日で届く
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PRODUCT DETAILS ACCORDION -->
+    <div class="details-section">
+      <div class="detail-accordion" id="accordion">
+        <div class="detail-accordion-item">
+          <button
+            class="detail-accordion-header"
+            onclick="toggleAccordion(this)"
+          >
+            <span>商品仕様</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="detail-accordion-body">
+            <div class="detail-accordion-content" id="specContent">
+              <!-- JS fills this -->
+            </div>
+          </div>
+        </div>
+        <div class="detail-accordion-item">
+          <button
+            class="detail-accordion-header"
+            onclick="toggleAccordion(this)"
+          >
+            <span>プリントについて</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="detail-accordion-body">
+            <div class="detail-accordion-content" id="printContent">
+              <!-- JS fills this -->
+            </div>
+          </div>
+        </div>
+        <div class="detail-accordion-item">
+          <button
+            class="detail-accordion-header"
+            onclick="toggleAccordion(this)"
+          >
+            <span>配送について</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="detail-accordion-body">
+            <div class="detail-accordion-content" id="shippingContent">
+              <!-- JS fills this -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STICKY CTA -->
+    <div class="sticky-cta" id="stickyCta">
+      <div class="sticky-info">
+        <span class="sticky-name" id="stickyName">パーカー</span>
+        <span class="sticky-price" id="stickyPrice">¥7,980</span>
+      </div>
+      <button class="sticky-btn" onclick="goToOrder()">デザインを開始 →</button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-logo">
+        <img
+          src="img/logo.svg"
+          alt="Deer"
+          style="
+            height: 2.5rem;
+            filter: brightness(0) invert(0.85);
+            margin: 0 auto;
+          "
+        />
+      </div>
+      <div class="footer-links">
+        <a href="terms">利用規約</a>
+        <a href="privacy">プライバシーポリシー</a>
+        <a href="tokushoho">特定商取引法</a>
+        <a href="mailto:info@deer.gift">お問い合わせ</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Deer. All rights reserved. — deer.gift
+      </div>
+    </footer>
+
+    <script>
+      // ==================== PRODUCT DATA ====================
+      const PRODUCTS = {
+        hoodie: {
+          name: "パーカー",
+          subtitle:
+            "愛犬のアートをプリントした、世界にひとつだけのパーカー。厚手の裏毛素材で、お散歩時にも暖かく快適です。",
+          base: 7980,
+          hasSize: true,
+          colors: [
+            { id: "gray", name: "グレー", hex: "#8B8B8B" },
+            { id: "navy", name: "ネイビー", hex: "#2C3E5A" },
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "pink", name: "ピンク", hex: "#E8B4B8" },
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+          ],
+          placements: [
+            { id: "left-chest", name: "左胸ワンポイント", price: 0 },
+            { id: "center", name: "胸中央プリント", price: 0 },
+            { id: "back", name: "バックプリント", price: 2000 },
+          ],
+          gallery: [
+            { src: "img/product-hoodie.png", label: "メイン" },
+            { src: "img/placement/hoodie-leftchest.png", label: "左胸" },
+            { src: "img/placement/hoodie-center.png", label: "胸中央" },
+            { src: "img/placement/hoodie-back.png", label: "バック" },
+            {
+              src: "img/placement/detail/hoodie-leftchest-impressionism.png",
+              label: "印象派",
+            },
+            {
+              src: "img/placement/detail/hoodie-center-watercolor.png",
+              label: "水彩",
+            },
+          ],
+          specs: {
+            素材: "コットン100%（裏毛）",
+            厚み: "10oz（厚手）",
+            サイズ展開: "S / M / L / XL / 2XL",
+            プリント方式: "DTGプリント",
+            洗濯: "洗濯機OK（ネット使用推奨）",
+          },
+          hasEmbroidery: true,
+          printInfo: {
+            method: "DTGプリント（Direct to Garment）",
+            desc: "繊維に直接インクを浸透させるため、肌触りを損なわず、洗濯にも強い仕上がりです。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短5営業日",
+            method: "宅急便（追跡番号付き）",
+            gift: "対応可能（無料）",
+          },
+        },
+        tshirt: {
+          name: "Tシャツ",
+          subtitle:
+            "愛犬のアートをプリントしたオリジナルTシャツ。柔らかい生地で着心地抜群。普段使いにぴったりです。",
+          base: 4980,
+          hasSize: true,
+          colors: [
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "gray", name: "グレー", hex: "#8B8B8B" },
+            { id: "pink", name: "ピンク", hex: "#E8B4B8" },
+            { id: "beige", name: "ベージュ", hex: "#D4C5B2" },
+          ],
+          placements: [
+            { id: "left-chest", name: "左胸ワンポイント", price: 0 },
+            { id: "center", name: "胸中央プリント", price: 0 },
+            { id: "back", name: "バックプリント", price: 1500 },
+          ],
+          gallery: [
+            { src: "img/product-tshirt.png", label: "メイン" },
+            { src: "img/placement/tshirt-leftchest.png", label: "左胸" },
+            { src: "img/placement/tshirt-center.png", label: "胸中央" },
+            { src: "img/placement/tshirt-back.png", label: "バック" },
+            {
+              src: "img/placement/detail/tshirt-center-impressionism.png",
+              label: "印象派",
+            },
+            {
+              src: "img/placement/detail/tshirt-leftchest-watercolor.png",
+              label: "水彩",
+            },
+          ],
+          specs: {
+            素材: "コットン100%（天竺編み）",
+            厚み: "5.6oz（ミドルウェイト）",
+            サイズ展開: "S / M / L / XL / 2XL",
+            プリント方式: "DTGプリント",
+            洗濯: "洗濯機OK（ネット使用推奨）",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "DTGプリント（Direct to Garment）",
+            desc: "繊維に直接インクを浸透させるため、肌触りを損なわず、洗濯にも強い仕上がりです。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短5営業日",
+            method: "宅急便（追跡番号付き）",
+            gift: "対応可能（無料）",
+          },
+        },
+        mug: {
+          name: "マグカップ",
+          subtitle:
+            "愛犬のアートが映えるラップアラウンドプリント。毎朝のコーヒータイムが楽しくなります。",
+          base: 2980,
+          hasSize: false,
+          colors: [{ id: "white", name: "ホワイト", hex: "#F5F5F0" }],
+          placements: [{ id: "wrap", name: "ラップアラウンド", price: 0 }],
+          gallery: [
+            { src: "img/product-mug.png", label: "メイン" },
+            { src: "img/placement/mug-wrap.png", label: "着用" },
+            {
+              src: "img/placement/detail/mug-wrap-impressionism.png",
+              label: "印象派",
+            },
+            {
+              src: "img/placement/detail/mug-wrap-watercolor.png",
+              label: "水彩",
+            },
+            {
+              src: "img/placement/detail/mug-wrap-popart.png",
+              label: "ポップ",
+            },
+          ],
+          specs: {
+            素材: "陶器",
+            容量: "330ml",
+            サイズ: "直径8cm × 高さ9.5cm",
+            プリント方式: "昇華転写プリント",
+            食洗機: "使用可",
+            電子レンジ: "使用可",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "昇華転写プリント",
+            desc: "マグカップの持ち手の反対側を中心に帯状にプリントされます（印刷面: 約23×9cm）。高温で転写するため色が鮮やかに定着し、食洗機にも対応。色褪せにくく長くお使いいただけます。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短5営業日",
+            method: "宅急便（追跡番号付き・緩衝材梱包）",
+            gift: "対応可能（無料）",
+          },
+        },
+        case: {
+          name: "スマホケース",
+          subtitle:
+            "デュアルレイヤー構造で衝撃からスマホを保護。UVインクで鮮やかなデザインが長持ちします。",
+          base: 4980,
+          hasSize: false,
+          colors: [
+            { id: "glossy", name: "グロス", hex: "#E8E8E8" },
+            { id: "matte", name: "マット", hex: "#1a1a1a" },
+          ],
+          placements: [{ id: "back", name: "背面プリント", price: 0 }],
+          gallery: [
+            { src: "img/product-case.png", label: "メイン" },
+            { src: "img/placement/case-back.png", label: "着用" },
+            {
+              src: "img/placement/detail/case-back-impressionism.png",
+              label: "印象派",
+            },
+            {
+              src: "img/placement/detail/case-back-watercolor.png",
+              label: "水彩",
+            },
+            {
+              src: "img/placement/detail/case-back-popart.png",
+              label: "ポップ",
+            },
+          ],
+          specs: {
+            素材: "PC+TPU二重構造（Tough Case）",
+            対応機種: "iPhone / Samsung 主要機種",
+            プリント方式: "UVプリント",
+            特徴: "ワイヤレス充電対応",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "UVプリント（Tough Case二重構造）",
+            desc: "デュアルレイヤー構造で衝撃からスマホを保護。UVインクで鮮やかなデザインが長持ちします。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短5営業日",
+            method: "ネコポス（追跡番号付き）",
+            gift: "対応可能（無料）",
+          },
+        },
+        poster: {
+          name: "アートポスター",
+          subtitle:
+            "愛犬のアートをA3サイズのポスターに。フレーム付きでそのまま飾れます。お部屋のインテリアに。",
+          base: 4480,
+          hasSize: false,
+          colors: [
+            { id: "white-frame", name: "ホワイトフレーム", hex: "#F5F5F0" },
+            {
+              id: "natural-frame",
+              name: "ナチュラルフレーム",
+              hex: "#C4A265",
+            },
+            { id: "black-frame", name: "ブラックフレーム", hex: "#1a1a1a" },
+          ],
+          placements: [{ id: "full", name: "A3サイズ", price: 0 }],
+          gallery: [{ src: "img/product-poster.png", label: "メイン" }],
+          specs: {
+            用紙: "マット紙（厚手）",
+            サイズ: "A3（297 × 420 mm）",
+            フレーム: "木製フレーム付き",
+            プリント方式: "ジクレープリント",
+            特徴: "UVカットアクリル板付き",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "ジクレープリント（高精細インクジェット）",
+            desc: "美術館品質のアーカイバルペーパーに高精細プリント。微細なグラデーションまで忠実に再現し、長期保存にも適しています。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短7営業日",
+            method: "宅急便（追跡番号付き・専用ケース梱包）",
+            gift: "対応可能（無料）",
+          },
+        },
+        postcard: {
+          name: "ポストカードセット",
+          subtitle:
+            "愛犬のアートを5枚セットのポストカードに。メッセージカードやインテリアとして使えます。",
+          base: 1980,
+          hasSize: false,
+          colors: [{ id: "white", name: "マットホワイト", hex: "#F5F5F0" }],
+          placements: [{ id: "front", name: "フロントプリント", price: 0 }],
+          gallery: [{ src: "img/product-postcard.png", label: "メイン" }],
+          specs: {
+            用紙: "マットコート紙（350gsm）",
+            サイズ: "100 × 148 mm（はがきサイズ）",
+            セット内容: "5枚セット（同デザイン）",
+            プリント方式: "オフセットプリント",
+            裏面: "メッセージ・宛名記入欄付き",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "高品質オフセット印刷",
+            desc: "厚手マットコート紙に高品質オフセット印刷。色の再現性が高く、手触りの良い仕上がりです。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短5営業日",
+            method: "ネコポス（追跡番号付き）",
+            gift: "対応可能（無料）",
+          },
+        },
+        "emb-cap": {
+          name: "刺繍キャップ",
+          subtitle:
+            "愛犬のシルエットやワンポイントを刺繍で仕上げたキャップ。立体感のある刺繍は高級感があり、お散歩のお供に最適です。",
+          base: 4980,
+          hasSize: false,
+          hasModel: false,
+          colors: [
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "navy", name: "ネイビー", hex: "#2C3E5A" },
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+            { id: "khaki", name: "カーキ", hex: "#8B7D5A" },
+          ],
+          placements: [{ id: "front", name: "フロントパネル", price: 0 }],
+          gallery: [{ src: "img/product-cap.png", label: "メイン" }],
+          specs: {
+            素材: "コットン100%",
+            サイズ: "フリーサイズ（アジャスター付き）",
+            刺繍方式: "フラット刺繍 / 3Dパフ刺繍",
+            刺繍範囲: "最大16 × 6.5 cm",
+            原産国: "中国製",
+            お手入れ: "手洗い推奨",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "刺繍（Embroidery）",
+            desc: "糸で直接縫い上げるため、立体感のある高級な仕上がりです。フラット刺繍と3Dパフ刺繍からお選びいただけます。洗濯を重ねても色落ちしにくく、長くご愛用いただけます。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短7営業日",
+            method: "宅急便（追跡番号付き）",
+            gift: "対応可能（無料）",
+          },
+        },
+        "emb-hoodie": {
+          name: "刺繍パーカー",
+          subtitle:
+            "愛犬のアートを刺繍で仕上げた、ワンランク上のパーカー。糸の立体感が生む高級感と、洗濯に強い耐久性が魅力です。",
+          base: 12980,
+          hasSize: true,
+          sizes: ["S", "M", "L", "XL"],
+          colors: [
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "navy", name: "ネイビー", hex: "#2C3E5A" },
+            { id: "gray", name: "グレー", hex: "#8B8B8B" },
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+          ],
+          placements: [
+            { id: "left-chest", name: "左胸ワンポイント", price: 0 },
+            { id: "back", name: "バック刺繍", price: 3000 },
+          ],
+          gallery: [
+            { src: "img/product-embroidery-hoodie.png", label: "メイン" },
+          ],
+          specs: {
+            素材: "コットン100%（裏毛）",
+            厚み: "10oz（厚手）",
+            サイズ展開: "S / M / L / XL",
+            刺繍方式: "フラット刺繍 / 無制限カラー刺繍",
+            左胸刺繍範囲: "最大10 × 10 cm",
+            バック刺繍範囲: "最大33 × 25 cm",
+            原産国: "中国製",
+            お手入れ: "洗濯機OK（ネット使用推奨）",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "刺繍（Embroidery）",
+            desc: "糸で直接縫い上げるため、プリントにはない立体感と高級感のある仕上がりです。洗濯を重ねても色落ちせず、むしろ風合いが増していきます。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短7営業日",
+            method: "宅急便（追跡番号付き）",
+            gift: "対応可能（無料）",
+          },
+        },
+        sticker: {
+          name: "カッティングステッカー",
+          subtitle:
+            "愛犬アートを耐候性ビニールステッカーに。車のリアガラスやバンパー、ノートPC、スーツケース等に貼れるDie-Cutステッカーです。",
+          base: 1480,
+          hasSize: false,
+          hasModel: false,
+          colors: [{ id: "default", name: "フルカラー", hex: "#C4A265" }],
+          placements: [{ id: "full", name: "ステッカー全面", price: 0 }],
+          gallery: [{ src: "img/product-sticker.png", label: "メイン" }],
+          specs: {
+            素材: "耐候性ビニール（光沢仕上げ）",
+            サイズ: "最大14cm",
+            耐久性: "屋内外対応・耐水・耐UV",
+            仕様: "台紙付きDie-Cut（形状カット）",
+          },
+          hasEmbroidery: false,
+          printInfo: {
+            method: "高精細UVインクジェット印刷",
+            desc: "耐候性ビニール素材にUVインクで印刷。防水・耐UV加工により屋外でも色褪せにくく長持ちします。",
+          },
+          shippingInfo: {
+            delivery: "ご注文から最短5営業日",
+            method: "ネコポス（ポスト投函）",
+            gift: "非対応",
+          },
+        },
+      };
+
+      const SIZES = ["S", "M", "L", "XL", "2XL"];
+
+      // ==================== STATE ====================
+      let currentProduct = null;
+      let currentProductId = "hoodie";
+      let selectedPlacement = null;
+      let selectedColor = null;
+      let selectedSize = null;
+      let currentGalleryIndex = 0;
+
+      // ==================== INIT ====================
+      function init() {
+        const params = new URLSearchParams(window.location.search);
+        currentProductId = params.get("product") || "hoodie";
+        if (!PRODUCTS[currentProductId]) {
+          currentProductId = "hoodie";
+        }
+        currentProduct = PRODUCTS[currentProductId];
+
+        document.title = currentProduct.name + " — Deer";
+
+        // Breadcrumb
+        document.getElementById("breadcrumb-product").textContent =
+          currentProduct.name;
+
+        // Title + subtitle
+        document.getElementById("productTitle").textContent =
+          currentProduct.name;
+        document.getElementById("productSubtitle").textContent =
+          currentProduct.subtitle;
+
+        // Sticky CTA name
+        document.getElementById("stickyName").textContent = currentProduct.name;
+
+        // Gallery
+        renderGallery();
+
+        // Manufacture tabs (show only if embroidery variant exists)
+        renderManufactureTabs();
+
+        // Placements
+        renderPlacements();
+
+        // Colors
+        renderColors();
+
+        // Sizes
+        renderSizes();
+
+        // Specs
+        renderSpecs();
+
+        // Update price
+        updatePrice();
+
+        // Setup sticky CTA observer
+        setupStickyCta();
+
+        // Nav scroll
+        window.addEventListener("scroll", () => {
+          document
+            .getElementById("nav")
+            .classList.toggle("scrolled", window.scrollY > 50);
+        });
+      }
+
+      // ==================== GALLERY ====================
+      function renderGallery() {
+        const thumbsEl = document.getElementById("galleryThumbs");
+        const mainEl = document.getElementById("galleryMain");
+        const gallery = currentProduct.gallery;
+
+        thumbsEl.innerHTML = "";
+        gallery.forEach((img, i) => {
+          const thumb = document.createElement("div");
+          thumb.className = "gallery-thumb" + (i === 0 ? " active" : "");
+          thumb.innerHTML = `<img src="${img.src}" alt="${img.label}" onerror="this.style.display='none'" />`;
+          thumb.onclick = () => selectGalleryImage(i);
+          thumbsEl.appendChild(thumb);
+        });
+
+        mainEl.src = gallery[0].src;
+        mainEl.alt = currentProduct.name;
+        currentGalleryIndex = 0;
+      }
+
+      function selectGalleryImage(index) {
+        const gallery = currentProduct.gallery;
+        if (index < 0 || index >= gallery.length) return;
+
+        currentGalleryIndex = index;
+        document.getElementById("galleryMain").src = gallery[index].src;
+
+        document.querySelectorAll(".gallery-thumb").forEach((t, i) => {
+          t.classList.toggle("active", i === index);
+        });
+      }
+
+      // ==================== MANUFACTURE TABS ====================
+      function renderManufactureTabs() {
+        const tabsEl = document.getElementById("manufactureTabs");
+
+        // 刺繍商品の場合はタブ不要（すでに刺繍商品）
+        if (
+          currentProductId === "emb-cap" ||
+          currentProductId === "emb-hoodie"
+        ) {
+          tabsEl.style.display = "none";
+          return;
+        }
+
+        if (currentProduct.hasEmbroidery || currentProductId === "hoodie") {
+          tabsEl.innerHTML = `
+            <button class="manufacture-tab active">プリント</button>
+            <button class="manufacture-tab disabled">
+              刺繍<span class="coming-tag">Coming Soon</span>
+            </button>
+          `;
+          tabsEl.style.display = "flex";
+        } else {
+          tabsEl.style.display = "none";
+        }
+      }
+
+      // ==================== PLACEMENTS ====================
+      function renderPlacements() {
+        const group = document.getElementById("placementGroup");
+        const container = document.getElementById("placementOptions");
+
+        if (currentProduct.placements.length <= 1) {
+          group.style.display = "none";
+          selectedPlacement = currentProduct.placements[0];
+          return;
+        }
+
+        group.style.display = "block";
+        container.innerHTML = "";
+        selectedPlacement = currentProduct.placements[0];
+
+        currentProduct.placements.forEach((p, i) => {
+          const btn = document.createElement("button");
+          btn.className = "placement-btn" + (i === 0 ? " selected" : "");
+          btn.innerHTML =
+            p.name +
+            (p.price > 0
+              ? ` <span class="extra-price">+¥${p.price.toLocaleString()}</span>`
+              : "");
+          btn.onclick = () => selectPlacement(i);
+          container.appendChild(btn);
+        });
+
+        document.getElementById("placementSelectedName").textContent =
+          "— " + selectedPlacement.name;
+      }
+
+      function selectPlacement(index) {
+        selectedPlacement = currentProduct.placements[index];
+        document.querySelectorAll(".placement-btn").forEach((b, i) => {
+          b.classList.toggle("selected", i === index);
+        });
+        document.getElementById("placementSelectedName").textContent =
+          "— " + selectedPlacement.name;
+        updatePrice();
+      }
+
+      // ==================== COLORS ====================
+      function renderColors() {
+        const group = document.getElementById("colorGroup");
+        const container = document.getElementById("colorOptions");
+
+        if (currentProduct.colors.length <= 1) {
+          group.style.display = "none";
+          selectedColor = currentProduct.colors[0];
+          return;
+        }
+
+        group.style.display = "block";
+        container.innerHTML = "";
+        selectedColor = currentProduct.colors[0];
+
+        currentProduct.colors.forEach((c, i) => {
+          const swatch = document.createElement("div");
+          swatch.className = "color-swatch" + (i === 0 ? " selected" : "");
+          swatch.style.background = c.hex;
+          if (c.hex === "#F5F5F0" || c.hex === "#E8E8E8") {
+            swatch.style.boxShadow = "inset 0 0 0 1px rgba(0,0,0,0.15)";
+          }
+          swatch.innerHTML = `<span class="color-name">${c.name}</span>`;
+          swatch.onclick = () => selectColor(i);
+          container.appendChild(swatch);
+        });
+
+        document.getElementById("colorSelectedName").textContent =
+          "— " + selectedColor.name;
+      }
+
+      function selectColor(index) {
+        selectedColor = currentProduct.colors[index];
+        document.querySelectorAll(".color-swatch").forEach((s, i) => {
+          s.classList.toggle("selected", i === index);
+        });
+        document.getElementById("colorSelectedName").textContent =
+          "— " + selectedColor.name;
+      }
+
+      // ==================== SIZES ====================
+      function renderSizes() {
+        const group = document.getElementById("sizeGroup");
+        const container = document.getElementById("sizeOptions");
+
+        if (!currentProduct.hasSize) {
+          group.style.display = "none";
+          return;
+        }
+
+        group.style.display = "block";
+        container.innerHTML = "";
+        selectedSize = "M";
+
+        const sizes = currentProduct.sizes || SIZES;
+        sizes.forEach((s) => {
+          const btn = document.createElement("button");
+          btn.className = "size-btn" + (s === "M" ? " selected" : "");
+          btn.textContent = s;
+          btn.onclick = () => selectSize(s);
+          container.appendChild(btn);
+        });
+
+        document.getElementById("sizeSelectedName").textContent = "— M";
+      }
+
+      function selectSize(size) {
+        selectedSize = size;
+        document.querySelectorAll(".size-btn").forEach((b) => {
+          b.classList.toggle("selected", b.textContent === size);
+        });
+        document.getElementById("sizeSelectedName").textContent = "— " + size;
+      }
+
+      // ==================== SPECS ====================
+      function renderSpecs() {
+        // 商品仕様
+        const el = document.getElementById("specContent");
+        const table = document.createElement("table");
+        for (const [key, val] of Object.entries(currentProduct.specs)) {
+          const tr = document.createElement("tr");
+          const th = document.createElement("th");
+          th.textContent = key;
+          const td = document.createElement("td");
+          td.textContent = val;
+          tr.appendChild(th);
+          tr.appendChild(td);
+          table.appendChild(tr);
+        }
+        el.innerHTML = "";
+        el.appendChild(table);
+
+        // プリントについて
+        const printEl = document.getElementById("printContent");
+        const pi = currentProduct.printInfo;
+        printEl.innerHTML = `
+          <p>高品質<strong>${pi.method}</strong>を採用。${pi.desc}</p>
+          <p style="margin-top: 0.5rem">
+            お客様の愛犬の写真をAIがアート作品に変換し、そのデータをもとにプリントします。
+            1点1点オーダーメイドのため、ご注文後の制作となります。
+          </p>
+        `;
+
+        // 配送について
+        const shipEl = document.getElementById("shippingContent");
+        const si = currentProduct.shippingInfo;
+        shipEl.innerHTML = `
+          <p>全品送料無料でお届けします。</p>
+          <table>
+            <tr><th>お届け目安</th><td>${si.delivery}</td></tr>
+            <tr><th>配送方法</th><td>${si.method}</td></tr>
+            <tr><th>ギフトラッピング</th><td>${si.gift}</td></tr>
+          </table>
+        `;
+      }
+
+      // ==================== PRICE ====================
+      function updatePrice() {
+        const base = currentProduct.base;
+        const placementExtra = selectedPlacement ? selectedPlacement.price : 0;
+        const total = base + placementExtra;
+
+        document.getElementById("basePrice").textContent =
+          "¥" + base.toLocaleString();
+
+        const priceRow = document.getElementById("placementPriceRow");
+        if (placementExtra > 0) {
+          priceRow.style.display = "flex";
+          document.getElementById("placementPriceLabel").textContent =
+            selectedPlacement.name + " 追加";
+          document.getElementById("placementPrice").textContent =
+            "+¥" + placementExtra.toLocaleString();
+        } else {
+          priceRow.style.display = "none";
+        }
+
+        document.getElementById("totalPrice").textContent =
+          "¥" + total.toLocaleString();
+        document.getElementById("stickyPrice").textContent =
+          "¥" + total.toLocaleString();
+      }
+
+      // ==================== CTA ====================
+      function goToOrder() {
+        let url = "upload?item=" + encodeURIComponent(currentProductId);
+        if (selectedPlacement)
+          url += "&placement=" + encodeURIComponent(selectedPlacement.id);
+        if (selectedColor)
+          url += "&color=" + encodeURIComponent(selectedColor.id);
+        if (selectedSize) url += "&size=" + encodeURIComponent(selectedSize);
+
+        window.location.href = url;
+      }
+
+      // ==================== STICKY CTA ====================
+      function setupStickyCta() {
+        const ctaBtn = document.getElementById("ctaButton");
+        const stickyCta = document.getElementById("stickyCta");
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              stickyCta.classList.toggle("visible", !entry.isIntersecting);
+            });
+          },
+          { threshold: 0, rootMargin: "0px" },
+        );
+
+        observer.observe(ctaBtn);
+      }
+
+      // ==================== ACCORDION ====================
+      function toggleAccordion(header) {
+        const item = header.parentElement;
+        const isOpen = item.classList.contains("open");
+
+        // Close all
+        document
+          .querySelectorAll(".detail-accordion-item")
+          .forEach((i) => i.classList.remove("open"));
+
+        // Toggle clicked
+        if (!isOpen) {
+          item.classList.add("open");
+        }
+      }
+
+      // ==================== GO ====================
+      init();
+    </script>
+  </body>
+</html>

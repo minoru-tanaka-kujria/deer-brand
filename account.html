@@ -1,0 +1,1199 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>マイページ — Deer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="robots" content="noindex" />
+    <style>
+      :root {
+        --ivory: #faf7f2;
+        --cream: #f5ede3;
+        --warm: #ede4d8;
+        --gold: #c4a265;
+        --gold-light: #d4b87a;
+        --terracotta: #c4836a;
+        --charcoal: #2c2824;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --text-light: #9b9490;
+        --white: #ffffff;
+        --border: #e8dfd5;
+        --red: #c0392b;
+        --serif: "Cormorant Garamond", Georgia, serif;
+        --sans: "Zen Maru Gothic", sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: var(--sans);
+        background: var(--ivory);
+        color: var(--text);
+        line-height: 1.8;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      /* NAV */
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-logo img {
+        height: 1.8rem;
+      }
+      .nav-back {
+        font-size: 0.78rem;
+        color: var(--text-mid);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .nav-back:hover {
+        color: var(--terracotta);
+      }
+
+      /* LAYOUT */
+      .page {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+      }
+      .page-title {
+        font-family: var(--serif);
+        font-size: 1.8rem;
+        font-weight: 400;
+        color: var(--charcoal);
+        margin-bottom: 0.3rem;
+      }
+      .page-sub {
+        font-size: 0.78rem;
+        color: var(--text-mid);
+        margin-bottom: 2rem;
+      }
+
+      /* SECTION CARD */
+      .section-card {
+        background: var(--white);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+      .section-card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .section-card-header svg {
+        color: var(--gold);
+        flex-shrink: 0;
+      }
+      .section-card-header h2 {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+      .section-card-body {
+        padding: 1.5rem;
+      }
+
+      /* USER INFO */
+      .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--border);
+        margin-bottom: 1rem;
+        background: var(--cream);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+      .user-name {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--charcoal);
+      }
+      .user-email {
+        font-size: 0.78rem;
+        color: var(--text-mid);
+      }
+      .user-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: var(--cream);
+        border-radius: 1rem;
+        padding: 0.2rem 0.7rem;
+        font-size: 0.68rem;
+        color: var(--text-mid);
+        margin-top: 0.5rem;
+      }
+
+      /* FORM */
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-mid);
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.5px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        color: var(--text);
+        background: var(--cream);
+        transition: border-color 0.3s;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--gold);
+        background: var(--white);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+      }
+
+      /* BUTTONS */
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        padding: 0.85rem;
+        background: var(--charcoal);
+        color: var(--white);
+        border: none;
+        border-radius: 10px;
+        font-family: var(--sans);
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.3s;
+      }
+      .btn-primary:hover {
+        opacity: 0.85;
+      }
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        padding: 0.75rem;
+        background: transparent;
+        color: var(--text-mid);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 0.6rem;
+      }
+      .btn-secondary:hover {
+        border-color: var(--terracotta);
+        color: var(--terracotta);
+      }
+      .btn-danger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        padding: 0.75rem;
+        background: transparent;
+        color: var(--red);
+        border: 1.5px solid rgba(192, 57, 43, 0.3);
+        border-radius: 10px;
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 0.6rem;
+      }
+      .btn-danger:hover {
+        background: rgba(192, 57, 43, 0.06);
+      }
+
+      /* ADDRESS LIST */
+      .address-item {
+        padding: 1rem;
+        background: var(--cream);
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .address-item.default {
+        border-color: var(--gold);
+        background: rgba(196, 162, 101, 0.06);
+      }
+      .address-text {
+        font-size: 0.82rem;
+        line-height: 1.7;
+        color: var(--charcoal);
+      }
+      .address-default-badge {
+        font-size: 0.62rem;
+        background: var(--gold);
+        color: var(--white);
+        padding: 0.15rem 0.5rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .address-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+      }
+      .icon-btn {
+        padding: 0.3rem;
+        color: var(--text-mid);
+        border: none;
+        background: none;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: color 0.2s;
+      }
+      .icon-btn:hover {
+        color: var(--terracotta);
+      }
+
+      /* PAYMENT CARDS */
+      .card-item {
+        padding: 1rem 1.2rem;
+        background: var(--cream);
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .card-brand {
+        font-size: 1.4rem;
+      }
+      .card-info {
+        flex: 1;
+      }
+      .card-number {
+        font-size: 0.82rem;
+        color: var(--charcoal);
+        font-weight: 500;
+      }
+      .card-exp {
+        font-size: 0.72rem;
+        color: var(--text-mid);
+      }
+      .card-default-badge {
+        font-size: 0.62rem;
+        background: var(--charcoal);
+        color: var(--white);
+        padding: 0.15rem 0.5rem;
+        border-radius: 1rem;
+        font-weight: 600;
+      }
+      .add-card-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        color: var(--text-mid);
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: none;
+        font-family: var(--sans);
+      }
+      .add-card-btn:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      /* ORDERS */
+      .order-item {
+        padding: 1rem 1.2rem;
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        margin-bottom: 0.8rem;
+      }
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+      .order-id {
+        font-size: 0.72rem;
+        color: var(--text-mid);
+        font-family: monospace;
+      }
+      .order-status {
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 0.2rem 0.6rem;
+        border-radius: 1rem;
+      }
+      .order-status.preparing {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .order-status.shipped {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .order-status.delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+      .order-product {
+        font-size: 0.82rem;
+        color: var(--charcoal);
+        font-weight: 500;
+      }
+      .order-detail {
+        font-size: 0.72rem;
+        color: var(--text-mid);
+      }
+      .order-price {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--charcoal);
+        margin-top: 0.4rem;
+      }
+
+      /* COUPONS */
+      .coupon-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.8rem 1rem;
+        background: linear-gradient(135deg, #fff9f0, var(--white));
+        border: 1.5px dashed var(--gold-light);
+        border-radius: 10px;
+        margin-bottom: 0.6rem;
+      }
+      .coupon-icon {
+        font-size: 1.4rem;
+      }
+      .coupon-code {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--charcoal);
+        font-family: monospace;
+        letter-spacing: 1px;
+      }
+      .coupon-desc {
+        font-size: 0.72rem;
+        color: var(--text-mid);
+      }
+      .coupon-discount {
+        margin-left: auto;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--terracotta);
+      }
+
+      /* LOGOUT */
+      .logout-area {
+        text-align: center;
+        padding: 1rem 0 0;
+      }
+      .logout-btn {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        font-size: 0.78rem;
+        cursor: pointer;
+        font-family: var(--sans);
+        text-decoration: underline;
+      }
+      .logout-btn:hover {
+        color: var(--red);
+      }
+
+      /* LOADING */
+      .loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        gap: 1rem;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border);
+        border-top-color: var(--gold);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loading-text {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+      }
+
+      /* NOT LOGGED IN */
+      .not-logged-in {
+        text-align: center;
+        padding: 4rem 2rem;
+      }
+      .not-logged-in h2 {
+        font-family: var(--serif);
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: var(--charcoal);
+        margin-bottom: 0.5rem;
+      }
+      .not-logged-in p {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+        margin-bottom: 2rem;
+      }
+
+      /* EMPTY STATE */
+      .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 600px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <nav class="nav">
+      <a class="nav-back" href="index">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        トップへ
+      </a>
+      <a href="index" class="nav-logo"><img src="img/logo.svg" alt="Deer" /></a>
+      <a
+        href="upload"
+        style="font-size: 0.78rem; color: var(--terracotta); font-weight: 600"
+        >注文する</a
+      >
+    </nav>
+
+    <div class="page" id="pageContent">
+      <!-- ローディング中 -->
+      <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <div class="loading-text">読み込み中...</div>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+        updateDoc,
+        arrayRemove,
+        arrayUnion,
+        collection,
+        query,
+        where,
+        orderBy,
+        getDocs,
+        limit,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      import {
+        FIREBASE_CONFIG,
+        STRIPE_PUBLISHABLE_KEY,
+      } from "./js/firebase-config.js";
+
+      const app = initializeApp(FIREBASE_CONFIG);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // auth-modal.js が参照するグローバル変数をセット
+      window._deerFirebaseAuth = auth;
+      window._deerFirebaseDb = db;
+
+      // ============================================================
+      //  認証状態を監視
+      // ============================================================
+      onAuthStateChanged(auth, async (user) => {
+        const page = document.getElementById("pageContent");
+        if (!user) {
+          // 未ログイン
+          page.innerHTML = `
+            <div class="not-logged-in">
+              <h2>ログインが必要です</h2>
+              <p>マイページを表示するにはログインしてください。</p>
+              <button class="btn-primary" style="width:auto;padding:0.8rem 2.5rem" onclick="DeerAuth.openModal()">
+                ログイン / 新規登録
+              </button>
+            </div>`;
+          return;
+        }
+
+        // Firestoreからユーザーデータ取得
+        const snap = await getDoc(doc(db, "users", user.uid)).catch(() => null);
+        const userData = snap?.exists() ? snap.data() : {};
+
+        // 注文履歴: ordersコレクションをuserIdで直接クエリ（より確実）
+        let orderDocs = [];
+        try {
+          const ordersQ = query(
+            collection(db, "orders"),
+            where("userId", "==", user.uid),
+            orderBy("createdAt", "desc"),
+            limit(20),
+          );
+          const ordersSnap = await getDocs(ordersQ);
+          orderDocs = ordersSnap.docs.map((d) => d.data());
+        } catch (e) {
+          // クエリ失敗時はorderId配列フォールバック
+          const orderIds = userData.orders || [];
+          if (orderIds.length > 0) {
+            const fetches = orderIds
+              .slice(0, 10)
+              .map((oid) => getDoc(doc(db, "orders", oid)).catch(() => null));
+            const results = await Promise.all(fetches);
+            orderDocs = results
+              .filter((r) => r && r.exists())
+              .map((r) => r.data());
+          }
+        }
+        userData._resolvedOrders = orderDocs;
+
+        renderAccountPage(user, userData);
+      });
+
+      // ============================================================
+      //  マイページHTML構築
+      // ============================================================
+      function renderAccountPage(user, data) {
+        const page = document.getElementById("pageContent");
+        const orders = data._resolvedOrders || [];
+        const coupons = data.availableCoupons || [];
+        const addresses = data.savedAddresses || [];
+        const now = new Date();
+
+        // ログインプロバイダーアイコン
+        const providerIcon =
+          user.providerData?.[0]?.providerId === "google.com"
+            ? "G"
+            : user.providerData?.[0]?.providerId === "apple.com"
+              ? ""
+              : user.providerData?.[0]?.providerId === "line"
+                ? "L"
+                : "✉";
+
+        page.innerHTML = `
+          <h1 class="page-title">マイページ</h1>
+          <p class="page-sub">ようこそ、<span id="accountDisplayName"></span>さん</p>
+
+          <!-- ユーザー情報 -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <h2>アカウント情報</h2>
+            </div>
+            <div class="section-card-body">
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem">
+                ${
+                  user.photoURL
+                    ? `<img src="${user.photoURL}" class="user-avatar" style="width:60px;height:60px;border-radius:50%;object-fit:cover">`
+                    : `<div class="user-avatar" style="width:60px;height:60px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:2px solid var(--border)">${providerIcon}</div>`
+                }
+                <div>
+                  <div class="user-name" id="accountUserName"></div>
+                  <div class="user-email">${escHtml(user.email || "")}</div>
+                  <div class="user-badge" id="accountEmailVerifiedBadge">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span id="accountEmailVerifiedText"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>表示名</label>
+                <input type="text" id="editDisplayName" value="${escHtml(user.displayName || "")}" placeholder="お名前">
+              </div>
+              <button class="btn-secondary" style="margin-top:0" onclick="saveProfile('${user.uid}')">プロフィールを保存</button>
+            </div>
+          </div>
+
+          <!-- 保存済み住所 -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-8-7.5-8-12a8 8 0 0116 0c0 4.5-8 12-8 12z"/><circle cx="12" cy="9" r="2"/></svg>
+              <h2>お届け先住所</h2>
+            </div>
+            <div class="section-card-body">
+              <div id="addressList">
+              ${
+                addresses.length === 0
+                  ? `<p class="empty-state">保存された住所がありません。<br>注文時に住所を入力すると自動保存されます。</p>`
+                  : addresses
+                      .map(
+                        (a, i) => `
+                  <div class="address-item ${i === 0 ? "default" : ""}">
+                    <div style="flex:1">
+                      ${i === 0 ? `<span class="address-default-badge">デフォルト</span>` : `<button class="btn-set-default" onclick="setDefaultAddress('${user.uid}', ${i})" style="font-size:0.65rem;color:var(--text-mid);background:none;border:1px solid var(--border);border-radius:1rem;padding:0.15rem 0.5rem;cursor:pointer;margin-bottom:0.3rem">デフォルトに設定</button>`}
+                      <div class="address-text" style="margin-top:0.3rem">
+                        ${escHtml(a.fullName || [a.lastName, a.firstName].filter(Boolean).join(" "))}<br>
+                        ${a.phone ? `📞 ${escHtml(a.phone)}<br>` : ""}
+                        〒${escHtml(a.zip)} ${escHtml(a.prefecture)} ${escHtml(a.address1)}
+                        ${a.address2 ? `<br>${escHtml(a.address2)}` : ""}
+                      </div>
+                    </div>
+                    <div class="address-actions">
+                      <button class="icon-btn" title="削除" onclick="deleteAddress('${user.uid}', ${i})">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                      </button>
+                    </div>
+                  </div>`,
+                      )
+                      .join("")
+              }
+              </div>
+              <button class="add-card-btn" style="margin-top:0.8rem" onclick="openAddAddressModal('${user.uid}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                新しい住所を追加
+              </button>
+            </div>
+          </div>
+
+          <!-- お支払い方法 -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              <h2>お支払い方法</h2>
+            </div>
+            <div class="section-card-body">
+              <p style="font-size:0.75rem;color:var(--text-mid);margin-bottom:1rem;line-height:1.6">
+                クレジットカードはStripeによって安全に管理されます。カード情報はDeerのサーバーには保存されません。
+              </p>
+              <!-- 保存済みカード（Stripe Customer Portalから取得） -->
+              <div id="savedCards">
+                <div class="empty-state">保存されたカードがありません</div>
+              </div>
+              <button class="add-card-btn" onclick="openStripeCardSetup()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                カードを追加
+              </button>
+            </div>
+          </div>
+
+          <!-- クーポン -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <h2>保有クーポン</h2>
+            </div>
+            <div class="section-card-body">
+              ${
+                coupons.length === 0
+                  ? `<p class="empty-state">現在使えるクーポンはありません。<br>Instagramフォローや新規登録でクーポンが発行されます。</p>`
+                  : coupons
+                      .map((c) => {
+                        let isExpired = false;
+                        if (c.expiresAt) {
+                          const expDate = c.expiresAt.toDate
+                            ? c.expiresAt.toDate()
+                            : new Date(c.expiresAt);
+                          if (expDate < now) isExpired = true;
+                        }
+                        const expiredBadge = isExpired
+                          ? `<span style="font-size:0.62rem;background:#c0392b;color:#fff;padding:0.1rem 0.4rem;border-radius:1rem;margin-left:0.4rem;font-weight:600">期限切れ</span>`
+                          : "";
+                        const opacity = isExpired ? "opacity:0.5;" : "";
+                        return `
+                  <div class="coupon-item" style="${opacity}">
+                    <div class="coupon-icon">🎟</div>
+                    <div>
+                      <div class="coupon-code">${escHtml(c.code)}${expiredBadge}</div>
+                      <div class="coupon-desc">${escHtml(c.description)}</div>
+                    </div>
+                    <div class="coupon-discount">${isExpired ? '<span style="font-size:0.72rem;color:#c0392b">使用不可</span>' : c.type === "percent" ? c.discount + "%OFF" : "¥" + c.discount.toLocaleString()}</div>
+                  </div>`;
+                      })
+                      .join("")
+              }
+            </div>
+          </div>
+
+          <!-- 注文履歴 -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+              <h2>注文履歴</h2>
+            </div>
+            <div class="section-card-body">
+              ${
+                orders.length === 0
+                  ? `<p class="empty-state">まだ注文がありません。<br><a href="upload" style="color:var(--terracotta)">はじめての注文をする →</a></p>`
+                  : orders
+                      .slice(0, 5)
+                      .map((o) => {
+                        const statusLabel =
+                          o.status === "preparing"
+                            ? "制作中"
+                            : o.status === "shipped"
+                              ? "発送済み"
+                              : o.status === "delivered"
+                                ? "配達完了"
+                                : o.status === "pending"
+                                  ? "受付中"
+                                  : escHtml(o.status || "処理中");
+                        const productName =
+                          o.productName || o.product || "商品";
+                        return `
+                  <div class="order-item">
+                    <div class="order-header">
+                      <div class="order-id">${escHtml(o.orderId)}</div>
+                      <span class="order-status ${escHtml(o.status || "pending")}">${statusLabel}</span>
+                    </div>
+                    <div class="order-product">${escHtml(productName)}</div>
+                    <div class="order-detail">${escHtml(o.style || "")}${o.style && o.color ? " / " : ""}${escHtml(o.color || "")}</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.4rem">
+                      <div style="font-size:0.7rem;color:var(--text-light)">${(() => { try { const d = o.createdAt?.toDate ? o.createdAt.toDate() : o.createdAt ? new Date(o.createdAt) : null; return d ? d.toLocaleDateString("ja-JP", {year:"numeric",month:"2-digit",day:"2-digit"}) : ""; } catch(e){ return ""; } })()}</div>
+                      <div class="order-price" style="margin-top:0">¥${Number(o.total || 0).toLocaleString()}</div>
+                    </div>
+                  </div>`;
+                      })
+                      .join("")
+              }
+            </div>
+          </div>
+
+          <!-- ログアウト -->
+          <div class="logout-area">
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+          </div>
+        `;
+
+        const displayNameEl = document.getElementById("accountDisplayName");
+        if (displayNameEl) {
+          displayNameEl.textContent = user.displayName || "ゲスト";
+        }
+        const accountUserNameEl = document.getElementById("accountUserName");
+        if (accountUserNameEl) {
+          accountUserNameEl.textContent = user.displayName || "名前未設定";
+        }
+        const accountEmailVerifiedTextEl = document.getElementById(
+          "accountEmailVerifiedText",
+        );
+        if (accountEmailVerifiedTextEl) {
+          accountEmailVerifiedTextEl.textContent =
+            user.emailVerified === true ? "メール確認済み" : "メール未確認";
+        }
+
+        // ログアウトボタン（auth-modal.jsの確認ダイアログを使用）
+        document
+          .getElementById("logoutBtn")
+          .addEventListener("click", () => {
+            if (typeof DeerAuth !== "undefined" && typeof DeerAuth.logout === "function") {
+              DeerAuth.logout();
+            } else {
+              if (confirm("ログアウトしますか？")) {
+                signOut(auth).then(() => { window.location.href = "index"; });
+              }
+            }
+          });
+      }
+
+      // ============================================================
+      //  プロフィール保存
+      // ============================================================
+      window.saveProfile = async (uid) => {
+        const displayName = document
+          .getElementById("editDisplayName")
+          .value.trim();
+        try {
+          await updateDoc(doc(db, "users", uid), { displayName });
+          showToast("プロフィールを保存しました");
+        } catch (e) {
+          showToast("保存に失敗しました", true);
+        }
+      };
+
+      // ============================================================
+      //  Stripeカード追加（SetupIntent フロー）
+      // ============================================================
+      window.openStripeCardSetup = async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          showToast("ログインが必要です", "error");
+          return;
+        }
+
+        // SetupIntentをサーバーから取得
+        let clientSecret;
+        try {
+          const res = await fetch("/api/stripe-setup-intent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.uid }),
+          });
+          if (!res.ok) throw new Error("SetupIntent作成失敗");
+          const data = await res.json();
+          clientSecret = data.clientSecret;
+        } catch (e) {
+          showToast(
+            "カード登録の準備に失敗しました。時間をおいて再度お試しください。",
+            "error",
+          );
+          return;
+        }
+
+        // Stripeが未ロードの場合のフォールバック
+        if (typeof Stripe === "undefined") {
+          showToast(
+            "Stripe.jsが読み込まれていません。ページをリロードしてください。",
+            "error",
+          );
+          return;
+        }
+
+        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        const elements = stripe.elements();
+        const cardEl = elements.create("card", {
+          style: {
+            base: {
+              fontFamily: '"Zen Maru Gothic", sans-serif',
+              fontSize: "15px",
+              color: "#2c2824",
+            },
+          },
+          hidePostalCode: true,
+        });
+
+        // モーダルを生成してカード入力UIを表示
+        const modal = document.createElement("div");
+        modal.style.cssText =
+          "position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem";
+        modal.innerHTML = `
+          <div style="background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+            <h3 style="font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:1.2rem;color:var(--charcoal)">カードを追加</h3>
+            <div id="setupCardElement" style="padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);margin-bottom:0.5rem"></div>
+            <div id="setupCardErrors" style="font-size:0.72rem;color:var(--red);min-height:1.2rem;margin-bottom:1rem"></div>
+            <button id="setupConfirmBtn" style="width:100%;padding:0.85rem;background:var(--charcoal);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:0.88rem;font-weight:600;cursor:pointer">カードを保存する</button>
+            <button id="setupCancelBtn" style="width:100%;padding:0.7rem;background:none;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.82rem;cursor:pointer;margin-top:0.6rem;color:var(--text-mid)">キャンセル</button>
+          </div>`;
+        document.body.appendChild(modal);
+        cardEl.mount("#setupCardElement");
+        cardEl.on("change", (e) => {
+          document.getElementById("setupCardErrors").textContent = e.error
+            ? e.error.message
+            : "";
+        });
+
+        document
+          .getElementById("setupCancelBtn")
+          .addEventListener("click", () => {
+            modal.remove();
+          });
+
+        document
+          .getElementById("setupConfirmBtn")
+          .addEventListener("click", async () => {
+            const btn = document.getElementById("setupConfirmBtn");
+            btn.disabled = true;
+            btn.textContent = "処理中...";
+            const { setupIntent, error } = await stripe.confirmCardSetup(
+              clientSecret,
+              {
+                payment_method: { card: cardEl },
+              },
+            );
+            if (error) {
+              document.getElementById("setupCardErrors").textContent =
+                error.message;
+              btn.disabled = false;
+              btn.textContent = "カードを保存する";
+            } else {
+              modal.remove();
+              showToast("カードを保存しました", "success");
+            }
+          });
+      };
+
+      // ============================================================
+      //  住所削除
+      // ============================================================
+      window.deleteAddress = async (uid, idx) => {
+        if (!confirm("この住所を削除しますか？")) return;
+        try {
+          const snap = await getDoc(doc(db, "users", uid));
+          if (!snap.exists()) return;
+          const addresses = snap.data().savedAddresses || [];
+          const target = addresses[idx];
+          if (!target) return;
+          const newAddresses = addresses.filter((_, i) => i !== idx);
+          await updateDoc(doc(db, "users", uid), { savedAddresses: newAddresses });
+          showToast("住所を削除しました", "success");
+          refreshAddressList(uid);
+        } catch (e) {
+          showToast("住所の削除に失敗しました", "error");
+        }
+      };
+
+      // ============================================================
+      //  住所デフォルト設定
+      // ============================================================
+      window.setDefaultAddress = async (uid, idx) => {
+        try {
+          const snap = await getDoc(doc(db, "users", uid));
+          if (!snap.exists()) return;
+          const addresses = snap.data().savedAddresses || [];
+          if (idx < 0 || idx >= addresses.length) return;
+          // 選択した住所を先頭に移動
+          const selected = addresses.splice(idx, 1)[0];
+          const newAddresses = [selected, ...addresses];
+          await updateDoc(doc(db, "users", uid), { savedAddresses: newAddresses });
+          showToast("デフォルト住所を変更しました", "success");
+          refreshAddressList(uid);
+        } catch (e) {
+          showToast("住所の変更に失敗しました", "error");
+        }
+      };
+
+      // ============================================================
+      //  住所リスト再描画（リロードなし）
+      // ============================================================
+      async function refreshAddressList(uid) {
+        try {
+          const snap = await getDoc(doc(db, "users", uid));
+          const addresses = snap?.exists() ? (snap.data().savedAddresses || []) : [];
+          const container = document.getElementById("addressList");
+          if (!container) return;
+          if (addresses.length === 0) {
+            container.innerHTML = `<p class="empty-state">保存された住所がありません。<br>注文時に住所を入力すると自動保存されます。</p>`;
+            return;
+          }
+          container.innerHTML = addresses.map((a, i) => `
+            <div class="address-item ${i === 0 ? "default" : ""}">
+              <div style="flex:1">
+                ${i === 0 ? `<span class="address-default-badge">デフォルト</span>` : `<button onclick="setDefaultAddress('${uid}', ${i})" style="font-size:0.65rem;color:var(--text-mid);background:none;border:1px solid var(--border);border-radius:1rem;padding:0.15rem 0.5rem;cursor:pointer;margin-bottom:0.3rem">デフォルトに設定</button>`}
+                <div class="address-text" style="margin-top:0.3rem">
+                  ${escHtml(a.fullName || [a.lastName, a.firstName].filter(Boolean).join(" "))}<br>
+                  ${a.phone ? `📞 ${escHtml(a.phone)}<br>` : ""}
+                  〒${escHtml(a.zip)} ${escHtml(a.prefecture)} ${escHtml(a.address1)}
+                  ${a.address2 ? `<br>${escHtml(a.address2)}` : ""}
+                </div>
+              </div>
+              <div class="address-actions">
+                <button class="icon-btn" title="削除" onclick="deleteAddress('${uid}', ${i})">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </button>
+              </div>
+            </div>`).join("");
+        } catch (e) {
+          console.warn("住所リスト更新失敗:", e);
+        }
+      }
+
+      // ============================================================
+      //  住所追加モーダル
+      // ============================================================
+      window.openAddAddressModal = (uid) => {
+        const existing = document.getElementById("addAddressModal");
+        if (existing) existing.remove();
+
+        const modal = document.createElement("div");
+        modal.id = "addAddressModal";
+        modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem";
+        modal.innerHTML = `
+          <div style="background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+            <h3 style="font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:1.2rem;color:var(--charcoal)">新しい住所を追加</h3>
+            <div class="form-group"><label>お名前（フルネーム）</label><input type="text" id="addrFullName" placeholder="山田 花子" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)"></div>
+            <div class="form-group"><label>電話番号</label><input type="tel" id="addrPhone" placeholder="090-1234-5678" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem">
+              <div class="form-group"><label>郵便番号</label><input type="text" id="addrZip" placeholder="123-4567" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)"></div>
+              <div class="form-group"><label>都道府県</label>
+                <select id="addrPref" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)">
+                  <option value="">選択</option>
+                  ${["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"].map(p=>`<option>${p}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label>市区町村・番地</label><input type="text" id="addrAddress1" placeholder="渋谷区神南1-2-3" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)"></div>
+            <div class="form-group"><label>建物名・部屋番号（任意）</label><input type="text" id="addrAddress2" placeholder="ABCマンション 101号室" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)"></div>
+            <div id="addrError" style="font-size:0.72rem;color:var(--red);min-height:1rem;margin-bottom:0.5rem"></div>
+            <button id="addrSaveBtn" style="width:100%;padding:0.85rem;background:var(--charcoal);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:0.88rem;font-weight:600;cursor:pointer">保存する</button>
+            <button onclick="document.getElementById('addAddressModal').remove()" style="width:100%;padding:0.7rem;background:none;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.82rem;cursor:pointer;margin-top:0.6rem;color:var(--text-mid)">キャンセル</button>
+          </div>`;
+        document.body.appendChild(modal);
+
+        document.getElementById("addrSaveBtn").addEventListener("click", async () => {
+          const fullName = document.getElementById("addrFullName").value.trim();
+          const phone = document.getElementById("addrPhone").value.trim();
+          const zip = document.getElementById("addrZip").value.trim();
+          const prefecture = document.getElementById("addrPref").value;
+          const address1 = document.getElementById("addrAddress1").value.trim();
+          const address2 = document.getElementById("addrAddress2").value.trim();
+          const errEl = document.getElementById("addrError");
+
+          if (!fullName || !phone || !zip || !prefecture || !address1) {
+            errEl.textContent = "必須項目をすべて入力してください";
+            return;
+          }
+          const zipRegex = /^\d{7}$|^\d{3}-\d{4}$/;
+          if (!zipRegex.test(zip)) {
+            errEl.textContent = "郵便番号はXXX-XXXXまたは7桁で入力してください";
+            return;
+          }
+          errEl.textContent = "";
+          const btn = document.getElementById("addrSaveBtn");
+          btn.disabled = true;
+          btn.textContent = "保存中...";
+          try {
+            const snap = await getDoc(doc(db, "users", uid));
+            const current = snap?.exists() ? (snap.data().savedAddresses || []) : [];
+            const isDuplicate = current.some(a => a.zip === zip && a.address1 === address1);
+            if (isDuplicate) { errEl.textContent = "同じ住所がすでに登録されています"; btn.disabled = false; btn.textContent = "保存する"; return; }
+            const newAddresses = [...current, { fullName, phone, zip, prefecture, address1, address2 }].slice(0, 5);
+            await updateDoc(doc(db, "users", uid), { savedAddresses: newAddresses });
+            modal.remove();
+            showToast("住所を追加しました", "success");
+            refreshAddressList(uid);
+          } catch (e) {
+            errEl.textContent = "保存に失敗しました。再度お試しください。";
+            btn.disabled = false;
+            btn.textContent = "保存する";
+          }
+        });
+      };
+
+      // ============================================================
+      //  ユーティリティ
+      // ============================================================
+      function escHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      // type: 'success' | 'error' | 'warning' （後方互換: isError=true も受け付ける）
+      function showToast(msg, type = "success") {
+        if (type === true) type = "error";
+        if (type === false) type = "success";
+        const bgMap = {
+          error: "#c0392b",
+          success: "#2c2824",
+          warning: "#e67e22",
+        };
+        const bg = bgMap[type] || bgMap.success;
+        const t = document.createElement("div");
+        t.textContent = msg;
+        Object.assign(t.style, {
+          position: "fixed",
+          bottom: "2rem",
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: bg,
+          color: "#fff",
+          padding: "0.7rem 1.5rem",
+          borderRadius: "2rem",
+          fontSize: "0.82rem",
+          fontFamily: "var(--sans)",
+          zIndex: "9999",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+          opacity: "0",
+          transition: "opacity 0.3s",
+          maxWidth: "90vw",
+          textAlign: "center",
+        });
+        document.body.appendChild(t);
+        setTimeout(() => (t.style.opacity = "1"), 10);
+        setTimeout(() => {
+          t.style.opacity = "0";
+          setTimeout(() => t.remove(), 300);
+        }, 2500);
+      }
+    </script>
+
+    <!-- 共通ログインモーダル -->
+    <div id="authModal" style="display: none"></div>
+    <script src="js/auth-modal.js"></script>
+  </body>
+</html>

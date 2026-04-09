@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>アナログテスト用マニュアル — Deer Brand</title>
+    <style>
+      :root {
+        --gold: #c4a265;
+        --gold-dark: #b0904f;
+        --bg: #faf7f2;
+        --white: #ffffff;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --border: #e8dfd5;
+        --red: #991b1b;
+        --green: #166534;
+        --blue: #1e40af;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.8;
+        font-size: 14px;
+      }
+      .doc-header {
+        background: #2c2824;
+        color: white;
+        padding: 36px 48px;
+        border-bottom: 4px solid var(--gold);
+      }
+      .doc-header .brand {
+        color: var(--gold);
+        font-size: 13px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .doc-header h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .doc-header .meta {
+        color: #aaa;
+        font-size: 12px;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 48px;
+      }
+      /* 概要ボックス */
+      .overview-box {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 32px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .overview-item {
+      }
+      .overview-item .label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+      .overview-item .value {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      /* 目次 */
+      .toc {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 40px;
+      }
+      .toc h2 {
+        font-size: 16px;
+        color: var(--gold);
+        margin-bottom: 16px;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 8px;
+      }
+      .toc ol {
+        padding-left: 24px;
+      }
+      .toc li {
+        margin-bottom: 8px;
+      }
+      .toc a {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .toc a:hover {
+        color: var(--gold);
+      }
+      /* セクション */
+      .section {
+        margin-bottom: 56px;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--gold);
+      }
+      .section-badge {
+        background: var(--gold);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 20px;
+        flex-shrink: 0;
+      }
+      .section-badge.normal {
+        background: #166534;
+      }
+      .section-badge.error {
+        background: #991b1b;
+      }
+      .section-badge.admin {
+        background: #1e40af;
+      }
+      .section-header h2 {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      /* スクリーンショット */
+      .screenshot-block {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 20px 0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      }
+      .screenshot-block .caption {
+        background: var(--bg);
+        padding: 10px 16px;
+        font-size: 12px;
+        color: var(--text-mid);
+        border-top: 1px solid var(--border);
+      }
+      .screenshot-block img {
+        width: 100%;
+        display: block;
+      }
+      /* テストシナリオブロック */
+      .scenario {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .scenario-header {
+        padding: 14px 20px;
+        font-weight: bold;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .scenario-header.normal {
+        background: #f0fdf4;
+        color: #166534;
+        border-bottom-color: #bbf7d0;
+      }
+      .scenario-header.error {
+        background: #fef2f2;
+        color: #991b1b;
+        border-bottom-color: #fecaca;
+      }
+      .scenario-header.admin {
+        background: #eff6ff;
+        color: #1e40af;
+        border-bottom-color: #bfdbfe;
+      }
+      .scenario-id {
+        font-size: 11px;
+        font-family: monospace;
+        opacity: 0.7;
+      }
+      /* チェックリスト */
+      .checklist {
+        list-style: none;
+        padding: 16px 20px;
+      }
+      .checklist li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f0ea;
+        font-size: 13px;
+      }
+      .checklist li:last-child {
+        border-bottom: none;
+      }
+      .check-box {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 1px;
+        background: white;
+      }
+      .check-label {
+        flex: 1;
+        line-height: 1.6;
+      }
+      .check-label .step-num {
+        color: var(--gold);
+        font-weight: bold;
+        margin-right: 4px;
+      }
+      .check-label .expected {
+        display: block;
+        color: var(--text-mid);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+      .check-label .input-val {
+        color: #2563eb;
+        font-family: monospace;
+        font-size: 12px;
+      }
+      /* テーブル */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        background: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      }
+      th {
+        background: var(--bg);
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1.5px solid var(--border);
+      }
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        vertical-align: top;
+      }
+      /* 注意ボックス */
+      .note {
+        border-left: 4px solid var(--gold);
+        background: #fef9f0;
+        color: #7a5c1e;
+        padding: 12px 18px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+        font-size: 13px;
+      }
+      .note strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      code {
+        background: #f0ebe3;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: "SF Mono", "Courier New", monospace;
+        font-size: 12px;
+        color: #c4534a;
+      }
+      /* テスター情報欄 */
+      .tester-box {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 32px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+      .tester-field .label {
+        font-size: 11px;
+        color: var(--text-mid);
+        margin-bottom: 6px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .tester-field .field-line {
+        border-bottom: 1.5px solid var(--border);
+        height: 28px;
+      }
+      /* 印刷用 */
+      @media print {
+        body {
+          background: white;
+          font-size: 11px;
+        }
+        .doc-header {
+          background: #2c2824 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .section {
+          page-break-inside: avoid;
+        }
+        .scenario {
+          page-break-inside: avoid;
+          border: 1px solid #ccc;
+        }
+        .screenshot-block {
+          page-break-inside: avoid;
+          border: 1px solid #ccc;
+          max-height: 300px;
+          overflow: hidden;
+        }
+        .screenshot-block img {
+          max-height: 280px;
+          object-fit: cover;
+          object-position: top;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        /* 印刷時のチェックボックスを目立たせる */
+        .check-box {
+          border: 2px solid #666 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .scenario-header.normal {
+          background: #f0fdf4 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .scenario-header.error {
+          background: #fef2f2 !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .scenario-header.admin {
+          background: #eff6ff !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc-header">
+      <div class="brand">Deer Brand</div>
+      <h1>アナログテスト用マニュアル</h1>
+      <div class="meta">
+        作成日：2026年4月1日　バージョン：v1.0　環境：本番（https://deer-brand.vercel.app/）
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- テスター情報欄 -->
+      <div class="tester-box">
+        <div class="tester-field">
+          <div class="label">テスター名</div>
+          <div class="field-line"></div>
+        </div>
+        <div class="tester-field">
+          <div class="label">テスト実施日</div>
+          <div class="field-line"></div>
+        </div>
+        <div class="tester-field">
+          <div class="label">テスト環境（ブラウザ）</div>
+          <div class="field-line"></div>
+        </div>
+        <div class="tester-field">
+          <div class="label">テスト結果（合格/不合格）</div>
+          <div class="field-line"></div>
+        </div>
+      </div>
+
+      <!-- テスト概要 -->
+      <div class="overview-box">
+        <div class="overview-item">
+          <div class="label">テスト対象URL</div>
+          <div class="value">https://deer-brand.vercel.app/</div>
+        </div>
+        <div class="overview-item">
+          <div class="label">管理者パネルURL</div>
+          <div class="value">https://deer-brand.vercel.app/admin.html</div>
+        </div>
+        <div class="overview-item">
+          <div class="label">テストシナリオ数</div>
+          <div class="value">正常系 3件 / 異常系 5件 / 管理者 4件</div>
+        </div>
+        <div class="overview-item">
+          <div class="label">テスト用カード番号（Stripe）</div>
+          <div class="value"><code>4242 4242 4242 4242</code></div>
+        </div>
+      </div>
+
+      <!-- 目次 -->
+      <nav class="toc">
+        <h2>目次</h2>
+        <ol>
+          <li><a href="#env">1. テスト環境・前提条件</a></li>
+          <li>
+            <a href="#normal"
+              >2. 正常系テスト — ユーザーが商品を購入できること</a
+            >
+          </li>
+          <li>
+            <a href="#error">3. 異常系テスト — 不正な入力でエラーが出ること</a>
+          </li>
+          <li>
+            <a href="#admin">4. 管理者テスト — ログイン・注文管理できること</a>
+          </li>
+        </ol>
+      </nav>
+
+      <!-- 1. テスト環境 -->
+      <section class="section" id="env">
+        <div class="section-header">
+          <span class="section-badge">概要</span>
+          <h2>テスト環境・前提条件</h2>
+        </div>
+
+        <table>
+          <tr>
+            <th>項目</th>
+            <th>内容</th>
+          </tr>
+          <tr>
+            <td>本番URL</td>
+            <td>https://deer-brand.vercel.app/</td>
+          </tr>
+          <tr>
+            <td>管理者パネル</td>
+            <td>https://deer-brand.vercel.app/admin.html</td>
+          </tr>
+          <tr>
+            <td>推奨ブラウザ</td>
+            <td>Google Chrome 最新版</td>
+          </tr>
+          <tr>
+            <td>Stripeテスト用カード</td>
+            <td>
+              <code>4242 4242 4242 4242</code
+              >（有効期限：任意の未来日、CVV：任意3桁）
+            </td>
+          </tr>
+          <tr>
+            <td>テスト用メール</td>
+            <td>
+              実在するメールアドレスを使用（確認メール到達を確認するため）
+            </td>
+          </tr>
+          <tr>
+            <td>テスト用ペット写真</td>
+            <td>犬・猫の正面写真（JPEG/PNG、1MB程度）を事前に準備する</td>
+          </tr>
+        </table>
+
+        <div class="note">
+          <strong>注意</strong>
+          本番環境でのテストになります。実際に課金が発生するため、Stripeのテスト用カード番号を必ず使用してください。テスト後は管理者パネルから注文をキャンセルしてください。
+        </div>
+
+        <div class="screenshot-block">
+          <img
+            src="screenshots/top_01.png"
+            alt="テスト開始画面（トップページ）"
+          />
+          <div class="caption">
+            テスト開始前の確認：トップページが正常に表示されること
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 正常系テスト -->
+      <section class="section" id="normal">
+        <div class="section-header">
+          <span class="section-badge normal">正常系</span>
+          <h2>正常系テスト — ユーザーが商品を購入できること</h2>
+        </div>
+
+        <!-- シナリオN-1 -->
+        <div class="scenario">
+          <div class="scenario-header normal">
+            <span class="scenario-id">N-01</span>
+            パーカーを購入できること（フルフロー）
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span> https://deer-brand.vercel.app/
+                にアクセスする
+                <span class="expected"
+                  >期待値：トップページが表示される。ヘッダーに「アートスタイル」「グッズ一覧」「ログイン」が表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span>「はじめる」または「無料でつくる
+                →」ボタンをクリック
+                <span class="expected"
+                  >期待値：オーダーページ（/upload）に遷移。ステップバーに「①
+                  商品選択」が強調される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">3.</span> 商品一覧から「パーカー ×
+                印象派」カードをクリック
+                <span class="expected"
+                  >期待値：ステップ②（配置選択）に遷移する</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">4.</span>
+                配置：「左胸ワンポイント」を選択して「次へ」
+                <span class="expected"
+                  >期待値：ステップ③（カラー選択）に遷移する</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">5.</span>
+                カラー：「グレー」を選択して「次へ」
+                <span class="expected"
+                  >期待値：ステップ④（サイズ選択）に遷移する</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">6.</span> サイズ：「M」を選択して「次へ」
+                <span class="expected"
+                  >期待値：ステップ⑤（写真アップロード）に遷移する</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">7.</span>
+                愛犬の写真（JPEG/PNG）をアップロードする
+                <span class="expected"
+                  >期待値：写真がプレビュー表示される。「次へ」ボタンが有効になる</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">8.</span
+                >「次へ」をクリックしてAIプレビューを待つ（最大60秒）
+                <span class="expected"
+                  >期待値：アート変換後のプレビュー画像が表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">9.</span>「このデザインで進む」をクリック
+                <span class="expected"
+                  >期待値：ステップ⑦（お届け先）に遷移する</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">10.</span>
+                お届け先を入力する（氏名・〒・住所・電話番号）
+                <span class="expected"
+                  >期待値：全フィールド入力後「次へ」が有効になる</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">11.</span>
+                クレジットカード情報を入力：<span class="input-val"
+                  >4242 4242 4242 4242 / 12/30 / 123</span
+                >
+                <span class="expected"
+                  >期待値：Stripeフォームにカード情報が入力される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">12.</span
+                >「注文を確定する」ボタンをクリック
+                <span class="expected"
+                  >期待値：注文完了画面が表示され、注文ID（DEER-YYYYMMDD-XXXX形式）が表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">13.</span>
+                登録したメールアドレスに確認メールが届くことを確認
+                <span class="expected"
+                  >期待値：注文確認メール（件名に注文IDを含む）が数分以内に届く</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- シナリオN-2 -->
+        <div class="scenario">
+          <div class="scenario-header normal">
+            <span class="scenario-id">N-02</span>
+            アートスタイルページから商品詳細ページへ遷移できること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                ナビの「アートスタイル」をクリック
+                <span class="expected"
+                  >期待値：/art-styles
+                  に遷移。23種類のスタイルカードが表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span>
+                カテゴリタブ「水彩画」をクリック
+                <span class="expected"
+                  >期待値：水彩画カテゴリのスタイルのみに絞り込まれる</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">3.</span> 任意のスタイルカードをクリック
+                <span class="expected"
+                  >期待値：商品詳細ページ（/product-detail?...）に遷移する</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">4.</span> 「デザインを開始する
+                →」ボタンをクリック
+                <span class="expected"
+                  >期待値：オーダーページ（/upload）に遷移する</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- シナリオN-3 -->
+        <div class="scenario">
+          <div class="scenario-header normal">
+            <span class="scenario-id">N-03</span>
+            マイページでログインして注文履歴を確認できること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                https://deer-brand.vercel.app/account にアクセス
+                <span class="expected"
+                  >期待値：「ログインが必要です」画面が表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span>「ログイン /
+                新規登録」ボタンをクリックしてモーダルを開く
+                <span class="expected"
+                  >期待値：ログインモーダルが表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">3.</span>
+                メールアドレスとパスワードを入力してログイン
+                <span class="expected"
+                  >期待値：ログイン成功。マイページに注文履歴が表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">4.</span>
+                N-01で作成した注文が一覧に表示されることを確認
+                <span class="expected"
+                  >期待値：注文ID・商品名・金額・ステータス「受付済み」が表示される</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="screenshot-block">
+          <img src="screenshots/upload_01.png" alt="オーダーページ" />
+          <div class="caption">
+            N-01 ステップ②：商品選択画面 —
+            パーカー・Tシャツ・マグカップなどのカードが表示される
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 異常系テスト -->
+      <section class="section" id="error">
+        <div class="section-header">
+          <span class="section-badge error">異常系</span>
+          <h2>異常系テスト — 不正な入力でエラーが出ること</h2>
+        </div>
+
+        <!-- E-01 -->
+        <div class="scenario">
+          <div class="scenario-header error">
+            <span class="scenario-id">E-01</span>
+            写真未アップロードのまま次へ進めないこと
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                オーダーページ（ステップ⑤：写真アップロード）で、写真をアップロードせずに「次へ」をクリック
+                <span class="expected"
+                  >期待値：エラーメッセージが表示される。次ステップに進めない</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- E-02 -->
+        <div class="scenario">
+          <div class="scenario-header error">
+            <span class="scenario-id">E-02</span>
+            不正なファイル形式（PDF等）をアップロードした際にエラーが出ること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                ステップ⑤でPDFまたはテキストファイルをアップロードしようとする
+                <span class="expected"
+                  >期待値：「JPEG/PNGのみ対応」等のエラーが表示され、アップロードが拒否される</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- E-03 -->
+        <div class="scenario">
+          <div class="scenario-header error">
+            <span class="scenario-id">E-03</span>
+            お届け先の必須フィールドが空のまま次に進めないこと
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                ステップ⑦（お届け先）で氏名を空のまま「次へ」をクリック
+                <span class="expected"
+                  >期待値：「氏名を入力してください」等のエラーが表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span> 郵便番号に不正な値（例：<span
+                  class="input-val"
+                  >abcdefg</span
+                >）を入力して「次へ」
+                <span class="expected"
+                  >期待値：郵便番号フォーマットのバリデーションエラーが表示される</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- E-04 -->
+        <div class="scenario">
+          <div class="scenario-header error">
+            <span class="scenario-id">E-04</span>
+            無効なクレジットカードで決済が失敗すること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                ステップ⑧でStripeの失敗用テストカード
+                <span class="input-val">4000 0000 0000 0002</span>
+                を入力して送信
+                <span class="expected"
+                  >期待値：「カードが拒否されました」等の決済エラーが表示される。注文は作成されない</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- E-05 -->
+        <div class="scenario">
+          <div class="scenario-header error">
+            <span class="scenario-id">E-05</span>
+            未ログイン状態でマイページにアクセスした際にログイン促進が表示されること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span> ログアウト状態で
+                https://deer-brand.vercel.app/account にアクセス
+                <span class="expected"
+                  >期待値：「ログインが必要です」メッセージと「ログイン /
+                  新規登録」ボタンが表示される</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="screenshot-block">
+          <img src="screenshots/account_01.png" alt="マイページ - 未ログイン" />
+          <div class="caption">E-05 期待値：未ログイン時のマイページ表示</div>
+        </div>
+      </section>
+
+      <!-- 4. 管理者テスト -->
+      <section class="section" id="admin">
+        <div class="section-header">
+          <span class="section-badge admin">管理者</span>
+          <h2>管理者テスト — ログイン・注文管理できること</h2>
+        </div>
+
+        <div class="screenshot-block">
+          <img src="screenshots/admin_01.png" alt="管理者ログイン画面" />
+          <div class="caption">
+            管理者パネルのログイン画面 — ADMIN_SECRET_KEY
+            を入力してログインします
+          </div>
+        </div>
+
+        <!-- A-01 -->
+        <div class="scenario">
+          <div class="scenario-header admin">
+            <span class="scenario-id">A-01</span>
+            正しい管理者キーでログインできること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                https://deer-brand.vercel.app/admin.html にアクセス
+                <span class="expected"
+                  >期待値：ログイン画面が表示される（ダッシュボードは表示されない）</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span> 正しい ADMIN_SECRET_KEY
+                を入力して「ログイン」をクリック
+                <span class="expected"
+                  >期待値：ダッシュボードが表示される。統計カード・注文テーブルが表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">3.</span>
+                N-01で作成したテスト注文が一覧に表示されることを確認
+                <span class="expected"
+                  >期待値：注文ID・日時・商品・金額・ステータス「受付済み」が表示される</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- A-02 -->
+        <div class="scenario">
+          <div class="scenario-header admin">
+            <span class="scenario-id">A-02</span>
+            間違った管理者キーでログインが失敗すること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span> 管理者キーに
+                <span class="input-val">wrongkey123</span>
+                を入力して「ログイン」をクリック
+                <span class="expected"
+                  >期待値：「認証に失敗しました」等のエラーが表示される。ダッシュボードは表示されない</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- A-03 -->
+        <div class="scenario">
+          <div class="scenario-header admin">
+            <span class="scenario-id">A-03</span>
+            注文ステータスを更新できること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                ダッシュボードでN-01の注文を見つける
+                <span class="expected"
+                  >期待値：ステータス「受付済み」で表示されている</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span>
+                「ステータス変更」から「制作中」を選択して確定
+                <span class="expected"
+                  >期待値：ステータスバッジが「制作中」に変わる</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">3.</span>
+                「ステータス変更」から「キャンセル」を選択して確定（テスト注文のクリーンアップ）
+                <span class="expected"
+                  >期待値：ステータスが「キャンセル」に変わる</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- A-04 -->
+        <div class="scenario">
+          <div class="scenario-header admin">
+            <span class="scenario-id">A-04</span>
+            ステータスフィルタが機能すること
+          </div>
+          <ul class="checklist">
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">1.</span>
+                ダッシュボードのフィルタで「受付済み」を選択
+                <span class="expected"
+                  >期待値：pending ステータスの注文のみが表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">2.</span> フィルタを「キャンセル」に変更
+                <span class="expected"
+                  >期待値：cancelled
+                  ステータスの注文のみが表示される。A-03でキャンセルした注文が表示される</span
+                >
+              </div>
+            </li>
+            <li>
+              <div class="check-box"></div>
+              <div class="check-label">
+                <span class="step-num">3.</span> フィルタを「すべて」に戻す
+                <span class="expected"
+                  >期待値：全ステータスの注文が表示される</span
+                >
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- テスト結果サマリー -->
+      <section class="section" id="summary">
+        <div class="section-header">
+          <span class="section-badge" style="background: #4b5563">結果</span>
+          <h2>テスト結果サマリー</h2>
+        </div>
+        <table>
+          <tr>
+            <th>シナリオID</th>
+            <th>シナリオ名</th>
+            <th>種別</th>
+            <th>結果（合格□ / 不合格□）</th>
+            <th>備考</th>
+          </tr>
+          <tr>
+            <td>N-01</td>
+            <td>パーカーを購入できること（フルフロー）</td>
+            <td>正常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>N-02</td>
+            <td>アートスタイルページから遷移できること</td>
+            <td>正常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>N-03</td>
+            <td>マイページで注文履歴を確認できること</td>
+            <td>正常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>E-01</td>
+            <td>写真未アップロードで次へ進めないこと</td>
+            <td>異常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>E-02</td>
+            <td>不正ファイル形式でエラーが出ること</td>
+            <td>異常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>E-03</td>
+            <td>必須フィールド空でエラーが出ること</td>
+            <td>異常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>E-04</td>
+            <td>無効カードで決済が失敗すること</td>
+            <td>異常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>E-05</td>
+            <td>未ログインでマイページ制限されること</td>
+            <td>異常系</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>A-01</td>
+            <td>正しいキーで管理者ログインできること</td>
+            <td>管理者</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>A-02</td>
+            <td>誤ったキーでログイン失敗すること</td>
+            <td>管理者</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>A-03</td>
+            <td>注文ステータスを更新できること</td>
+            <td>管理者</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>A-04</td>
+            <td>ステータスフィルタが機能すること</td>
+            <td>管理者</td>
+            <td>合格□　不合格□</td>
+            <td></td>
+          </tr>
+        </table>
+
+        <div
+          style="
+            margin-top: 24px;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+          "
+        >
+          <div
+            style="
+              font-size: 13px;
+              font-weight: 700;
+              color: var(--text-mid);
+              margin-bottom: 12px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            "
+          >
+            総合所見・不具合メモ
+          </div>
+          <div
+            style="
+              border: 1.5px solid var(--border);
+              border-radius: 8px;
+              height: 120px;
+            "
+          ></div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

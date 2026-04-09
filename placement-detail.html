@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>配置詳細 — Deer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ivory: #faf7f2;
+        --cream: #f5ede3;
+        --warm: #ede4d8;
+        --gold: #c4a265;
+        --gold-light: #d4b87a;
+        --terracotta: #c4836a;
+        --terracotta-soft: #d9a28e;
+        --charcoal: #2c2824;
+        --charcoal-light: #4a453f;
+        --text: #2c2824;
+        --text-mid: #6b6460;
+        --text-light: #9b9490;
+        --white: #ffffff;
+        --border: #e8dfd5;
+        --serif: "Cormorant Garamond", "Georgia", serif;
+        --sans: "Zen Maru Gothic", sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        font-family: var(--sans);
+        background: var(--ivory);
+        color: var(--text);
+        line-height: 1.8;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .nav {
+        background: var(--charcoal);
+        padding: 0 2rem;
+        height: 3.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-logo {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        font-weight: 300;
+        letter-spacing: 6px;
+        color: var(--cream);
+        text-transform: uppercase;
+      }
+      .nav-back {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: color 0.3s;
+      }
+      .nav-back:hover {
+        color: var(--cream);
+      }
+
+      /* HERO */
+      .detail-hero {
+        background: var(--charcoal);
+        padding: 3rem 2rem 2.5rem;
+        text-align: center;
+      }
+      .detail-hero .breadcrumb {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+      }
+      .detail-hero .breadcrumb a {
+        color: var(--gold-light);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .detail-hero h1 {
+        font-family: var(--serif);
+        font-size: 2rem;
+        font-weight: 300;
+        color: var(--cream);
+        letter-spacing: 2px;
+        margin-bottom: 0.3rem;
+      }
+      .detail-hero .placement-label {
+        font-size: 0.88rem;
+        color: var(--terracotta-soft);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      .detail-hero .price {
+        font-family: var(--serif);
+        font-size: 1.8rem;
+        color: var(--cream);
+        font-weight: 600;
+      }
+      .detail-hero .price-note {
+        font-size: 0.72rem;
+        color: var(--text-light);
+      }
+
+      /* COLOR SELECTOR */
+      .color-bar {
+        background: var(--cream);
+        border-bottom: 1px solid var(--border);
+        padding: 1.2rem 2rem;
+        text-align: center;
+      }
+      .color-bar-label {
+        font-size: 0.78rem;
+        color: var(--text-mid);
+        margin-bottom: 0.6rem;
+      }
+      .color-swatches {
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+      }
+      .color-sw {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+      .color-sw:hover {
+        transform: scale(1.1);
+      }
+      .color-sw.active {
+        border-color: var(--terracotta);
+        box-shadow: 0 0 0 2px var(--terracotta-soft);
+      }
+      .color-sw .cname {
+        display: block;
+        font-size: 0.6rem;
+        color: var(--text-mid);
+        text-align: center;
+        margin-top: 4px;
+        white-space: nowrap;
+      }
+
+      /* SAMPLES GRID */
+      .samples-section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2.5rem 2rem 1rem;
+      }
+      .samples-section h2 {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        font-weight: 400;
+        color: var(--charcoal);
+        margin-bottom: 0.3rem;
+      }
+      .samples-section p {
+        font-size: 0.8rem;
+        color: var(--text-mid);
+        margin-bottom: 1.5rem;
+      }
+      .samples-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.2rem;
+      }
+      .sample-card {
+        background: var(--white);
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.4s;
+      }
+      .sample-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(44, 40, 36, 0.1);
+        border-color: var(--gold-light);
+      }
+      .sample-card .card-img-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        position: relative;
+      }
+      .sample-card .card-img-wrap .img-half {
+        overflow: hidden;
+        position: relative;
+      }
+      .sample-card img {
+        width: 100%;
+        aspect-ratio: 3/4;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+      .sample-card:hover img {
+        transform: scale(1.03);
+      }
+      .sample-card .img-label {
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.55rem;
+        color: var(--white);
+        background: rgba(44, 40, 36, 0.55);
+        padding: 0.1rem 0.45rem;
+        border-radius: 100px;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+      .sample-card .card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 50%,
+          rgba(44, 40, 36, 0.5) 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 14px;
+      }
+      .sample-card:hover .card-overlay {
+        opacity: 1;
+      }
+      .sample-card .order-btn {
+        padding: 0.5rem 1.5rem;
+        background: var(--terracotta);
+        color: var(--white);
+        border: none;
+        border-radius: 100px;
+        font-family: var(--sans);
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transform: translateY(8px);
+        opacity: 0;
+        transition: all 0.3s;
+      }
+      .sample-card:hover .order-btn {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .card-body {
+        padding: 0.8rem 1rem 1rem;
+      }
+      .card-body .style-name {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--charcoal);
+      }
+      .card-body .style-sub {
+        font-size: 0.7rem;
+        color: var(--text-light);
+        font-family: var(--serif);
+        font-style: italic;
+      }
+      .card-body .tags {
+        margin-top: 0.4rem;
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+      }
+      .card-body .tag {
+        font-size: 0.58rem;
+        padding: 0.12rem 0.45rem;
+        background: rgba(196, 162, 101, 0.12);
+        color: var(--gold);
+        border-radius: 100px;
+        font-weight: 500;
+      }
+
+      .more-btn-wrap {
+        text-align: center;
+        margin: 1.5rem 0 3rem;
+      }
+      .more-btn {
+        padding: 0.7rem 2rem;
+        border: 1.5px solid var(--border);
+        border-radius: 100px;
+        background: var(--white);
+        font-family: var(--sans);
+        font-size: 0.82rem;
+        color: var(--text-mid);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .more-btn:hover {
+        border-color: var(--gold);
+        color: var(--charcoal);
+      }
+
+      /* CTA */
+      .bottom-cta {
+        background: var(--charcoal);
+        text-align: center;
+        padding: 3rem 2rem;
+      }
+      .bottom-cta h2 {
+        font-family: var(--serif);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--cream);
+        margin-bottom: 0.5rem;
+      }
+      .bottom-cta p {
+        font-size: 0.82rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+      }
+      .bottom-cta .cta-btn {
+        display: inline-block;
+        padding: 0.9rem 2.5rem;
+        background: var(--terracotta);
+        color: var(--white);
+        border-radius: 100px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+      }
+      .bottom-cta .cta-btn:hover {
+        background: #b3725c;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(196, 131, 106, 0.3);
+      }
+
+      .fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s,
+          transform 0.6s;
+      }
+      .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 640px) {
+        .nav {
+          padding: 0 1rem;
+        }
+        .detail-hero {
+          padding: 2rem 1rem 1.5rem;
+        }
+        .detail-hero h1 {
+          font-size: 1.4rem;
+        }
+        .samples-section {
+          padding: 1.5rem 1rem 0.5rem;
+        }
+        .samples-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.7rem;
+        }
+        .card-body {
+          padding: 0.6rem 0.7rem 0.8rem;
+        }
+        .card-body .style-sub {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="index.html" class="nav-back">&larr; トップに戻る</a>
+      <a href="index.html" class="nav-logo"
+        ><img
+          src="img/logo.svg"
+          alt="Deer"
+          style="height: 1.8rem; filter: brightness(0) invert(0.85)"
+      /></a>
+    </nav>
+
+    <div class="detail-hero" id="heroSection">
+      <div class="breadcrumb">
+        <a href="index.html">トップ</a> &rsaquo; プリント配置イメージ
+      </div>
+      <h1 id="heroTitle">パーカー</h1>
+      <div class="placement-label" id="heroPlacement">左胸ワンポイント</div>
+      <div class="price" id="heroPrice">¥7,980</div>
+      <div class="price-note">税込・送料無料</div>
+    </div>
+
+    <div class="color-bar">
+      <div class="color-bar-label">カラーを選ぶ</div>
+      <div class="color-swatches" id="colorSwatches"></div>
+    </div>
+
+    <div class="samples-section">
+      <h2 class="fade-up">アートスタイル別サンプル</h2>
+      <p class="fade-up">
+        同じ配置でもスタイルによって印象が変わります。気になるサンプルをクリックしてオーダーへ
+      </p>
+      <p
+        class="fade-up"
+        style="
+          font-size: 0.68rem;
+          color: var(--text-light);
+          margin-top: -0.8rem;
+          margin-bottom: 1.2rem;
+        "
+      >
+        ※画像はイメージです。実際のプリントサイズは配置・商品により異なります。
+      </p>
+      <div class="samples-grid" id="samplesGrid"></div>
+    </div>
+
+    <div class="more-btn-wrap" id="moreBtnWrap" style="display: none">
+      <button class="more-btn" id="moreBtn">もっと見る →</button>
+    </div>
+
+    <div class="bottom-cta">
+      <h2>Create Your Art</h2>
+      <p>あなたの愛犬をこの配置でアートにしませんか？</p>
+      <a href="upload.html" class="cta-btn" id="ctaBtn"
+        >この配置でオーダーする</a
+      >
+    </div>
+
+    <script>
+      // ============================================================
+      // DATA
+      // ============================================================
+      const PRODUCTS = {
+        hoodie: {
+          name: "パーカー",
+          colors: [
+            { id: "gray", name: "グレー", hex: "#8B8B8B" },
+            { id: "navy", name: "ネイビー", hex: "#2C3E5A" },
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "pink", name: "ピンク", hex: "#E8B4B8" },
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+          ],
+          placements: {
+            "left-chest": {
+              name: "左胸ワンポイント",
+              price: 7980,
+              desc: "左胸に最大10cm角のさりげないアート",
+            },
+            center: {
+              name: "胸中央プリント",
+              price: 7980,
+              desc: "胸中央に最大25×20cmのアート",
+            },
+            back: {
+              name: "バックプリント",
+              price: 9980,
+              desc: "背中に最大30×40cmのアート",
+            },
+          },
+        },
+        tshirt: {
+          name: "Tシャツ",
+          colors: [
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "gray", name: "グレー", hex: "#8B8B8B" },
+            { id: "pink", name: "ピンク", hex: "#E8B4B8" },
+            { id: "beige", name: "ベージュ", hex: "#D4C5B2" },
+          ],
+          placements: {
+            "left-chest": {
+              name: "左胸ワンポイント",
+              price: 4980,
+              desc: "左胸に最大12cm角の上品なアート",
+            },
+            center: {
+              name: "胸中央プリント",
+              price: 4980,
+              desc: "胸中央に最大20×20cmのアート",
+            },
+            back: {
+              name: "バックプリント",
+              price: 6480,
+              desc: "背中に最大30×40cmのアート",
+            },
+          },
+        },
+        mug: {
+          name: "マグカップ",
+          colors: [{ id: "white", name: "ホワイト", hex: "#F5F5F0" }],
+          placements: {
+            wrap: {
+              name: "ラップアラウンド",
+              price: 2980,
+              desc: "持ち手の反対側を中心に帯状印刷（約23×9cm）",
+            },
+          },
+        },
+        case: {
+          name: "スマホケース",
+          colors: [
+            { id: "clear", name: "クリア", hex: "#E8E8E8" },
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+          ],
+          placements: {
+            back: {
+              name: "背面プリント",
+              price: 4980,
+              desc: "ケース背面にアートをプリント",
+            },
+          },
+        },
+        "emb-cap": {
+          name: "刺繍キャップ",
+          colors: [
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "navy", name: "ネイビー", hex: "#2C3E5A" },
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+            { id: "khaki", name: "カーキ", hex: "#8B7D5A" },
+          ],
+          placements: {
+            front: {
+              name: "フロントパネル",
+              price: 4980,
+              desc: "キャップ正面に刺繍（最大10×5.7cm）",
+            },
+          },
+        },
+        "emb-hoodie": {
+          name: "刺繍パーカー",
+          colors: [
+            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "navy", name: "ネイビー", hex: "#2C3E5A" },
+            { id: "gray", name: "グレー", hex: "#8B8B8B" },
+            { id: "white", name: "ホワイト", hex: "#F5F5F0" },
+          ],
+          placements: {
+            "left-chest": {
+              name: "左胸ワンポイント",
+              price: 12980,
+              desc: "左胸に刺繍（最大10×10cm）",
+            },
+            back: {
+              name: "バック刺繍",
+              price: 15980,
+              desc: "背中に刺繍（最大25×15cm）",
+            },
+          },
+        },
+        sticker: {
+          name: "カッティングステッカー",
+          colors: [{ id: "default", name: "フルカラー", hex: "#C4A265" }],
+          placements: {
+            full: {
+              name: "ステッカー全面",
+              price: 1480,
+              desc: "ステッカー全面にアートをプリント",
+            },
+          },
+        },
+      };
+
+      const STYLES_INITIAL = [
+        {
+          id: "oil-impressionism",
+          name: "印象派",
+          nameEn: "Impressionism",
+          tags: ["華やか", "温かみ"],
+        },
+        {
+          id: "oil-baroque",
+          name: "バロック",
+          nameEn: "Baroque",
+          tags: ["重厚", "高級感"],
+        },
+        {
+          id: "oil-renaissance",
+          name: "ルネサンス",
+          nameEn: "Renaissance",
+          tags: ["古典", "格調高い"],
+        },
+        {
+          id: "oil-expressionism",
+          name: "表現主義",
+          nameEn: "Expressionism",
+          tags: ["力強い", "感情的"],
+        },
+        {
+          id: "wc-loose",
+          name: "にじみ水彩",
+          nameEn: "Loose Watercolor",
+          tags: ["透明感", "やわらかい"],
+        },
+        {
+          id: "wc-botanical",
+          name: "ボタニカル水彩",
+          nameEn: "Botanical",
+          tags: ["繊細", "ナチュラル"],
+        },
+        {
+          id: "wc-wet",
+          name: "ウェットオンウェット",
+          nameEn: "Wet-on-Wet",
+          tags: ["にじみ", "幻想的"],
+        },
+        {
+          id: "ink-sumie",
+          name: "水墨画",
+          nameEn: "Sumi-e",
+          tags: ["和風", "静謐"],
+        },
+        {
+          id: "ink-nanga",
+          name: "南画",
+          nameEn: "Nanga",
+          tags: ["文人画", "風雅"],
+        },
+      ];
+
+      const STYLES_MORE = [
+        {
+          id: "pop-warhol",
+          name: "ウォーホル風",
+          nameEn: "Warhol Style",
+          tags: ["大胆", "カラフル"],
+        },
+        {
+          id: "pop-comic",
+          name: "アメコミ風",
+          nameEn: "Comic Style",
+          tags: ["ポップ", "楽しい"],
+        },
+        {
+          id: "pop-graffiti",
+          name: "グラフィティ",
+          nameEn: "Graffiti",
+          tags: ["ストリート", "大胆"],
+        },
+        {
+          id: "mono-hicon",
+          name: "ハイコントラスト",
+          nameEn: "High Contrast",
+          tags: ["モノクロ", "印象的"],
+        },
+        {
+          id: "mono-charcoal",
+          name: "木炭デッサン",
+          nameEn: "Charcoal",
+          tags: ["素描", "リアル"],
+        },
+        {
+          id: "mono-noir",
+          name: "フィルム・ノワール",
+          nameEn: "Film Noir",
+          tags: ["陰影", "ドラマチック"],
+        },
+        {
+          id: "future-cyber",
+          name: "サイバーパンク",
+          nameEn: "Cyberpunk",
+          tags: ["近未来", "SF"],
+        },
+        {
+          id: "future-neon",
+          name: "ネオンアート",
+          nameEn: "Neon Art",
+          tags: ["光彩", "鮮烈"],
+        },
+        {
+          id: "future-glitch",
+          name: "グリッチアート",
+          nameEn: "Glitch Art",
+          tags: ["デジタル", "実験的"],
+        },
+        {
+          id: "line-oneline",
+          name: "一筆描き",
+          nameEn: "One-Line",
+          tags: ["ミニマル", "洗練"],
+        },
+        {
+          id: "line-minimal",
+          name: "ミニマルライン",
+          nameEn: "Minimal Line",
+          tags: ["シンプル", "上品"],
+        },
+        {
+          id: "collage-mixed",
+          name: "ミクストメディア",
+          nameEn: "Mixed Media",
+          tags: ["コラージュ", "個性的"],
+        },
+        {
+          id: "collage-papercut",
+          name: "ペーパーカット",
+          nameEn: "Papercut",
+          tags: ["立体的", "工芸"],
+        },
+        {
+          id: "silhouette",
+          name: "シルエット",
+          nameEn: "Silhouette",
+          tags: ["影絵", "シック"],
+        },
+      ];
+
+      // ============================================================
+      // INIT
+      // ============================================================
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get("product") || "hoodie";
+      const placementId = params.get("placement") || "left-chest";
+      const product = PRODUCTS[productId] || PRODUCTS["hoodie"];
+      const placement =
+        product.placements[placementId] ||
+        product.placements[Object.keys(product.placements)[0]];
+      if (!PRODUCTS[productId] || !product.placements[placementId]) {
+        // 不正パラメータ時はトップへリダイレクト
+        window.location.href = "index.html";
+      }
+      let selectedColor = product.colors[0].id;
+      let showingMore = true;
+
+      // Set hero
+      document.getElementById("heroTitle").textContent = product.name;
+      document.getElementById("heroPlacement").textContent = placement.name;
+      document.getElementById("heroPrice").textContent =
+        "¥" + placement.price.toLocaleString();
+      document.title = product.name + " " + placement.name + " — Deer";
+
+      // Set CTA link and label
+      const ctaBtn = document.getElementById("ctaBtn");
+      ctaBtn.href = "upload?item=" + productId + "&placement=" + placementId;
+      ctaBtn.textContent = product.name + "【" + placement.name + "】でオーダーする";
+
+      // Build colors
+      function buildColors() {
+        const container = document.getElementById("colorSwatches");
+        container.innerHTML = product.colors
+          .map(
+            (c) =>
+              '<div style="text-align:center">' +
+              '<div class="color-sw' +
+              (c.id === selectedColor ? " active" : "") +
+              '" style="background:' +
+              c.hex +
+              '" onclick="selectColor(\'' +
+              c.id +
+              "')\">" +
+              "</div>" +
+              '<span class="cname">' +
+              c.name +
+              "</span>" +
+              "</div>",
+          )
+          .join("");
+      }
+
+      function selectColor(colorId) {
+        selectedColor = colorId;
+        buildColors();
+        // In future: swap images to show selected color
+      }
+
+      // Style ID → art image mapping (フォールバック用。存在しない画像のみ指定)
+      const STYLE_ART_IMG = {
+        silhouette: "img/styles/mono-hicon.png",
+      };
+
+      // Build samples
+      function buildSamples() {
+        const grid = document.getElementById("samplesGrid");
+        const styles = showingMore
+          ? [...STYLES_INITIAL, ...STYLES_MORE]
+          : STYLES_INITIAL;
+
+        // placementId → 実ファイル名部分のマッピング
+        const PLACEMENT_FILE_MAP = {
+          "back-print": "back", "left-chest": "leftchest",
+          "center": "center", "wrap": "wrap",
+          "leftchest": "leftchest", "back": "back",
+        };
+        // styleId → 実ファイル名部分のマッピング（8種類の実画像にフォールバック）
+        const STYLE_MOCKUP_MAP = {
+          "oil-impressionism": "impressionism",
+          "oil-baroque": "oil-baroque",
+          "oil-renaissance": "oil-baroque",
+          "oil-expressionism": "impressionism",
+          "wc-loose": "watercolor",
+          "wc-botanical": "wc-botanical",
+          "wc-wet": "watercolor",
+          "ink-sumie": "sumie",
+          "ink-nanga": "sumie",
+          "pop-warhol": "popart",
+          "pop-comic": "popart",
+          "pop-graffiti": "popart",
+          "mono-hicon": "mono-charcoal",
+          "mono-charcoal": "mono-charcoal",
+          "mono-noir": "mono-charcoal",
+          "future-cyber": "mono-charcoal",
+          "future-neon": "mono-charcoal",
+          "future-glitch": "mono-charcoal",
+          "line-oneline": "line-oneline",
+          "line-minimal": "line-oneline",
+          "collage-mixed": "wc-botanical",
+          "collage-papercut": "wc-botanical",
+          "silhouette": "mono-charcoal",
+        };
+
+        grid.innerHTML = styles
+          .map((s, i) => {
+            const placementFile = PLACEMENT_FILE_MAP[placementId] || placementId.replace(/-/g, "");
+            const styleFile = STYLE_MOCKUP_MAP[s.id] || s.id;
+            const mockupPath = "img/placement/detail/" + productId + "-" + placementFile + "-" + styleFile + ".png";
+            const artPath =
+              STYLE_ART_IMG[s.id] || "img/styles/" + s.id + ".png";
+            return (
+              '<div class="sample-card fade-up" style="transition-delay:' +
+              i * 0.08 +
+              's"' +
+              " onclick=\"location.href='upload?item=" +
+              productId +
+              "&placement=" +
+              placementId +
+              "&style=" +
+              s.id +
+              "&color=" +
+              selectedColor +
+              "'\">" +
+              '<div class="card-img-wrap">' +
+              '<div class="img-half">' +
+              '<img src="' +
+              mockupPath +
+              '" alt="' +
+              s.name +
+              ' 着用イメージ" loading="lazy">' +
+              '<span class="img-label">着用イメージ</span>' +
+              "</div>" +
+              '<div class="img-half">' +
+              '<img src="' +
+              artPath +
+              '" alt="' +
+              s.name +
+              ' スタイル" loading="lazy">' +
+              '<span class="img-label">アートスタイル</span>' +
+              "</div>" +
+              '<div class="card-overlay">' +
+              '<button class="order-btn">このスタイルでオーダー</button>' +
+              "</div>" +
+              "</div>" +
+              '<div class="card-body">' +
+              '<div class="style-name">' +
+              s.name +
+              "</div>" +
+              '<div class="style-sub">' +
+              s.nameEn +
+              "</div>" +
+              '<div class="tags">' +
+              s.tags.map((t) => '<span class="tag">' + t + "</span>").join("") +
+              "</div>" +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+
+        document.getElementById("moreBtnWrap").style.display = showingMore
+          ? "none"
+          : "block";
+
+        // Trigger animations
+        requestAnimationFrame(() => {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  e.target.classList.add("visible");
+                  observer.unobserve(e.target);
+                }
+              });
+            },
+            { threshold: 0, rootMargin: "100px" },
+          );
+          document
+            .querySelectorAll(".fade-up")
+            .forEach((el) => observer.observe(el));
+        });
+      }
+
+      document.getElementById("moreBtn").addEventListener("click", () => {
+        showingMore = true;
+        buildSamples();
+      });
+
+      // Init
+      buildColors();
+      buildSamples();
+    </script>
+  </body>
+</html>

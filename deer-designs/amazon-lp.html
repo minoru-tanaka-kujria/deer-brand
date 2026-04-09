@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>German Shepherd アートTシャツ — Deer Brand | Amazon風LP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Arial, sans-serif; background: #fff; color: #0f1111; line-height: 1.6; }
+
+  /* ===== Amazon Header ===== */
+  .amz-header { background: #131921; color: #fff; padding: .6rem 1rem; display: flex; align-items: center; gap: .8rem; position: sticky; top: 0; z-index: 100; }
+  .amz-header .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -.5px; }
+  .amz-header .logo span { color: #ff9900; }
+  .amz-header .search-bar { flex: 1; display: flex; }
+  .amz-header .search-bar input { flex: 1; padding: .45rem .7rem; border: none; border-radius: 4px 0 0 4px; font-size: .85rem; }
+  .amz-header .search-bar button { background: #febd69; border: none; padding: .45rem .8rem; border-radius: 0 4px 4px 0; cursor: pointer; font-size: .85rem; }
+
+  /* ===== Breadcrumb ===== */
+  .breadcrumb { font-size: .75rem; color: #007185; padding: .5rem 1rem; }
+  .breadcrumb span { margin: 0 .3rem; color: #565959; }
+
+  /* ===== Main Product Layout ===== */
+  .product-container { max-width: 1200px; margin: 0 auto; padding: 0 1rem 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem; }
+
+  /* --- Image Gallery --- */
+  .gallery { flex: 1 1 480px; min-width: 300px; }
+  .main-image { width: 100%; aspect-ratio: 1; background: #f7f7f7; border: 1px solid #e3e6e6; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; margin-bottom: .6rem; }
+  .main-image .placeholder-art { font-size: 8rem; opacity: .15; user-select: none; }
+  .main-image .badge { position: absolute; top: 12px; left: 12px; background: #cc0c39; color: #fff; font-size: .7rem; font-weight: 700; padding: .2rem .6rem; border-radius: 3px; }
+  .main-image .style-label { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.7); color: #fff; padding: .3rem 1rem; border-radius: 20px; font-size: .8rem; font-weight: 600; }
+  .thumbs { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .thumbs .thumb { width: 60px; height: 60px; border: 2px solid #e3e6e6; border-radius: 6px; background: #f7f7f7; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; opacity: .3; cursor: pointer; transition: all .2s; }
+  .thumbs .thumb:hover, .thumbs .thumb.active { border-color: #e77600; opacity: 1; }
+
+  /* --- Product Info --- */
+  .product-info { flex: 1 1 400px; min-width: 300px; }
+  .product-info h1 { font-size: 1.35rem; font-weight: 400; line-height: 1.4; color: #0f1111; margin-bottom: .4rem; }
+  .brand-link { font-size: .85rem; color: #007185; margin-bottom: .6rem; }
+  .brand-link:hover { color: #c7511f; text-decoration: underline; cursor: pointer; }
+  .rating { display: flex; align-items: center; gap: .4rem; margin-bottom: .5rem; font-size: .85rem; }
+  .stars { color: #de7921; letter-spacing: 1px; }
+  .rating-count { color: #007185; }
+  .rating .separator { color: #ccc; }
+  .rating .sold { color: #565959; }
+  .price-box { background: #f0f2f2; padding: .8rem 1rem; border-radius: 8px; margin: .8rem 0; }
+  .price-box .price-label { font-size: .75rem; color: #565959; }
+  .price-box .price { font-size: 1.6rem; color: #0f1111; font-weight: 700; }
+  .price-box .price .yen { font-size: .95rem; vertical-align: top; }
+  .price-box .price-note { font-size: .75rem; color: #565959; margin-top: .2rem; }
+  .price-box .prime { display: inline-flex; align-items: center; gap: .3rem; margin-top: .3rem; font-size: .8rem; }
+  .price-box .prime-badge { background: #232f3e; color: #fff; padding: .1rem .5rem; border-radius: 3px; font-weight: 700; font-size: .7rem; letter-spacing: .5px; }
+  .price-box .prime-check { color: #067d62; font-weight: 600; }
+
+  /* Style Selector */
+  .style-selector { margin: 1rem 0; }
+  .style-selector h3 { font-size: .85rem; margin-bottom: .5rem; }
+  .style-options { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .style-option { width: 70px; text-align: center; cursor: pointer; border: 2px solid #e3e6e6; border-radius: 6px; padding: .4rem; transition: border-color .2s; }
+  .style-option:hover { border-color: #e77600; }
+  .style-option.selected { border-color: #e77600; box-shadow: 0 0 0 1px #e77600; }
+  .style-option .swatch { width: 100%; aspect-ratio: 1; background: #f7f7f7; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: .2rem; }
+  .style-option .swatch-label { font-size: .6rem; color: #565959; line-height: 1.2; }
+
+  /* Size Selector */
+  .size-selector { margin: 1rem 0; }
+  .size-selector h3 { font-size: .85rem; margin-bottom: .5rem; }
+  .size-pills { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .size-pill { padding: .35rem .9rem; border: 1px solid #d5d9d9; border-radius: 20px; font-size: .8rem; cursor: pointer; transition: all .15s; background: #fff; }
+  .size-pill:hover { border-color: #e77600; }
+  .size-pill.selected { background: #edfdff; border-color: #007185; font-weight: 600; }
+
+  /* Color */
+  .color-selector { margin: 1rem 0; }
+  .color-selector h3 { font-size: .85rem; margin-bottom: .5rem; }
+  .color-swatches { display: flex; gap: .5rem; }
+  .color-swatch { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e3e6e6; cursor: pointer; transition: all .15s; }
+  .color-swatch:hover { border-color: #e77600; }
+  .color-swatch.selected { border-color: #e77600; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #e77600; }
+
+  /* CTA */
+  .cta-section { margin: 1.2rem 0; }
+  .btn-cart { width: 100%; padding: .65rem; background: #ffd814; border: 1px solid #fcd200; border-radius: 20px; font-size: .9rem; font-weight: 600; cursor: pointer; margin-bottom: .5rem; }
+  .btn-cart:hover { background: #f7ca00; }
+  .btn-buy { width: 100%; padding: .65rem; background: #ffa41c; border: 1px solid #ff8f00; border-radius: 20px; font-size: .9rem; font-weight: 600; cursor: pointer; }
+  .btn-buy:hover { background: #fa8900; }
+
+  .delivery { font-size: .8rem; color: #0f1111; margin: .6rem 0; }
+  .delivery strong { color: #0f1111; }
+  .delivery .free { color: #067d62; font-weight: 600; }
+  .in-stock { color: #067d62; font-weight: 600; font-size: .9rem; margin: .4rem 0; }
+
+  /* ===== Bullet Points ===== */
+  .bullets { margin: 1.2rem 0; padding-left: 1.2rem; }
+  .bullets li { font-size: .85rem; margin-bottom: .5rem; color: #0f1111; }
+  .bullets li strong { font-weight: 600; }
+
+  /* ===== A+ Content Section ===== */
+  .aplus { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+  .aplus h2 { font-size: 1.3rem; text-align: center; margin-bottom: 1.5rem; padding-bottom: .8rem; border-bottom: 1px solid #e3e6e6; }
+  .aplus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+  .aplus-card { border: 1px solid #e3e6e6; border-radius: 8px; overflow: hidden; transition: box-shadow .2s; }
+  .aplus-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+  .aplus-card .card-image { width: 100%; aspect-ratio: 1; background: #f7f7f7; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+  .aplus-card .card-image .art-icon { font-size: 4rem; opacity: .2; }
+  .aplus-card .card-image .overlay-label { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.65); color: #fff; padding: .2rem .8rem; border-radius: 12px; font-size: .7rem; white-space: nowrap; }
+  .aplus-card .card-body { padding: .8rem; }
+  .aplus-card .card-body h4 { font-size: .9rem; margin-bottom: .3rem; }
+  .aplus-card .card-body p { font-size: .78rem; color: #565959; }
+
+  /* ===== Comparison Table ===== */
+  .comparison { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+  .comparison h2 { font-size: 1.3rem; text-align: center; margin-bottom: 1rem; }
+  .comp-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+  .comp-table th, .comp-table td { padding: .6rem .8rem; border: 1px solid #e3e6e6; text-align: center; }
+  .comp-table th { background: #f0f2f2; font-weight: 600; }
+  .comp-table td { vertical-align: middle; }
+  .comp-table .check { color: #067d62; font-weight: 700; }
+  .comp-table .style-head { font-size: 1.5rem; display: block; margin-bottom: .2rem; }
+
+  /* ===== Reviews ===== */
+  .reviews { max-width: 1000px; margin: 2rem auto; padding: 0 1rem 3rem; }
+  .reviews h2 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .review-summary { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1rem; background: #faf0e4; border-radius: 8px; }
+  .review-score { text-align: center; }
+  .review-score .big-num { font-size: 2.5rem; font-weight: 700; color: #0f1111; line-height: 1; }
+  .review-score .of5 { font-size: .8rem; color: #565959; }
+  .review-score .total-stars { color: #de7921; font-size: 1.1rem; letter-spacing: 2px; margin-top: .2rem; }
+  .review-bars { flex: 1; }
+  .review-bar-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .3rem; font-size: .78rem; }
+  .review-bar-row .label { width: 40px; text-align: right; color: #007185; }
+  .review-bar-row .bar { flex: 1; height: 16px; background: #e3e6e6; border-radius: 3px; overflow: hidden; }
+  .review-bar-row .bar .fill { height: 100%; background: #ffa41c; border-radius: 3px; }
+  .review-bar-row .pct { width: 32px; font-size: .75rem; color: #565959; }
+
+  .review-card { border-bottom: 1px solid #e3e6e6; padding: 1rem 0; }
+  .review-card .reviewer { font-size: .8rem; font-weight: 600; }
+  .review-card .review-stars { color: #de7921; font-size: .8rem; margin: .2rem 0; }
+  .review-card .review-title { font-weight: 600; font-size: .85rem; }
+  .review-card .review-date { font-size: .75rem; color: #565959; margin-bottom: .3rem; }
+  .review-card .review-body { font-size: .85rem; color: #0f1111; }
+  .review-card .verified { font-size: .7rem; color: #c45500; font-weight: 600; }
+
+  /* ===== Footer ===== */
+  .amz-footer { background: #232f3e; color: #ddd; text-align: center; padding: 1.5rem; font-size: .75rem; }
+  .amz-footer a { color: #ff9900; text-decoration: none; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .product-container { flex-direction: column; }
+    .gallery, .product-info { flex: 1 1 100%; min-width: unset; }
+    .aplus-grid { grid-template-columns: 1fr; }
+    .comp-table { font-size: .7rem; }
+    .comp-table th, .comp-table td { padding: .4rem; }
+    .review-summary { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="amz-header">
+  <div class="logo"><span>deer</span>.gift</div>
+  <div class="search-bar">
+    <input type="text" value="German Shepherd Tシャツ アート" readonly />
+    <button>検索</button>
+  </div>
+</header>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  ファッション <span>&gt;</span> メンズ <span>&gt;</span> Tシャツ・カットソー <span>&gt;</span> <strong>アニマルアート</strong>
+</div>
+
+<!-- ===== Product Main ===== -->
+<div class="product-container">
+
+  <!-- Image Gallery -->
+  <div class="gallery">
+    <div class="main-image" id="mainImage">
+      <div class="placeholder-art" id="mainArt">🎨</div>
+      <div class="badge">ベストセラー</div>
+      <div class="style-label" id="mainStyleLabel">油絵風 — 正面ポートレート</div>
+    </div>
+    <div class="thumbs">
+      <div class="thumb active" onclick="selectThumb(this, '🎨', '油絵風 — 正面ポートレート')">🎨</div>
+      <div class="thumb" onclick="selectThumb(this, '🎨', '油絵風 — 横顔')">🎨</div>
+      <div class="thumb" onclick="selectThumb(this, '💧', '水彩風 — 正面')">💧</div>
+      <div class="thumb" onclick="selectThumb(this, '🎯', 'ポップアート — 正面')">🎯</div>
+      <div class="thumb" onclick="selectThumb(this, '✏️', '線画風 — 正面')">✏️</div>
+      <div class="thumb" onclick="selectThumb(this, '🧵', '刺繍風 — 正面')">🧵</div>
+      <div class="thumb" onclick="selectThumb(this, '👕', 'Tシャツ着用イメージ')">👕</div>
+    </div>
+  </div>
+
+  <!-- Product Info -->
+  <div class="product-info">
+    <h1>[Deer Brand] ジャーマンシェパード アートTシャツ — 5種のアートスタイル / プレミアム綿100% / ユニセックス</h1>
+    <div class="brand-link">Deer Brand (deer.gift) のストアを表示</div>
+
+    <div class="rating">
+      <span class="stars">★★★★★</span>
+      <span class="rating-count">1,247件の評価</span>
+      <span class="separator">|</span>
+      <span class="sold">5,000点以上購入されています</span>
+    </div>
+
+    <div class="price-box">
+      <div class="price-label">参考価格</div>
+      <div class="price"><span class="yen">￥</span>3,480</div>
+      <div class="price-note">税込 / 配送料無料（プライム会員）</div>
+      <div class="prime">
+        <span class="prime-badge">prime</span>
+        <span class="prime-check">翌日配送 無料</span>
+      </div>
+    </div>
+
+    <!-- Style Selector -->
+    <div class="style-selector">
+      <h3>スタイル: <strong id="selectedStyle">油絵風</strong></h3>
+      <div class="style-options">
+        <div class="style-option selected" onclick="selectStyle(this, '油絵風')">
+          <div class="swatch">🎨</div>
+          <div class="swatch-label">油絵風</div>
+        </div>
+        <div class="style-option" onclick="selectStyle(this, '水彩風')">
+          <div class="swatch">💧</div>
+          <div class="swatch-label">水彩風</div>
+        </div>
+        <div class="style-option" onclick="selectStyle(this, 'ポップアート')">
+          <div class="swatch">🎯</div>
+          <div class="swatch-label">ポップ<br>アート</div>
+        </div>
+        <div class="style-option" onclick="selectStyle(this, '線画風')">
+          <div class="swatch">✏️</div>
+          <div class="swatch-label">線画風</div>
+        </div>
+        <div class="style-option" onclick="selectStyle(this, '刺繍風')">
+          <div class="swatch">🧵</div>
+          <div class="swatch-label">刺繍風</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color -->
+    <div class="color-selector">
+      <h3>カラー: <strong>ブラック</strong></h3>
+      <div class="color-swatches">
+        <div class="color-swatch selected" style="background:#1a1a1a;" title="ブラック"></div>
+        <div class="color-swatch" style="background:#f5f5f5;" title="ホワイト"></div>
+        <div class="color-swatch" style="background:#2c3e50;" title="ネイビー"></div>
+        <div class="color-swatch" style="background:#5d6d7e;" title="チャコール"></div>
+      </div>
+    </div>
+
+    <!-- Size -->
+    <div class="size-selector">
+      <h3>サイズ:</h3>
+      <div class="size-pills">
+        <div class="size-pill">XS</div>
+        <div class="size-pill">S</div>
+        <div class="size-pill selected">M</div>
+        <div class="size-pill">L</div>
+        <div class="size-pill">XL</div>
+        <div class="size-pill">2XL</div>
+        <div class="size-pill">3XL</div>
+      </div>
+    </div>
+
+    <div class="in-stock">在庫あり</div>
+    <div class="delivery">
+      <span class="free">無料配送</span> <strong>3月23日 日曜日</strong> にお届け
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <button class="btn-cart">カートに入れる</button>
+      <button class="btn-buy">今すぐ買う</button>
+    </div>
+
+    <!-- Bullet Points -->
+    <ul class="bullets">
+      <li><strong>5つのアートスタイル:</strong> 油絵風・水彩風・ポップアート・線画風・刺繍風の5種。お気に入りのスタイルを選べます</li>
+      <li><strong>4つの構図:</strong> 正面ポートレート・横顔・全身・遊びの4パターンから、ジャーマンシェパードの魅力を表現</li>
+      <li><strong>プレミアム素材:</strong> 綿100%、厚手6.0oz生地。洗濯後も色落ち・型崩れしにくい高品質プリント</li>
+      <li><strong>ユニセックス:</strong> XS〜3XLの幅広いサイズ展開。男女問わずお使いいただけます</li>
+      <li><strong>ギフトに最適:</strong> ジャーマンシェパード好き・犬好きの方へのプレゼントに。deer.gift ブランドのオリジナルデザイン</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== A+ Content: Style Showcase ===== -->
+<section class="aplus">
+  <h2>5つのアートスタイルで表現するジャーマンシェパードの世界</h2>
+  <div class="aplus-grid">
+    <div class="aplus-card">
+      <div class="card-image" style="background: linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #8d6e63 100%);">
+        <div class="art-icon" style="opacity:.4;">🎨</div>
+        <div class="overlay-label">Oil Painting — 油絵風</div>
+      </div>
+      <div class="card-body">
+        <h4>油絵風 (Oil Painting)</h4>
+        <p>古典的な油絵の技法でジャーマンシェパードの威厳を表現。レンブラント照明と重厚なインパスト筆致が美術館品質の仕上がりを実現します。</p>
+      </div>
+    </div>
+    <div class="aplus-card">
+      <div class="card-image" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);">
+        <div class="art-icon" style="opacity:.4;">💧</div>
+        <div class="overlay-label">Watercolor — 水彩風</div>
+      </div>
+      <div class="card-body">
+        <h4>水彩風 (Watercolor)</h4>
+        <p>ウェット・オン・ウェット技法による繊細なにじみと透明感。柔らかなアースカラーとブルーの組み合わせが上品な仕上がり。</p>
+      </div>
+    </div>
+    <div class="aplus-card">
+      <div class="card-image" style="background: linear-gradient(135deg, #e91e63 0%, #ffd600 50%, #2979ff 100%);">
+        <div class="art-icon" style="opacity:.4;">🎯</div>
+        <div class="overlay-label">Pop Art — ポップアート</div>
+      </div>
+      <div class="card-body">
+        <h4>ポップアート (Pop Art)</h4>
+        <p>ウォーホル風の大胆なネオンカラーとハーフトーン。スクリーンプリントの質感で1960年代のポップカルチャーを再現。</p>
+      </div>
+    </div>
+    <div class="aplus-card">
+      <div class="card-image" style="background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 50%, #eeeeee 100%);">
+        <div class="art-icon" style="opacity:.5;">✏️</div>
+        <div class="overlay-label">Line Art — 線画風</div>
+      </div>
+      <div class="card-body">
+        <h4>線画風 (Line Art)</h4>
+        <p>一筆書きのような連続線で描くミニマルなデザイン。黒インクのシンプルさがモダンでスタイリッシュ。</p>
+      </div>
+    </div>
+    <div class="aplus-card">
+      <div class="card-image" style="background: linear-gradient(135deg, #d7ccc8 0%, #bcaaa4 50%, #a1887f 100%);">
+        <div class="art-icon" style="opacity:.4;">🧵</div>
+        <div class="overlay-label">Embroidery — 刺繍風</div>
+      </div>
+      <div class="card-body">
+        <h4>刺繍風 (Embroidery)</h4>
+        <p>サテンステッチとロング＆ショートステッチで表現されたリアルな刺繍風デザイン。リネン生地の温かみが感じられます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Comparison Table ===== -->
+<section class="comparison">
+  <h2>スタイル比較表</h2>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>特徴</th>
+        <th><span class="style-head">🎨</span>油絵風</th>
+        <th><span class="style-head">💧</span>水彩風</th>
+        <th><span class="style-head">🎯</span>ポップアート</th>
+        <th><span class="style-head">✏️</span>線画風</th>
+        <th><span class="style-head">🧵</span>刺繍風</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>構図バリエーション</td>
+        <td>4種</td>
+        <td>4種</td>
+        <td>4種</td>
+        <td>4種</td>
+        <td>4種</td>
+      </tr>
+      <tr>
+        <td>おすすめカラー</td>
+        <td>ブラック</td>
+        <td>ホワイト</td>
+        <td>ブラック</td>
+        <td>ホワイト</td>
+        <td>ネイビー</td>
+      </tr>
+      <tr>
+        <td>雰囲気</td>
+        <td>クラシック</td>
+        <td>エレガント</td>
+        <td>カジュアル</td>
+        <td>モダン</td>
+        <td>ナチュラル</td>
+      </tr>
+      <tr>
+        <td>Tシャツ</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>トートバッグ</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+        <td class="check">&#10003;</td>
+      </tr>
+      <tr>
+        <td>ギフト人気度</td>
+        <td>★★★★★</td>
+        <td>★★★★☆</td>
+        <td>★★★★☆</td>
+        <td>★★★☆☆</td>
+        <td>★★★★★</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== Customer Reviews ===== -->
+<section class="reviews">
+  <h2>カスタマーレビュー</h2>
+
+  <div class="review-summary">
+    <div class="review-score">
+      <div class="big-num">4.7</div>
+      <div class="of5">5つ星のうち</div>
+      <div class="total-stars">★★★★★</div>
+    </div>
+    <div class="review-bars">
+      <div class="review-bar-row"><span class="label">5つ星</span><div class="bar"><div class="fill" style="width:72%"></div></div><span class="pct">72%</span></div>
+      <div class="review-bar-row"><span class="label">4つ星</span><div class="bar"><div class="fill" style="width:18%"></div></div><span class="pct">18%</span></div>
+      <div class="review-bar-row"><span class="label">3つ星</span><div class="bar"><div class="fill" style="width:6%"></div></div><span class="pct">6%</span></div>
+      <div class="review-bar-row"><span class="label">2つ星</span><div class="bar"><div class="fill" style="width:2%"></div></div><span class="pct">2%</span></div>
+      <div class="review-bar-row"><span class="label">1つ星</span><div class="bar"><div class="fill" style="width:2%"></div></div><span class="pct">2%</span></div>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="reviewer">犬好きパパ</div>
+    <div class="review-stars">★★★★★</div>
+    <div class="review-title">油絵風が最高！プレゼントに大好評</div>
+    <div class="review-date">2026年3月15日 <span class="verified">Amazonで購入</span></div>
+    <div class="review-body">妻の誕生日にジャーマンシェパードの油絵風Tシャツをプレゼント。生地もしっかりしていて、プリントの発色が素晴らしいです。まるで本物の油絵をTシャツに落とし込んだような仕上がり。犬を飼っている友人にも勧めたいです。</div>
+  </div>
+
+  <div class="review-card">
+    <div class="reviewer">アート好きOL</div>
+    <div class="review-stars">★★★★★</div>
+    <div class="review-title">水彩風の透明感が美しい</div>
+    <div class="review-date">2026年3月10日 <span class="verified">Amazonで購入</span></div>
+    <div class="review-body">水彩風のホワイトTシャツを購入。にじみの表現がとても繊細で、アート作品を着ているような気分になれます。サイズもぴったりで、洗濯しても色落ちしませんでした。リピート確定です！</div>
+  </div>
+
+  <div class="review-card">
+    <div class="reviewer">シェパード飼い主歴10年</div>
+    <div class="review-stars">★★★★☆</div>
+    <div class="review-title">デザインは最高、サイズ表要確認</div>
+    <div class="review-date">2026年3月5日 <span class="verified">Amazonで購入</span></div>
+    <div class="review-body">ポップアートスタイルを購入。デザインのクオリティは文句なし。色使いが鮮やかで目を引きます。ただ、少し大きめの作りなのでワンサイズ下がおすすめです。</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="amz-footer">
+  <p>Deer Brand (deer.gift) — German Shepherd Art Collection</p>
+  <p style="margin-top:.3rem;">5 Styles × 4 Compositions = 20 Unique Designs</p>
+  <p style="margin-top:.5rem;">これはLP（ランディングページ）のデザインサンプルです。実際のAmazon商品ページではありません。</p>
+</footer>
+
+<script>
+function selectThumb(el, icon, label) {
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('mainArt').textContent = icon;
+  document.getElementById('mainStyleLabel').textContent = label;
+}
+
+function selectStyle(el, name) {
+  document.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selectedStyle').textContent = name;
+}
+
+// Size pill toggle
+document.querySelectorAll('.size-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.size-pill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+  });
+});
+
+// Color swatch toggle
+document.querySelectorAll('.color-swatch').forEach(swatch => {
+  swatch.addEventListener('click', () => {
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    swatch.classList.add('selected');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2714 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>
+      うちの子スタンプ｜犬の気持ちプロジェクト — 愛犬の写真をLINEスタンプに
+    </title>
+    <meta
+      name="description"
+      content="写真1枚から、うちの子のLINEスタンプが完成。Deer鹿肉ドッグフード・オリジナルグッズ購入者は、クーポンコードで実質0円。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Nunito:wght@700;900;1000&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --c-dark: #2e3544;
+        --c-dark-soft: #4a5161;
+        --c-gold: #c9932e;
+        --c-gold-deep: #a67821;
+        --c-gold-bright: #e3b455;
+        --c-gold-pale: #f4e2b8;
+        --c-white: #ffffff;
+        --c-off: #faf6ef;
+        --c-paper: #f5efe3;
+        --c-paper-deep: #ebe3cc;
+        --c-brown: #7a4a28;
+        --c-brown-soft: #a3704a;
+        --c-green: #6b8e4e;
+        --c-green-pale: #dde6cf;
+        --c-red: #c0392b;
+        --c-text: #3a4150;
+        --c-mute: #7a8090;
+        --c-line: #e5dfd0;
+        --shadow-warm:
+          0 24px 60px -24px rgba(122, 74, 40, 0.28),
+          0 6px 16px -10px rgba(46, 53, 68, 0.12);
+        --shadow-soft: 0 12px 32px -16px rgba(122, 74, 40, 0.22);
+        --shadow-card: 0 8px 24px rgba(46, 53, 68, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        font-family:
+          "Noto Sans JP",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Hiragino Sans",
+          "Yu Gothic",
+          sans-serif;
+        background: var(--c-off);
+        color: var(--c-text);
+        line-height: 1.9;
+        letter-spacing: 0.06em;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 500;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.48 0 0 0 0 0.29 0 0 0 0 0.16 0 0 0 0.15 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+        opacity: 0.35;
+        mix-blend-mode: multiply;
+      }
+      ::selection {
+        background: var(--c-gold);
+        color: #fff;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+        font-family: "Zen Maru Gothic", "Noto Sans JP", sans-serif;
+        font-weight: 900;
+        color: var(--c-dark);
+        letter-spacing: 0.04em;
+        line-height: 1.45;
+      }
+
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 28px;
+        position: relative;
+        z-index: 2;
+      }
+      .wrap-narrow {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+
+      /* ========== BUTTONS ========== */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 32px;
+        border-radius: 999px;
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+        transition:
+          transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+          box-shadow 0.3s;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--c-gold);
+        color: #fff;
+        box-shadow:
+          0 14px 30px -12px rgba(201, 147, 46, 0.55),
+          0 2px 6px rgba(46, 53, 68, 0.1);
+      }
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px -14px rgba(201, 147, 46, 0.7);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--c-dark);
+        border: 2px solid var(--c-dark);
+      }
+      .btn-ghost:hover {
+        background: var(--c-dark);
+        color: var(--c-off);
+        transform: translateY(-2px);
+      }
+      .btn-dark {
+        background: var(--c-dark);
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(46, 53, 68, 0.18);
+      }
+      .btn-dark:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 36px -8px rgba(46, 53, 68, 0.35);
+      }
+      .btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* ========== HEADER ========== */
+      .hdr {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 14px 0;
+        background: rgba(250, 246, 239, 0.92);
+        backdrop-filter: blur(20px) saturate(1.2);
+        -webkit-backdrop-filter: blur(20px) saturate(1.2);
+        border-bottom: 1px solid rgba(229, 223, 208, 0.6);
+      }
+      .hdr-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .nav-logo {
+        height: 36px;
+        width: auto;
+      }
+      .nav-title {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 900;
+        font-size: 17px;
+        color: var(--c-dark);
+        letter-spacing: 0.06em;
+      }
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        list-style: none;
+      }
+      .nav-links a {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--c-dark-soft);
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--c-gold);
+      }
+      @media (max-width: 900px) {
+        .nav-links {
+          display: none;
+        }
+      }
+      .nav-cta {
+        background: var(--c-gold);
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+      }
+      @media (max-width: 560px) {
+        .nav-title {
+          display: none;
+        }
+      }
+
+      /* ========== HERO ========== */
+      .hero {
+        padding: 140px 0 120px;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            ellipse at 15% 30%,
+            rgba(107, 142, 78, 0.08),
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 85% 70%,
+            rgba(201, 147, 46, 0.1),
+            transparent 50%
+          ),
+          var(--c-off);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        position: relative;
+      }
+      @media (max-width: 980px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+          gap: 50px;
+        }
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid var(--c-gold);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--c-brown);
+        letter-spacing: 0.14em;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow-soft);
+      }
+      .hero-badge .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--c-gold);
+        animation: pulse 1.8s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.3);
+          opacity: 0.5;
+        }
+      }
+
+      h1.hero-title {
+        font-size: clamp(38px, 5.4vw, 68px);
+        line-height: 1.2;
+        margin-bottom: 32px;
+      }
+      h1.hero-title .underline {
+        position: relative;
+        display: inline-block;
+      }
+      h1.hero-title .underline::after {
+        content: "";
+        position: absolute;
+        left: -4px;
+        right: -4px;
+        bottom: 6px;
+        height: 14px;
+        background: var(--c-gold-pale);
+        z-index: -1;
+        border-radius: 8px;
+        transform: rotate(-0.5deg);
+      }
+      h1.hero-title .gold {
+        color: var(--c-gold);
+      }
+      h1.hero-title .en {
+        display: block;
+        font-family: "Nunito", sans-serif;
+        font-size: 0.22em;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--c-brown-soft);
+        margin-top: 16px;
+      }
+
+      .hero-lead {
+        font-size: 16px;
+        line-height: 2;
+        color: var(--c-mute);
+        max-width: 520px;
+        margin-bottom: 36px;
+      }
+
+      .price-card {
+        display: inline-flex;
+        align-items: center;
+        gap: 24px;
+        padding: 22px 30px 20px;
+        background: #fff;
+        border-radius: 24px;
+        border: 2px dashed var(--c-gold);
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 32px;
+        position: relative;
+      }
+      .price-card::before {
+        content: "クーポン適用で";
+        position: absolute;
+        top: -12px;
+        left: 24px;
+        background: var(--c-gold);
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+      }
+      .price-card .was {
+        font-family: "Nunito", sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--c-mute);
+        position: relative;
+        line-height: 1;
+      }
+      .price-card .was small {
+        display: block;
+        font-family: "Noto Sans JP";
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        color: var(--c-brown-soft);
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+      .price-card .was .v {
+        position: relative;
+        display: inline-block;
+      }
+      .price-card .was .v::after {
+        content: "";
+        position: absolute;
+        left: -4px;
+        right: -4px;
+        top: 50%;
+        height: 2px;
+        background: var(--c-red);
+        transform: rotate(-8deg);
+      }
+      .price-card .arrow {
+        width: 26px;
+        height: 2px;
+        background: var(--c-gold);
+        position: relative;
+      }
+      .price-card .arrow::after {
+        content: "";
+        position: absolute;
+        right: -2px;
+        top: -4px;
+        width: 10px;
+        height: 10px;
+        border: 2px solid var(--c-gold);
+        border-left: none;
+        border-bottom: none;
+        transform: rotate(45deg);
+      }
+      .price-card .now {
+        font-family: "Nunito", sans-serif;
+        font-weight: 1000;
+        font-size: 48px;
+        color: var(--c-red);
+        line-height: 0.9;
+      }
+      .price-card .now small {
+        font-size: 20px;
+        color: var(--c-dark);
+        margin-left: 2px;
+        font-weight: 900;
+      }
+
+      .cta-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .hero-note {
+        margin-top: 22px;
+        font-size: 12px;
+        color: var(--c-brown-soft);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hero-note::before {
+        content: "";
+        width: 18px;
+        height: 1px;
+        background: var(--c-brown-soft);
+      }
+
+      /* HERO VISUAL — Locket */
+      .hero-visual {
+        position: relative;
+        aspect-ratio: 1;
+        max-width: 520px;
+        margin: 0 auto;
+      }
+      .locket {
+        position: absolute;
+        inset: 12%;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #fff 0%,
+          var(--c-paper) 55%,
+          var(--c-paper-deep) 100%
+        );
+        box-shadow:
+          0 40px 80px -30px rgba(122, 74, 40, 0.4),
+          inset 0 4px 20px rgba(255, 255, 255, 0.8),
+          inset 0 -10px 30px rgba(201, 147, 46, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .locket::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border-radius: 50%;
+        border: 2px dashed var(--c-gold);
+        opacity: 0.45;
+      }
+      .locket-inner {
+        width: 74%;
+        height: 74%;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 40% 30%,
+          #fff,
+          var(--c-paper) 70%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: inset 0 0 40px rgba(201, 147, 46, 0.08);
+      }
+      .locket-dog {
+        font-size: 150px;
+        filter: drop-shadow(0 8px 16px rgba(122, 74, 40, 0.2));
+        animation: dogBob 4s ease-in-out infinite;
+      }
+      @keyframes dogBob {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-2deg);
+        }
+        50% {
+          transform: translateY(-6px) rotate(2deg);
+        }
+      }
+      .locket-label {
+        position: absolute;
+        bottom: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--c-dark);
+        color: var(--c-off);
+        padding: 8px 22px;
+        border-radius: 999px;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .orbit {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-warm);
+        border: 3px solid var(--c-off);
+      }
+      .orbit .em {
+        font-size: 42px;
+        line-height: 1;
+        margin-bottom: 2px;
+      }
+      .orbit .txt {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 900;
+        font-size: 11px;
+        color: var(--c-dark);
+      }
+      .orbit.o1 {
+        top: 0;
+        left: 5%;
+        transform: rotate(-8deg);
+        animation: float1 6s ease-in-out infinite;
+      }
+      .orbit.o2 {
+        top: 6%;
+        right: -2%;
+        transform: rotate(10deg);
+        animation: float2 7s ease-in-out infinite 0.3s;
+      }
+      .orbit.o3 {
+        bottom: 15%;
+        left: -6%;
+        transform: rotate(-4deg);
+        animation: float1 6.5s ease-in-out infinite 0.6s;
+      }
+      .orbit.o4 {
+        bottom: 0;
+        right: 8%;
+        transform: rotate(6deg);
+        animation: float2 7.5s ease-in-out infinite 0.9s;
+      }
+      @keyframes float1 {
+        0%,
+        100% {
+          transform: rotate(-8deg) translateY(0);
+        }
+        50% {
+          transform: rotate(-6deg) translateY(-12px);
+        }
+      }
+      @keyframes float2 {
+        0%,
+        100% {
+          transform: rotate(10deg) translateY(0);
+        }
+        50% {
+          transform: rotate(8deg) translateY(-10px);
+        }
+      }
+
+      .hand-arrow {
+        position: absolute;
+        top: 44%;
+        right: 60%;
+        width: 80px;
+        height: 60px;
+        pointer-events: none;
+      }
+      @media (max-width: 980px) {
+        .hand-arrow {
+          display: none;
+        }
+      }
+
+      /* ========== SECTION COMMONS ========== */
+      section {
+        padding: 120px 0;
+        position: relative;
+      }
+      .sec-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        background: rgba(201, 147, 46, 0.12);
+        color: var(--c-gold-deep);
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+      .sec-tag::before {
+        content: "✦";
+        color: var(--c-gold);
+      }
+      .sec-head {
+        text-align: center;
+        margin-bottom: 72px;
+      }
+      .sec-head h2 {
+        font-size: clamp(30px, 4.2vw, 48px);
+        margin-bottom: 20px;
+      }
+      .sec-head h2 .gold {
+        color: var(--c-gold);
+      }
+      .sec-head h2 .highlight {
+        position: relative;
+        display: inline-block;
+      }
+      .sec-head h2 .highlight::after {
+        content: "";
+        position: absolute;
+        left: -4px;
+        right: -4px;
+        bottom: 4px;
+        height: 12px;
+        background: var(--c-gold-pale);
+        z-index: -1;
+        border-radius: 6px;
+      }
+      .sec-head p {
+        font-size: 15px;
+        color: var(--c-mute);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 2;
+      }
+
+      /* ========== 3 PROMISES ========== */
+      .promises-sec {
+        background: var(--c-paper);
+        padding: 140px 0;
+      }
+      .promise-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
+      @media (max-width: 820px) {
+        .promise-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .promise {
+        background: #fff;
+        border-radius: 24px;
+        padding: 44px 32px 40px;
+        text-align: center;
+        position: relative;
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--c-line);
+        transition:
+          transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+          box-shadow 0.4s;
+      }
+      .promise:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-warm);
+      }
+      .promise .pn {
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--c-gold);
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 14px;
+        box-shadow: 0 6px 14px -4px rgba(201, 147, 46, 0.55);
+      }
+      .promise .icon {
+        width: 88px;
+        height: 88px;
+        margin: 18px auto 22px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--c-gold-pale), var(--c-paper));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+      }
+      .promise h3 {
+        font-size: 20px;
+        margin-bottom: 14px;
+      }
+      .promise p {
+        font-size: 14px;
+        color: var(--c-mute);
+        line-height: 2;
+      }
+
+      /* ========== HOW IT WORKS ========== */
+      .how-sec {
+        padding: 140px 0;
+      }
+      .how-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        position: relative;
+      }
+      @media (max-width: 900px) {
+        .how-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 32px;
+        }
+      }
+      .how-connector {
+        position: absolute;
+        top: 60px;
+        left: 12%;
+        right: 12%;
+        height: 2px;
+        background-image: linear-gradient(
+          to right,
+          var(--c-gold) 50%,
+          transparent 50%
+        );
+        background-size: 14px 2px;
+        background-repeat: repeat-x;
+        z-index: 0;
+      }
+      @media (max-width: 900px) {
+        .how-connector {
+          display: none;
+        }
+      }
+      .step {
+        text-align: center;
+        padding: 0 8px;
+        position: relative;
+        z-index: 2;
+      }
+      .step-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 24px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-warm);
+        position: relative;
+        border: 3px solid var(--c-paper);
+      }
+      .step-circle .emo {
+        font-size: 52px;
+      }
+      .step-num {
+        position: absolute;
+        top: -10px;
+        right: -6px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--c-dark);
+        color: var(--c-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 15px;
+        border: 3px solid var(--c-off);
+        box-shadow: 0 6px 14px -4px rgba(46, 53, 68, 0.35);
+      }
+      .step h3 {
+        font-size: 17px;
+        margin-bottom: 10px;
+      }
+      .step p {
+        font-size: 13px;
+        color: var(--c-mute);
+        line-height: 1.9;
+        max-width: 220px;
+        margin: 0 auto;
+      }
+      .step-tag {
+        display: inline-block;
+        margin-top: 12px;
+        font-family: "Nunito", sans-serif;
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--c-gold);
+      }
+
+      /* ========== STICKER BOOK ========== */
+      .stickers-sec {
+        background: var(--c-paper);
+        padding: 140px 0;
+      }
+      .sticker-book {
+        background: #fff;
+        border-radius: 32px;
+        padding: 60px 44px 52px;
+        box-shadow: var(--shadow-warm);
+        position: relative;
+        max-width: 920px;
+        margin: 0 auto;
+        border: 1px solid var(--c-line);
+      }
+      .sticker-book::before,
+      .sticker-book::after {
+        content: "";
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--c-paper-deep);
+        box-shadow: inset 0 3px 6px rgba(122, 74, 40, 0.25);
+      }
+      .sticker-book::before {
+        top: 24px;
+        left: 28px;
+      }
+      .sticker-book::after {
+        top: 24px;
+        right: 28px;
+      }
+      .book-title {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-top: 8px;
+      }
+      .book-title small {
+        display: block;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 10px;
+        letter-spacing: 0.32em;
+        color: var(--c-gold);
+        margin-bottom: 8px;
+      }
+      .book-title strong {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 900;
+        font-size: 24px;
+        color: var(--c-dark);
+      }
+      .stamp-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+      @media (max-width: 680px) {
+        .stamp-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .stamp {
+        aspect-ratio: 1;
+        border-radius: 20px;
+        background: linear-gradient(135deg, var(--c-off), var(--c-paper));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 10px;
+        border: 2px solid var(--c-line);
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .stamp:hover {
+        transform: translateY(-6px) rotate(-2deg);
+        border-color: var(--c-gold);
+        box-shadow: var(--shadow-soft);
+      }
+      .stamp:nth-child(even):hover {
+        transform: translateY(-6px) rotate(2deg);
+      }
+      .stamp .num {
+        position: absolute;
+        top: 8px;
+        left: 12px;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 10px;
+        color: var(--c-gold);
+      }
+      .stamp .em {
+        font-size: 52px;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .stamp .jp {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 900;
+        font-size: 13px;
+        color: var(--c-dark);
+      }
+      .stamp.accent {
+        background: linear-gradient(135deg, var(--c-gold-pale), var(--c-paper));
+        border-color: var(--c-gold);
+      }
+      .book-note {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px dashed var(--c-line);
+        font-size: 13px;
+        color: var(--c-brown);
+        font-weight: 500;
+      }
+      .book-note strong {
+        color: var(--c-gold-deep);
+        font-weight: 900;
+      }
+
+      /* ========== PRODUCTS (Deer dog food) ========== */
+      .products-sec {
+        padding: 140px 0;
+        background: var(--c-off);
+      }
+      .products-intro {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+      .products-intro img {
+        height: 32px;
+        width: auto;
+      }
+      .products-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid var(--c-line);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--c-brown);
+        letter-spacing: 0.1em;
+      }
+      .products-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 1080px;
+        margin: 60px auto 0;
+      }
+      @media (max-width: 900px) {
+        .products-list {
+          grid-template-columns: 1fr;
+          max-width: 520px;
+        }
+      }
+      .product {
+        background: var(--c-off);
+        border: 1px solid var(--c-line);
+        border-radius: 16px;
+        padding: 24px 22px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s,
+          border-color 0.3s;
+      }
+      .product:hover {
+        transform: translateY(-4px);
+        border-color: var(--c-gold);
+        box-shadow: var(--shadow-soft);
+        background: #fff;
+      }
+      .product__visual {
+        flex-shrink: 0;
+        width: 96px;
+        height: 96px;
+        border-radius: 12px;
+        background: #fff;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--c-line);
+      }
+      .product__visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .product__body {
+        flex: 1;
+        min-width: 0;
+      }
+      .product__name {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--c-dark);
+        margin-bottom: 4px;
+        line-height: 1.5;
+      }
+      .product__desc {
+        font-size: 11px;
+        color: var(--c-mute);
+        line-height: 1.6;
+        margin-bottom: 8px;
+      }
+      .product__price {
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 18px;
+        color: var(--c-gold-deep);
+      }
+      .product__price small {
+        font-size: 10px;
+        color: var(--c-mute);
+        margin-left: 4px;
+        font-weight: 700;
+      }
+
+      .products-cta {
+        text-align: center;
+        margin-top: 50px;
+      }
+      .coupon-notice {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        border-radius: 999px;
+        background: var(--c-gold-pale);
+        color: var(--c-brown);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        margin-bottom: 24px;
+      }
+      .coupon-notice::before {
+        content: "✦";
+        color: var(--c-gold);
+      }
+
+      /* ========== GOODS (Original goods — from reference) ========== */
+      .goods-sec {
+        padding: 140px 0;
+        background: var(--c-paper);
+      }
+      .goods-hero {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .goods-hero h2 {
+        font-size: clamp(28px, 4vw, 44px);
+        margin-bottom: 14px;
+        line-height: 1.3;
+      }
+      .goods-hero h2 em {
+        font-style: normal;
+        color: var(--c-gold);
+      }
+      .goods-sub {
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 11px;
+        letter-spacing: 0.32em;
+        color: var(--c-gold-deep);
+        text-transform: uppercase;
+      }
+
+      .goods-service {
+        background: #fff;
+        border: 1px solid var(--c-line);
+        border-radius: 24px;
+        padding: 44px 40px 48px;
+        max-width: 900px;
+        margin: 60px auto;
+        box-shadow: var(--shadow-card);
+      }
+      .goods-service-title {
+        text-align: center;
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 900;
+        font-size: 17px;
+        color: var(--c-dark);
+        margin-bottom: 32px;
+        letter-spacing: 0.1em;
+      }
+      .goods-service-title::before,
+      .goods-service-title::after {
+        content: "✦";
+        color: var(--c-gold);
+        margin: 0 14px;
+      }
+      .goods-steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      @media (max-width: 760px) {
+        .goods-steps {
+          grid-template-columns: 1fr;
+        }
+      }
+      .goods-step {
+        background: var(--c-off);
+        border: 1px solid var(--c-line);
+        border-radius: 16px;
+        padding: 24px 22px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .goods-step-num {
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--c-gold);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 16px;
+      }
+      .goods-step-text {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--c-mute);
+      }
+      .goods-step-text strong {
+        display: block;
+        color: var(--c-dark);
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .goods-items {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        max-width: 1080px;
+        margin: 60px auto 0;
+      }
+      @media (max-width: 900px) {
+        .goods-items {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 680px) {
+        .goods-items {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .goods-item {
+        background: #fff;
+        border: 1px solid var(--c-line);
+        border-radius: 16px;
+        padding: 22px 18px;
+        text-align: center;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s,
+          border-color 0.3s;
+      }
+      .goods-item:hover {
+        transform: translateY(-4px);
+        border-color: var(--c-gold);
+        box-shadow: var(--shadow-soft);
+      }
+      .goods-item-icon {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 12px;
+        background: var(--c-off);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        overflow: hidden;
+        border: 1px solid var(--c-line);
+      }
+      .goods-item-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .goods-item-name {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--c-dark);
+        margin-bottom: 6px;
+      }
+      .goods-item-price {
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 16px;
+        color: var(--c-gold-deep);
+      }
+
+      /* ========== ATELIER / DEMO ========== */
+      .atelier-sec {
+        padding: 140px 0;
+        background: linear-gradient(180deg, var(--c-off), var(--c-paper));
+      }
+      .atelier-box {
+        background: #fff;
+        border-radius: 32px;
+        padding: 52px 44px;
+        max-width: 820px;
+        margin: 0 auto;
+        box-shadow: var(--shadow-warm);
+        position: relative;
+        border: 1px solid var(--c-line);
+      }
+      @media (max-width: 640px) {
+        .atelier-box {
+          padding: 36px 24px;
+        }
+      }
+      .atelier-box::before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 24px;
+        border-radius: 12px;
+        background: var(--c-gold);
+        opacity: 0.3;
+      }
+      .drop-zone {
+        border: 3px dashed var(--c-gold);
+        border-radius: 22px;
+        padding: 56px 24px;
+        text-align: center;
+        background: var(--c-off);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .drop-zone:hover {
+        background: var(--c-paper);
+        border-color: var(--c-brown);
+        transform: scale(1.005);
+      }
+      .drop-zone.dragover {
+        background: var(--c-gold-pale);
+        border-color: var(--c-gold);
+      }
+      .drop-zone .plus {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: var(--c-gold-pale);
+        color: var(--c-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", sans-serif;
+        font-weight: 400;
+        font-size: 48px;
+        padding-bottom: 8px;
+      }
+      .drop-zone p {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 700;
+        font-size: 17px;
+        color: var(--c-dark);
+        margin-bottom: 6px;
+      }
+      .drop-zone small {
+        font-size: 11px;
+        color: var(--c-brown-soft);
+        letter-spacing: 0.1em;
+      }
+      .drop-zone input {
+        display: none;
+      }
+
+      .progress-wrap {
+        display: none;
+        margin-top: 32px;
+        text-align: center;
+      }
+      .progress-wrap.show {
+        display: block;
+      }
+      .progress-wrap img {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin: 0 auto 18px;
+        border: 4px solid var(--c-paper);
+        box-shadow: var(--shadow-soft);
+      }
+      .progress {
+        height: 8px;
+        background: var(--c-paper-deep);
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 14px auto;
+        max-width: 340px;
+      }
+      .progress .bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--c-gold), var(--c-gold-bright));
+        transition: width 0.4s;
+      }
+      .progress-label {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--c-dark);
+        letter-spacing: 0.08em;
+      }
+
+      .result-wrap {
+        display: none;
+        margin-top: 36px;
+      }
+      .result-wrap.show {
+        display: block;
+      }
+      .result-wrap h4 {
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 24px;
+      }
+      .result-wrap h4::before {
+        content: "✨ ";
+        color: var(--c-gold);
+      }
+
+      .coupon-gate {
+        margin-top: 32px;
+        padding: 28px;
+        border-radius: 20px;
+        background: var(--c-paper);
+        border: 2px solid var(--c-gold);
+        position: relative;
+      }
+      .coupon-gate::before {
+        content: "GATE";
+        position: absolute;
+        top: -10px;
+        left: 24px;
+        background: var(--c-gold);
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 999px;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+      }
+      .coupon-gate h4 {
+        font-size: 16px;
+        margin-bottom: 6px;
+        text-align: left;
+      }
+      .coupon-gate h4::before {
+        content: "";
+      }
+      .coupon-gate p {
+        font-size: 12px;
+        color: var(--c-mute);
+        margin-bottom: 16px;
+        line-height: 1.8;
+      }
+      .coupon-input-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .coupon-input-row input {
+        flex: 1;
+        min-width: 220px;
+        padding: 16px 22px;
+        border-radius: 999px;
+        border: 1.5px solid var(--c-line);
+        background: #fff;
+        font-family: "Nunito", sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+        color: var(--c-dark);
+      }
+      .coupon-input-row input:focus {
+        outline: none;
+        border-color: var(--c-gold);
+        box-shadow: 0 0 0 4px var(--c-gold-pale);
+      }
+      .status-msg {
+        margin-top: 14px;
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 20px;
+      }
+      .status-msg.ok {
+        color: var(--c-green);
+      }
+      .status-msg.ng {
+        color: var(--c-red);
+      }
+      .status-msg:not(:empty)::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .gate-link {
+        display: block;
+        margin-top: 14px;
+        font-size: 12px;
+        color: var(--c-brown-soft);
+        text-decoration: underline;
+        text-decoration-color: var(--c-gold);
+        text-underline-offset: 3px;
+      }
+
+      /* ========== STORY ========== */
+      .story-sec {
+        padding: 140px 0;
+        background: var(--c-off);
+      }
+      .story-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: 60px;
+        align-items: center;
+      }
+      @media (max-width: 900px) {
+        .story-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .story-image {
+        aspect-ratio: 4/5;
+        border-radius: 36px;
+        background: radial-gradient(
+          circle at 30% 30%,
+          var(--c-paper) 0%,
+          var(--c-paper-deep) 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 190px;
+        box-shadow: var(--shadow-warm);
+        position: relative;
+        overflow: hidden;
+      }
+      .story-image::before {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border-radius: 28px;
+        border: 2px dashed var(--c-gold);
+        opacity: 0.3;
+      }
+      .story-image::after {
+        content: "";
+        position: absolute;
+        bottom: 24px;
+        right: 24px;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #fff
+          url("https://inunokimochi.vercel.app/assets/deer-logo.svg") center/60%
+          no-repeat;
+        box-shadow: var(--shadow-soft);
+      }
+      .story-text h2 {
+        font-size: clamp(28px, 3.8vw, 42px);
+        margin-bottom: 24px;
+        line-height: 1.35;
+      }
+      .story-text h2 .gold {
+        color: var(--c-gold);
+      }
+      .story-text p {
+        font-size: 14px;
+        color: var(--c-mute);
+        line-height: 2.1;
+        margin-bottom: 18px;
+      }
+      .story-text .sig {
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--c-line);
+        font-family: "Nunito", sans-serif;
+        font-size: 11px;
+        color: var(--c-brown-soft);
+        letter-spacing: 0.15em;
+      }
+      .story-text .sig strong {
+        color: var(--c-gold-deep);
+        font-weight: 900;
+      }
+
+      /* ========== FAQ ========== */
+      .faq-sec {
+        padding: 140px 0;
+        background: var(--c-paper);
+      }
+      .faq-list {
+        max-width: 760px;
+        margin: 0 auto;
+      }
+      .faq-list details {
+        background: #fff;
+        border-radius: 20px;
+        padding: 24px 32px;
+        margin-bottom: 14px;
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--c-line);
+        transition: transform 0.3s;
+      }
+      .faq-list details:hover {
+        transform: translateX(4px);
+      }
+      .faq-list summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+      }
+      .faq-list summary::-webkit-details-marker {
+        display: none;
+      }
+      .faq-list summary .q {
+        font-family: "Zen Maru Gothic", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--c-dark);
+        line-height: 1.6;
+        flex: 1;
+      }
+      .faq-list summary .q::before {
+        content: "Q. ";
+        color: var(--c-gold);
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+      }
+      .faq-list .plus-btn {
+        flex-shrink: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--c-gold-pale);
+        color: var(--c-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 17px;
+        transition: transform 0.3s;
+      }
+      .faq-list details[open] .plus-btn {
+        transform: rotate(135deg);
+      }
+      .faq-list details p {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px dashed var(--c-line);
+        font-size: 13px;
+        color: var(--c-mute);
+        line-height: 2;
+        padding-left: 26px;
+      }
+      .faq-list details p::before {
+        content: "A. ";
+        color: var(--c-green);
+        font-weight: 700;
+        margin-left: -26px;
+        margin-right: 10px;
+      }
+
+      /* ========== FINAL CTA ========== */
+      .final-sec {
+        padding: 140px 0;
+        position: relative;
+        overflow: hidden;
+        background: var(--c-dark);
+        color: var(--c-off);
+      }
+      .final-sec::before {
+        content: "";
+        position: absolute;
+        top: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 800px;
+        height: 800px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(201, 147, 46, 0.22),
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+      .final-inner {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        max-width: 680px;
+        margin: 0 auto;
+      }
+      .final-inner .sec-tag {
+        background: rgba(201, 147, 46, 0.22);
+        color: var(--c-gold-bright);
+      }
+      .final-inner h2 {
+        font-size: clamp(34px, 4.8vw, 56px);
+        color: #fff;
+        margin-bottom: 24px;
+        line-height: 1.3;
+      }
+      .final-inner h2 .gold {
+        color: var(--c-gold-bright);
+      }
+      .final-inner p {
+        font-size: 15px;
+        color: rgba(250, 246, 239, 0.8);
+        margin-bottom: 40px;
+        line-height: 2;
+      }
+      .final-inner .btn-primary {
+        background: var(--c-gold);
+        box-shadow: 0 20px 50px -14px rgba(201, 147, 46, 0.6);
+        font-size: 15px;
+        padding: 22px 42px;
+      }
+      .final-deer {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 32px;
+        font-size: 12px;
+        color: rgba(250, 246, 239, 0.55);
+        letter-spacing: 0.1em;
+      }
+      .final-deer img {
+        height: 20px;
+        width: auto;
+        filter: brightness(0) invert(1);
+        opacity: 0.6;
+      }
+
+      /* ========== FOOTER ========== */
+      footer {
+        background: var(--c-dark);
+        color: rgba(250, 246, 239, 0.7);
+        padding: 64px 0 32px;
+        border-top: 1px solid rgba(250, 246, 239, 0.1);
+      }
+      .foot-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 48px;
+      }
+      @media (max-width: 720px) {
+        .foot-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .foot-brand img {
+        height: 32px;
+        width: auto;
+        filter: brightness(0) invert(1);
+      }
+      .foot-brand p {
+        margin-top: 16px;
+        font-size: 12px;
+        line-height: 2;
+        color: rgba(250, 246, 239, 0.55);
+        max-width: 280px;
+      }
+      .foot-col h5 {
+        font-family: "Nunito", sans-serif;
+        font-weight: 900;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--c-gold-bright);
+        margin-bottom: 18px;
+      }
+      .foot-col ul {
+        list-style: none;
+        line-height: 2.4;
+      }
+      .foot-col a {
+        font-size: 12px;
+        color: rgba(250, 246, 239, 0.65);
+      }
+      .foot-col a:hover {
+        color: var(--c-gold-bright);
+      }
+      .foot-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 28px;
+        border-top: 1px solid rgba(250, 246, 239, 0.1);
+        font-size: 11px;
+        color: rgba(250, 246, 239, 0.5);
+        letter-spacing: 0.08em;
+      }
+
+      /* ========== REVEAL ========== */
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .reveal.in {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ========== HEADER ========== -->
+    <header class="hdr">
+      <div class="hdr-inner">
+        <div class="nav-brand">
+          <img
+            src="https://inunokimochi.vercel.app/assets/deer-logo.svg"
+            alt="Deer"
+            class="nav-logo"
+          />
+          <div class="nav-title">犬の気持ちプロジェクト</div>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="#promises">特長</a></li>
+            <li><a href="#how">使い方</a></li>
+            <li><a href="#stickers">サンプル</a></li>
+            <li><a href="#products">ドッグフード</a></li>
+            <li><a href="#goods">グッズ</a></li>
+            <li><a href="#atelier">試作</a></li>
+          </ul>
+        </nav>
+        <a href="#products" class="nav-cta">クーポンGET</a>
+      </div>
+    </header>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div class="reveal">
+            <div class="hero-badge">
+              <span class="dot"></span>
+              Deer ドッグフード・グッズ購入者 限定特典
+            </div>
+
+            <h1 class="hero-title">
+              うちの子が、<br />
+              世界に1つの<br />
+              <span class="underline gold">LINEスタンプ</span>に。
+              <span class="en"
+                >YOUR DOG, PRESSED INTO EIGHT LITTLE STAMPS.</span
+              >
+            </h1>
+
+            <p class="hero-lead">
+              写真を1枚アップロードするだけで、AIがうちの子の表情を8つのLINEスタンプに。「おはよう」から「ワン！」まで、毎日使う黄金の8枚を丁寧にお届けします。
+            </p>
+
+            <div class="price-card">
+              <div class="was">
+                <small>通常価格</small>
+                <span class="v">¥4,980</span>
+              </div>
+              <div class="arrow"></div>
+              <div class="now">¥0<small>円</small></div>
+            </div>
+
+            <div class="cta-row">
+              <a href="#products" class="btn btn-primary">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 3h2l2 10h11l2-7H7" />
+                  <circle cx="9" cy="20" r="1.5" />
+                  <circle cx="18" cy="20" r="1.5" />
+                </svg>
+                Deer商品でクーポンGET
+              </a>
+              <a href="#atelier" class="btn btn-ghost">試作してみる →</a>
+            </div>
+
+            <p class="hero-note">
+              クーポンはDeerフード・グッズ購入時にメールで自動発行されます
+            </p>
+          </div>
+
+          <div class="hero-visual reveal">
+            <svg
+              class="hand-arrow"
+              viewBox="0 0 100 80"
+              fill="none"
+              stroke="#C9932E"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M10 60 Q 40 5 85 25" opacity=".7" />
+              <path d="M78 18 L 87 26 L 78 34" />
+            </svg>
+
+            <div class="locket">
+              <div class="locket-inner">
+                <div class="locket-dog">🐕</div>
+              </div>
+              <div class="locket-label">Your Dog Here</div>
+            </div>
+
+            <div class="orbit o1">
+              <div class="em">🌅</div>
+              <div class="txt">おはよう</div>
+            </div>
+            <div class="orbit o2">
+              <div class="em">🙏</div>
+              <div class="txt">ありがとう</div>
+            </div>
+            <div class="orbit o3">
+              <div class="em">🍖</div>
+              <div class="txt">おなかすいた</div>
+            </div>
+            <div class="orbit o4">
+              <div class="em">🐾</div>
+              <div class="txt">ワン！</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3 PROMISES ========== -->
+    <section class="promises-sec" id="promises">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="sec-tag">3 Promises / 3つの約束</span>
+          <h2>
+            犬の気持ちプロジェクトの、<br /><span class="highlight"
+              >3つのこだわり。</span
+            >
+          </h2>
+          <p>
+            ただのスタンプ生成サービスではありません。Deerの哲学「産地＆中身が見える」を、うちの子のスタンプ制作にも。
+          </p>
+        </div>
+        <div class="promise-grid">
+          <div class="promise reveal">
+            <div class="pn">01</div>
+            <div class="icon">🎯</div>
+            <h3>本当に使う8個だけ</h3>
+            <p>
+              40個作っても死蔵されるLINEスタンプ。私たちは「おはよう」「ありがとう」「ワン！」など、毎日使う黄金の8枚だけを厳選します。
+            </p>
+          </div>
+          <div class="promise reveal">
+            <div class="pn">02</div>
+            <div class="icon">✨</div>
+            <h3>プレミアムAIで高品質</h3>
+            <p>
+              Gemini 2.5 Flash Image
+              による高品質生成。背景除去からポーズ作成、文字入れまで自動。キャラの一貫性も抜群です。
+            </p>
+          </div>
+          <div class="promise reveal">
+            <div class="pn">03</div>
+            <div class="icon">🎁</div>
+            <h3>購入者は完全無料</h3>
+            <p>
+              Deerの鹿肉ドッグフード・オリジナルグッズを購入すると、クーポンコードをメールで自動発行。4,980円が0円に。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="how-sec" id="how">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="sec-tag">How it works / 使い方</span>
+          <h2><span class="highlight">4ステップ</span>で、完成。</h2>
+          <p>最短5分。Deer商品の購入から、LINE申請用ZIPのダウンロードまで。</p>
+        </div>
+        <div class="how-grid">
+          <div class="how-connector"></div>
+          <div class="step reveal">
+            <div class="step-circle">
+              <span class="emo">🦌</span>
+              <div class="step-num">1</div>
+            </div>
+            <h3>Deerを購入する</h3>
+            <p>
+              鹿肉ドッグフードやオリジナルグッズを注文すると、完了メールにクーポンコードが自動発行。
+            </p>
+            <div class="step-tag">Purchase</div>
+          </div>
+          <div class="step reveal">
+            <div class="step-circle">
+              <span class="emo">📸</span>
+              <div class="step-num">2</div>
+            </div>
+            <h3>写真をアップ</h3>
+            <p>
+              うちの子の一番いい顔の写真を1枚選んでアップロード。明るい写真が◎。
+            </p>
+            <div class="step-tag">Upload</div>
+          </div>
+          <div class="step reveal">
+            <div class="step-circle">
+              <span class="emo">✨</span>
+              <div class="step-num">3</div>
+            </div>
+            <h3>AIが自動生成</h3>
+            <p>
+              約90秒で8つのポーズ＋文字入れが完了。背景除去もすべて自動です。
+            </p>
+            <div class="step-tag">Generate</div>
+          </div>
+          <div class="step reveal">
+            <div class="step-circle">
+              <span class="emo">📦</span>
+              <div class="step-num">4</div>
+            </div>
+            <h3>ZIPダウンロード</h3>
+            <p>
+              クーポンコードを入力すると無料でZIP取得。LINE Creators
+              Marketへ申請を。
+            </p>
+            <div class="step-tag">Download</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== STICKER BOOK ========== -->
+    <section class="stickers-sec" id="stickers">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="sec-tag">Sticker Collection / 図鑑</span>
+          <h2>毎日使う、<span class="gold">黄金の8枚。</span></h2>
+          <p>
+            40個の死蔵スタンプより、毎日使える8個を。最後の「ワン！」は、何を言われても笑顔で返せる万能枠です。
+          </p>
+        </div>
+
+        <div class="sticker-book reveal">
+          <div class="book-title">
+            <small>✦ STICKER COLLECTION №.001 ✦</small>
+            <strong>うちの子スタンプ・基本セット</strong>
+          </div>
+          <div class="stamp-grid">
+            <div class="stamp">
+              <div class="num">01</div>
+              <div class="em">🌅</div>
+              <div class="jp">おはよう</div>
+            </div>
+            <div class="stamp accent">
+              <div class="num">02</div>
+              <div class="em">🙏</div>
+              <div class="jp">ありがとう</div>
+            </div>
+            <div class="stamp">
+              <div class="num">03</div>
+              <div class="em">🥺</div>
+              <div class="jp">ごめんね</div>
+            </div>
+            <div class="stamp accent">
+              <div class="num">04</div>
+              <div class="em">👌</div>
+              <div class="jp">了解！</div>
+            </div>
+            <div class="stamp accent">
+              <div class="num">05</div>
+              <div class="em">😴</div>
+              <div class="jp">おやすみ</div>
+            </div>
+            <div class="stamp">
+              <div class="num">06</div>
+              <div class="em">✨</div>
+              <div class="jp">うれしい！</div>
+            </div>
+            <div class="stamp accent">
+              <div class="num">07</div>
+              <div class="em">🍖</div>
+              <div class="jp">おなかすいた</div>
+            </div>
+            <div class="stamp">
+              <div class="num">08</div>
+              <div class="em">🐾</div>
+              <div class="jp">ワン！</div>
+            </div>
+          </div>
+          <div class="book-note">
+            ※
+            最後の<strong>「ワン！」</strong>は、何を言われても笑顔で返せる万能リアクション枠です。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PRODUCTS (Deer Dog Food) ========== -->
+    <section class="products-sec" id="products">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="sec-tag">Deer Dog Food / ドッグフード</span>
+          <h2>
+            購入でクーポンGET、<br /><span class="highlight"
+              >スタンプ制作が無料に。</span
+            >
+          </h2>
+          <p>
+            国産鹿肉100%・完全無添加。Deerの鹿肉ドッグフードをご購入いただいた方全員に、うちの子スタンプ制作の無料クーポンをプレゼントしています。
+          </p>
+        </div>
+
+        <div class="products-intro">
+          <img
+            src="https://inunokimochi.vercel.app/assets/deer-logo.svg"
+            alt="Deer"
+          />
+          <span class="products-tag">国産鹿肉100% ・ 完全無添加</span>
+        </div>
+
+        <div class="products-list">
+          <div class="product reveal">
+            <div class="product__visual">
+              <img
+                src="https://inunokimochi.vercel.app/assets/products/jerky-minced.png"
+                alt="鹿肉ミンチジャーキー"
+              />
+            </div>
+            <div class="product__body">
+              <div class="product__name">鹿肉ミンチジャーキー 50g</div>
+              <div class="product__desc">
+                天然鹿100%・完全無添加の犬用おやつ
+              </div>
+              <div class="product__price">¥980 <small>税込</small></div>
+            </div>
+          </div>
+
+          <div class="product reveal">
+            <div class="product__visual">
+              <img
+                src="https://inunokimochi.vercel.app/assets/products/jerky-abara.png"
+                alt="鹿のあばら骨ジャーキー"
+              />
+            </div>
+            <div class="product__body">
+              <div class="product__name">鹿のあばら骨ジャーキー 100g</div>
+              <div class="product__desc">
+                国産鹿骨をじっくり乾燥・低脂肪高たんぱく
+              </div>
+              <div class="product__price">¥980 <small>税込</small></div>
+            </div>
+          </div>
+
+          <div class="product reveal">
+            <div class="product__visual">
+              <img
+                src="https://inunokimochi.vercel.app/assets/products/frozen-mince.png"
+                alt="鹿肉冷凍ミンチ"
+              />
+            </div>
+            <div class="product__body">
+              <div class="product__name">鹿肉冷凍ミンチ 250g</div>
+              <div class="product__desc">
+                ヒューマングレード福井県産・急速冷凍
+              </div>
+              <div class="product__price">¥880 <small>税込</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="products-cta">
+          <div class="coupon-notice">
+            ご購入者全員にスタンプ無料クーポンをプレゼント
+          </div>
+          <div>
+            <a
+              href="https://www.deer.gift/"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-dark"
+              >Deer 公式オンラインストアへ →</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GOODS (Original Goods) ========== -->
+    <section class="goods-sec" id="goods">
+      <div class="wrap">
+        <div class="goods-hero">
+          <span class="sec-tag">Deer Custom / オリジナルグッズ</span>
+          <h2>愛犬の写真を、<em>23種類のアート</em>に。</h2>
+          <p class="goods-sub">DEER CUSTOM</p>
+        </div>
+
+        <div class="goods-service">
+          <div class="goods-service-title">注文の流れ</div>
+          <div class="goods-steps">
+            <div class="goods-step">
+              <div class="goods-step-num">1</div>
+              <div class="goods-step-text">
+                <strong>愛犬の写真をアップロード</strong>
+                スマホで撮った写真でOK
+              </div>
+            </div>
+            <div class="goods-step">
+              <div class="goods-step-num">2</div>
+              <div class="goods-step-text">
+                <strong>23種類のアートスタイルから選ぶ</strong>
+                印象派・水彩・水墨画・ポップアートなど
+              </div>
+            </div>
+            <div class="goods-step">
+              <div class="goods-step-num">3</div>
+              <div class="goods-step-text">
+                <strong>グッズに印刷・刺繍してお届け</strong>
+                最短5日・全品送料無料
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="goods-items">
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/tshirt.png"
+                alt="Tシャツ"
+              />
+            </div>
+            <div class="goods-item-name">Tシャツ</div>
+            <div class="goods-item-price">¥4,980〜</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/hoodie.png"
+                alt="パーカー"
+              />
+            </div>
+            <div class="goods-item-name">パーカー</div>
+            <div class="goods-item-price">¥7,980〜</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/mug.png"
+                alt="マグカップ"
+              />
+            </div>
+            <div class="goods-item-name">マグカップ</div>
+            <div class="goods-item-price">¥2,980</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/case.png"
+                alt="スマホケース"
+              />
+            </div>
+            <div class="goods-item-name">スマホケース</div>
+            <div class="goods-item-price">¥4,980</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/poster.png"
+                alt="アートポスター"
+              />
+            </div>
+            <div class="goods-item-name">アートポスター</div>
+            <div class="goods-item-price">¥4,480</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/postcard.png"
+                alt="ポストカード5枚セット"
+              />
+            </div>
+            <div class="goods-item-name">ポストカード5枚</div>
+            <div class="goods-item-price">¥1,980</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/cap.png"
+                alt="刺繍キャップ"
+              />
+            </div>
+            <div class="goods-item-name">刺繍キャップ</div>
+            <div class="goods-item-price">¥4,980</div>
+          </div>
+          <div class="goods-item reveal">
+            <div class="goods-item-icon">
+              <img
+                src="https://inunokimochi.vercel.app/assets/goods/sticker.png"
+                alt="カッティングステッカー"
+              />
+            </div>
+            <div class="goods-item-name">ステッカー</div>
+            <div class="goods-item-price">¥1,480</div>
+          </div>
+        </div>
+
+        <div class="products-cta">
+          <div class="coupon-notice">
+            オリジナルグッズのご購入でもクーポンGET
+          </div>
+          <div>
+            <a
+              href="https://www.deer.gift/"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-dark"
+              >Deer 公式オンラインストアへ →</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ATELIER / DEMO ========== -->
+    <section class="atelier-sec" id="atelier">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="sec-tag">Atelier / 試作工房</span>
+          <h2>まずは、<span class="highlight">お試しで作ってみる。</span></h2>
+          <p>
+            写真をアップロードしてAI生成を体験。ダウンロードにはDeer商品購入時のクーポンコードが必要です。
+          </p>
+        </div>
+        <div class="atelier-box reveal">
+          <label class="drop-zone" id="drop">
+            <div class="plus">+</div>
+            <p>写真をここへドロップ、またはクリックして選択</p>
+            <small>JPG / PNG / 最大10MB</small>
+            <input type="file" id="fileInput" accept="image/*" />
+          </label>
+
+          <div class="progress-wrap" id="preview">
+            <img id="previewImg" alt="preview" />
+            <div class="progress-label" id="progressLabel">解析中...</div>
+            <div class="progress"><div class="bar" id="progressBar"></div></div>
+          </div>
+
+          <div class="result-wrap" id="result">
+            <h4>完成しました！</h4>
+            <div class="stamp-grid">
+              <div class="stamp">
+                <div class="num">01</div>
+                <div class="em">🌅</div>
+                <div class="jp">おはよう</div>
+              </div>
+              <div class="stamp accent">
+                <div class="num">02</div>
+                <div class="em">🙏</div>
+                <div class="jp">ありがとう</div>
+              </div>
+              <div class="stamp">
+                <div class="num">03</div>
+                <div class="em">🥺</div>
+                <div class="jp">ごめんね</div>
+              </div>
+              <div class="stamp accent">
+                <div class="num">04</div>
+                <div class="em">👌</div>
+                <div class="jp">了解！</div>
+              </div>
+              <div class="stamp accent">
+                <div class="num">05</div>
+                <div class="em">😴</div>
+                <div class="jp">おやすみ</div>
+              </div>
+              <div class="stamp">
+                <div class="num">06</div>
+                <div class="em">✨</div>
+                <div class="jp">うれしい！</div>
+              </div>
+              <div class="stamp accent">
+                <div class="num">07</div>
+                <div class="em">🍖</div>
+                <div class="jp">おなかすいた</div>
+              </div>
+              <div class="stamp">
+                <div class="num">08</div>
+                <div class="em">🐾</div>
+                <div class="jp">ワン！</div>
+              </div>
+            </div>
+
+            <div class="coupon-gate">
+              <h4>クーポンコードを入力してダウンロード</h4>
+              <p>
+                Deer商品ご購入時のメールに記載されたコードを入力してください。
+              </p>
+              <div class="coupon-input-row">
+                <input type="text" id="coupon" placeholder="DEER-XXXXX-XXXXX" />
+                <button
+                  class="btn btn-primary"
+                  id="redeem"
+                  style="padding: 16px 28px; font-size: 13px"
+                >
+                  無料ダウンロード
+                </button>
+              </div>
+              <div class="status-msg" id="status"></div>
+              <a href="#products" class="gate-link"
+                >▶ クーポンを持っていない方はこちら（Deer商品を見る）</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== STORY ========== -->
+    <section class="story-sec">
+      <div class="wrap">
+        <div class="story-grid">
+          <div class="story-image reveal">🐕</div>
+          <div class="story-text reveal">
+            <span class="sec-tag">Our Story / ブランドストーリー</span>
+            <h2>犬と人を、<br />もっと<span class="gold">近くに。</span></h2>
+            <p>
+              Deerは、国産野生鹿を活用したフレッシュドッグフードブランド。獣害ジビエを地域資源として再生し、犬の健康と地域社会の両方に貢献することを目指しています。
+            </p>
+            <p>
+              そんな私たちが新しくお届けするのが、この「うちの子スタンプ」サービス。うちの子の写真から生まれたスタンプがLINEで毎日使われることで、犬と飼い主の絆が、もっと日常に溶け込みますように。
+            </p>
+            <p>
+              ドッグフードを買ってくださるあなたへの、ささやかな贈り物です。
+            </p>
+            <div class="sig">
+              <strong>— 犬の気持ちプロジェクト</strong> × DEER / 2026 SPRING
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section class="faq-sec" id="faq">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="sec-tag">FAQ / よくあるご質問</span>
+          <h2>気になる<span class="highlight">疑問にお答え</span>します</h2>
+        </div>
+        <div class="faq-list">
+          <details open>
+            <summary>
+              <span class="q"
+                >本当に、無料でLINEスタンプが作れるのですか？</span
+              >
+              <span class="plus-btn">+</span>
+            </summary>
+            <p>
+              はい。Deerのドッグフード・オリジナルグッズをご購入いただいた方には、ご注文完了メールに一度だけ使えるクーポンコードが自動で記載されます。このコードを入力することで、通常4,980円の制作費が0円になります。
+            </p>
+          </details>
+          <details>
+            <summary>
+              <span class="q">クーポンを持っていなくても作れますか？</span>
+              <span class="plus-btn">+</span>
+            </summary>
+            <p>
+              通常価格4,980円でもご購入いただけます。ただしクーポン経由なら実質無料ですので、まずはDeer商品のご購入をおすすめしています。鹿肉ミンチジャーキーは¥980からご用意があります。
+            </p>
+          </details>
+          <details>
+            <summary>
+              <span class="q"
+                >LINEスタンプは、どうやって申請するのですか？</span
+              >
+              <span class="plus-btn">+</span>
+            </summary>
+            <p>
+              当サービスはLINE Creators
+              Market申請用のZIPファイル（画像一式＋手順ガイド）をお渡しします。お客様ご自身のLINE
+              Creators
+              Marketアカウントから新規スタンプとして登録し、解凍した画像をアップロードして審査申請してください。はじめての方向けのガイドも同梱するため、5〜10分程度で完了します。
+            </p>
+          </details>
+          <details>
+            <summary>
+              <span class="q">なぜ40個ではなく、8個なのですか？</span>
+              <span class="plus-btn">+</span>
+            </summary>
+            <p>
+              実際にLINEで使われるスタンプは、平均して5〜8個と言われています。「おはよう」「ありがとう」「ワン！」など、毎日必ず使う黄金の8枚に絞ることで、生成時間は短く、そしてなによりキャラクターの一貫性を高く保つことができます。使われない32個よりも、毎日使われる8個を—それが私たちの哲学です。
+            </p>
+          </details>
+          <details>
+            <summary>
+              <span class="q">どんな写真を用意すればよいですか？</span>
+              <span class="plus-btn">+</span>
+            </summary>
+            <p>
+              明るい屋外や窓辺で、正面または斜め正面から撮影した、顔がはっきり写っている写真が最適です。ピントが合っていて、他の犬や人が写り込んでいない写真をお選びください。複数枚お持ちの場合は、一番表情豊かな1枚がおすすめです。
+            </p>
+          </details>
+          <details>
+            <summary>
+              <span class="q"
+                >Deer Customのグッズ購入でもクーポンはもらえますか？</span
+              >
+              <span class="plus-btn">+</span>
+            </summary>
+            <p>
+              はい、Tシャツやパーカー、マグカップなどのオリジナルグッズをご購入いただいた方にも、同じクーポンコードをメールで自動発行しています。最も金額の低いステッカー（¥1,480）からクーポン対象です。
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FINAL CTA ========== -->
+    <section class="final-sec">
+      <div class="wrap">
+        <div class="final-inner">
+          <span class="sec-tag">✦ Last Call ✦</span>
+          <h2>うちの子を、<br />毎日の<span class="gold">LINEに。</span></h2>
+          <p>
+            まずは、Deerの鹿肉ドッグフードまたはオリジナルグッズから。ご購入者全員に、スタンプ制作の無料クーポンコードをおつけしています。
+          </p>
+          <a
+            href="https://www.deer.gift/"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-primary"
+          >
+            Deer 公式オンラインストアへ
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
+          <div class="final-deer">
+            <img
+              src="https://inunokimochi.vercel.app/assets/deer-logo.svg"
+              alt="Deer"
+            />
+            犬の気持ちプロジェクト × DEER
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+      <div class="wrap">
+        <div class="foot-grid">
+          <div class="foot-brand">
+            <img
+              src="https://inunokimochi.vercel.app/assets/deer-logo.svg"
+              alt="Deer"
+            />
+            <p>
+              犬の気持ちプロジェクト × DEER<br />産地＆中身が見える、国産鹿肉100%・完全無添加のドッグフードブランド。
+            </p>
+          </div>
+          <div class="foot-col">
+            <h5>サービス</h5>
+            <ul>
+              <li><a href="#promises">特長</a></li>
+              <li><a href="#how">使い方</a></li>
+              <li><a href="#stickers">サンプル</a></li>
+              <li><a href="#atelier">試作する</a></li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h5>商品</h5>
+            <ul>
+              <li><a href="#products">ドッグフード</a></li>
+              <li><a href="#goods">オリジナルグッズ</a></li>
+              <li>
+                <a href="https://www.deer.gift/" target="_blank" rel="noopener"
+                  >公式ストア</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="foot-col">
+            <h5>運営</h5>
+            <ul>
+              <li><a href="#">特商法表記</a></li>
+              <li><a href="#">プライバシー</a></li>
+              <li><a href="#">利用規約</a></li>
+              <li><a href="#">お問い合わせ</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot-bottom">
+          <div>© 2026 犬の気持ちプロジェクト × DEER</div>
+          <div>Made in Japan with 国産鹿肉100%</div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12 },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      const drop = document.getElementById("drop");
+      const fileInput = document.getElementById("fileInput");
+      const preview = document.getElementById("preview");
+      const previewImg = document.getElementById("previewImg");
+      const progressBar = document.getElementById("progressBar");
+      const progressLabel = document.getElementById("progressLabel");
+      const result = document.getElementById("result");
+      const couponInput = document.getElementById("coupon");
+      const redeemBtn = document.getElementById("redeem");
+      const statusEl = document.getElementById("status");
+      const VALID = ["DEER-WELCOME-0000", "DEER-FOOD-8888", "DEER-GIFT-2026"];
+
+      drop.addEventListener("click", () => fileInput.click());
+      drop.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        drop.classList.add("dragover");
+      });
+      drop.addEventListener("dragleave", () =>
+        drop.classList.remove("dragover"),
+      );
+      drop.addEventListener("drop", (e) => {
+        e.preventDefault();
+        drop.classList.remove("dragover");
+        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+      });
+
+      function handleFile(file) {
+        if (!file.type.startsWith("image/")) {
+          alert("画像ファイルを選択してください");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          previewImg.src = ev.target.result;
+          preview.classList.add("show");
+          result.classList.remove("show");
+          runGen();
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function runGen() {
+        const steps = [
+          { p: 18, l: "写真を解析中..." },
+          { p: 38, l: "背景を除去中..." },
+          { p: 58, l: "8つのポーズを生成中..." },
+          { p: 80, l: "手書き文字を添加中..." },
+          { p: 100, l: "✨ 完成！" },
+        ];
+        let i = 0;
+        progressBar.style.width = "0%";
+        const tick = () => {
+          if (i >= steps.length) {
+            setTimeout(() => {
+              result.classList.add("show");
+              result.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 500);
+            return;
+          }
+          progressBar.style.width = steps[i].p + "%";
+          progressLabel.textContent = steps[i].l;
+          i++;
+          setTimeout(tick, 800);
+        };
+        tick();
+      }
+
+      redeemBtn.addEventListener("click", () => {
+        const code = couponInput.value.trim().toUpperCase();
+        if (!code) {
+          statusEl.textContent = "クーポンコードを入力してください";
+          statusEl.className = "status-msg ng";
+          return;
+        }
+        if (VALID.includes(code)) {
+          statusEl.textContent = "認証成功！ダウンロードを開始します...";
+          statusEl.className = "status-msg ok";
+          setTimeout(() => {
+            const blob = new Blob(["Demo: LINE Sticker ZIP"], {
+              type: "application/zip",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "uchinoko-stamp.zip";
+            a.click();
+            URL.revokeObjectURL(url);
+          }, 700);
+        } else {
+          statusEl.textContent =
+            "無効なコードです。Deer商品ご購入時のメールをご確認ください";
+          statusEl.className = "status-msg ng";
+        }
+      });
+    </script>
+  </body>
+</html>

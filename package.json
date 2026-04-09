@@ -1,0 +1,9 @@
+{
+  "name": "deer-brand",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "stripe": "^14.0.0"
+  }
+}

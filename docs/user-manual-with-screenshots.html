@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deer ユーザーマニュアル（スクリーンショット付き）</title>
+  <style>
+    :root {
+      --ivory: #faf7f2;
+      --cream: #f5ede3;
+      --warm: #ede4d8;
+      --gold: #c4a265;
+      --terracotta: #c4836a;
+      --charcoal: #2c2824;
+      --text: #2c2824;
+      --text-mid: #6b6460;
+      --text-light: #9b9490;
+      --green: #3daa6f;
+      --red: #c4534a;
+      --orange: #e07b3a;
+      --border: #e8dfd5;
+      --white: #ffffff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: var(--ivory);
+      color: var(--text);
+      line-height: 1.8;
+    }
+    /* ===== HEADER ===== */
+    header {
+      background: var(--charcoal);
+      color: white;
+      padding: 2.5rem 3rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+    header .badge {
+      display: inline-block;
+      background: var(--terracotta);
+      color: white;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-top: 0.8rem;
+    }
+    /* ===== NAV ===== */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav ul::-webkit-scrollbar { display: none; }
+    nav a {
+      display: block;
+      padding: 1rem 1.2rem;
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    nav a:hover {
+      color: var(--terracotta);
+      border-bottom-color: var(--terracotta);
+    }
+    /* ===== MAIN ===== */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+    /* ===== SECTION ===== */
+    .section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 60px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid var(--gold);
+    }
+    .section-num {
+      background: var(--terracotta);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .section-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-mid);
+      margin-bottom: 1.2rem;
+    }
+    /* ===== SCREENSHOT ===== */
+    .screenshot-wrap {
+      margin: 1.5rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .screenshot-wrap img {
+      width: 100%;
+      display: block;
+    }
+    .screenshot-caption {
+      background: var(--cream);
+      padding: 0.6rem 1rem;
+      font-size: 0.78rem;
+      color: var(--text-mid);
+      border-top: 1px solid var(--border);
+    }
+    /* ===== STEPS ===== */
+    .steps-list {
+      counter-reset: step;
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+    .steps-list li {
+      counter-increment: step;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      padding: 1rem 1.2rem;
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .steps-list li::before {
+      content: counter(step);
+      background: var(--gold);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .steps-list li strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--charcoal);
+      margin-bottom: 0.2rem;
+    }
+    .steps-list li span {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+    }
+    /* ===== TABLE ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.85rem;
+    }
+    th {
+      background: var(--charcoal);
+      color: white;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:nth-child(even) td { background: var(--ivory); }
+    tr:hover td { background: var(--cream); }
+    /* ===== CALLOUT ===== */
+    .callout {
+      padding: 1rem 1.3rem;
+      border-radius: 10px;
+      margin: 1.2rem 0;
+      border-left: 4px solid;
+      font-size: 0.85rem;
+    }
+    .callout-ok { background: #edf7f1; border-color: var(--green); }
+    .callout-warn { background: #fff8ec; border-color: var(--orange); }
+    .callout-err { background: #fdf0ef; border-color: var(--red); }
+    .callout-info { background: var(--cream); border-color: var(--gold); }
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .callout-ok .callout-title { color: var(--green); }
+    .callout-warn .callout-title { color: var(--orange); }
+    .callout-err .callout-title { color: var(--red); }
+    .callout-info .callout-title { color: var(--gold); }
+    /* ===== FLOW DIAGRAM ===== */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 1.5rem 0;
+    }
+    .flow-item {
+      display: flex;
+      align-items: stretch;
+      gap: 1rem;
+    }
+    .flow-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 40px;
+      flex-shrink: 0;
+    }
+    .flow-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .flow-line {
+      width: 2px;
+      flex: 1;
+      background: var(--border);
+      margin: 4px auto;
+      min-height: 20px;
+    }
+    .flow-body {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+    .flow-body strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--charcoal);
+      margin-bottom: 0.2rem;
+    }
+    .flow-body span {
+      font-size: 0.8rem;
+      color: var(--text-mid);
+    }
+    .flow-body .price {
+      font-size: 0.78rem;
+      color: var(--terracotta);
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+    /* ===== ISSUE ===== */
+    .issue-list {
+      list-style: none;
+      margin: 1.2rem 0;
+    }
+    .issue-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 0.8rem;
+    }
+    .issue-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      height: fit-content;
+      margin-top: 0.1rem;
+    }
+    .issue-high { background: #fde8e7; color: var(--red); }
+    .issue-mid { background: #fef3e2; color: var(--orange); }
+    .issue-low { background: #edf7f1; color: var(--green); }
+    .issue-body strong {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--charcoal);
+      margin-bottom: 0.25rem;
+    }
+    .issue-body span {
+      font-size: 0.8rem;
+      color: var(--text-mid);
+    }
+    /* ===== SCORE ===== */
+    .score-card {
+      background: var(--white);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .score-number {
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--terracotta);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .score-label {
+      font-size: 1.1rem;
+      color: var(--text-mid);
+      margin-bottom: 1.5rem;
+    }
+    .score-breakdown {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      text-align: left;
+    }
+    .score-item {
+      padding: 0.8rem;
+      background: var(--ivory);
+      border-radius: 8px;
+    }
+    .score-item-label {
+      font-size: 0.72rem;
+      color: var(--text-mid);
+      margin-bottom: 0.3rem;
+    }
+    .score-item-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.3rem;
+    }
+    .score-item-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--terracotta);
+    }
+    .score-item-val {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    /* ===== ART IMAGE ===== */
+    .art-result {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .art-result figure {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .art-result img {
+      width: 100%;
+      display: block;
+    }
+    .art-result figcaption {
+      background: var(--cream);
+      padding: 0.5rem 0.8rem;
+      font-size: 0.75rem;
+      color: var(--text-mid);
+    }
+    @media (max-width: 600px) {
+      .art-result { grid-template-columns: 1fr; }
+      nav ul { flex-wrap: nowrap; }
+      .score-breakdown { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🦌 Deer — ユーザーマニュアル</h1>
+  <p>ペット写真をAIアートに変換してオリジナルグッズを注文するサービスの完全ガイド</p>
+  <div class="badge">テスト実施日: 2026年4月4日 / URL: custom.deer.gift</div>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#overview">概要</a></li>
+    <li><a href="#pages">ページ一覧</a></li>
+    <li><a href="#flow">注文フロー</a></li>
+    <li><a href="#art-gen">アート生成</a></li>
+    <li><a href="#account">アカウント</a></li>
+    <li><a href="#api">API仕様</a></li>
+    <li><a href="#issues">問題点</a></li>
+    <li><a href="#evaluation">総合評価</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ===== OVERVIEW ===== -->
+  <section class="section" id="overview">
+    <div class="section-header">
+      <div class="section-num">概</div>
+      <h2 class="section-title">サービス概要</h2>
+    </div>
+    <p class="section-subtitle">Deerはペット写真をAIでアート変換し、パーカー・Tシャツ・マグカップなどのオリジナルグッズを製造・配送するD2Cサービスです。</p>
+
+    <div class="screenshot-wrap">
+      <img src="screenshots/top_01.png" alt="トップページ">
+      <div class="screenshot-caption">トップページ（custom.deer.gift） — 「愛犬の写真をアート作品に変える」キャッチコピーとAIアート作例が表示される</div>
+    </div>
+
+    <table>
+      <tr>
+        <th>項目</th>
+        <th>内容</th>
+      </tr>
+      <tr><td>サービス名</td><td>Deer（ディア）</td></tr>
+      <tr><td>URL</td><td>https://custom.deer.gift</td></tr>
+      <tr><td>対応ペット</td><td>犬・猫（写真1枚でOK）</td></tr>
+      <tr><td>アートスタイル数</td><td>23種類（油絵・水彩・ポップアート・東洋画・モノクロ・デジタルほか）</td></tr>
+      <tr><td>グッズ種類</td><td>パーカー・Tシャツ・マグカップ・スマホケース・アートポスター・ポストカードほか</td></tr>
+      <tr><td>価格帯</td><td>¥1,480（ステッカー）〜 ¥12,980（刺繍パーカー）</td></tr>
+      <tr><td>送料</td><td>全品送料無料</td></tr>
+      <tr><td>お届け目安</td><td>最短5日</td></tr>
+      <tr><td>決済</td><td>Stripe（クレジットカード）</td></tr>
+      <tr><td>認証</td><td>Google / Apple / LINE / メール</td></tr>
+      <tr><td>AI生成エンジン</td><td>Flux.1 Kontext Pro（black-forest-labs）via Replicate</td></tr>
+      <tr><td>製造</td><td>Printful（POD：プリント・オン・デマンド）</td></tr>
+    </table>
+
+    <div class="callout callout-ok">
+      <div class="callout-title">✅ 実際のAIアート生成テスト結果</div>
+      ラブラドール写真（WikimediaCommons）を使った印象派スタイルの生成に成功。Flux.1 Kontext Proが高品質な油絵アートを生成し、犬の特徴（体型・毛色）を忠実に維持した。
+    </div>
+  </section>
+
+  <!-- ===== PAGES ===== -->
+  <section class="section" id="pages">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2 class="section-title">ページ一覧とスクリーンショット</h2>
+    </div>
+
+    <table>
+      <tr>
+        <th>ページ名</th>
+        <th>URL</th>
+        <th>認証</th>
+        <th>目的</th>
+      </tr>
+      <tr><td>トップページ</td><td>/</td><td>不要</td><td>ランディング・CTA</td></tr>
+      <tr><td>アートスタイル一覧</td><td>/art-styles</td><td>不要</td><td>23スタイルのギャラリー閲覧</td></tr>
+      <tr><td>オーダーフロー</td><td>/upload</td><td>必要（注文確定時）</td><td>11ステップ注文フロー</td></tr>
+      <tr><td>マイページ</td><td>/account</td><td>必要</td><td>プロフィール・住所・クーポン・注文履歴</td></tr>
+      <tr><td>商品詳細</td><td>/product-detail</td><td>不要</td><td>個別商品説明</td></tr>
+      <tr><td>配置詳細</td><td>/placement-detail</td><td>不要</td><td>プリント位置のイメージ</td></tr>
+      <tr><td>特商法</td><td>/tokushoho</td><td>不要</td><td>特定商取引法の表示</td></tr>
+      <tr><td>管理画面</td><td>/admin</td><td>管理者</td><td>注文管理・ユーザー管理</td></tr>
+    </table>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">アートスタイル一覧ページ</h3>
+    <div class="screenshot-wrap">
+      <img src="screenshots/art_styles_01.png" alt="アートスタイル一覧">
+      <div class="screenshot-caption">/art-styles — 23スタイルをカテゴリー別に表示。フィルターボタンで絞り込み可能。各カードに「このスタイルで作る」ボタン。</div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">マイページ</h3>
+    <div class="screenshot-wrap">
+      <img src="screenshots/account_01.png" alt="マイページ">
+      <div class="screenshot-caption">/account — アカウント情報・お届け先住所・お支払い方法（Stripe）・保有クーポン・注文履歴を管理</div>
+    </div>
+  </section>
+
+  <!-- ===== ORDER FLOW ===== -->
+  <section class="section" id="flow">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2 class="section-title">11ステップ注文フロー</h2>
+    </div>
+    <p class="section-subtitle">「はじめる」ボタンから始まる全11ステップのオーダープロセスを解説します。</p>
+
+    <div class="screenshot-wrap">
+      <img src="screenshots/upload_01.png" alt="オーダーフロー ステップ1">
+      <div class="screenshot-caption">ステップ1「商品選択」— モデル着用画像からイメージで選ぶか、アイテムリストから選ぶ方式。前回の途中保存がある場合は再開バナーが表示される。</div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">1</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>商品選択（イメージから選ぶ）</strong>
+          <span>モデル着用画像またはアイテムリストからグッズを選択。パーカー・Tシャツ・マグカップほか9種。</span>
+          <div class="price">パーカー ¥7,980〜 / Tシャツ ¥4,980〜 / マグカップ ¥2,980</div>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">2</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>配置選択</strong>
+          <span>左胸ワンポイント（¥7,980）/ 胸中央プリント（¥7,980）/ バックプリント（¥9,980）から選択</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">3</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>カラー選択</strong>
+          <span>グレー / ネイビー / ブラック / ピンク / ホワイト（5色対応）</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">4</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>サイズ選択</strong>
+          <span>S / M / L / XL / 2XL。サイズガイド（胴丈・身幅・肩幅をcm表示）常時表示。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">5</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>写真アップロード</strong>
+          <span>ペット数（1〜4頭）を選択 → JPEG/PNG/HEIC対応、最大10MB。複数頭の場合は追加料金（2頭+¥1,000 / 3頭+¥1,500 / 4頭+¥2,000）。ドラッグ&ドロップ対応。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">6</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>スタイル選択（AIプレビュー生成可）</strong>
+          <span>23スタイルのカードを表示。「✨ AIプレビュー生成」で実際のペット写真でプレビューを生成（Flux.1 Kontext Pro）。生成後「このスタイルで進む」で決定。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">7</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>背景選択</strong>
+          <span>アートの背景をカスタマイズ。水彩系背景（花畑・空・草原・川辺・和紙）など複数オプション。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">8</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>名前・注文カスタマイズ</strong>
+          <span>ペットの名前をプリントに入れる設定。フォント選択・太字/斜体・位置調整が可能。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">9</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>お届け先入力</strong>
+          <span>氏名・郵便番号・住所・電話番号を入力。マイページの登録住所を自動反映。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">10</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>お支払い</strong>
+          <span>Stripeによるクレジットカード決済。クーポンコード入力欄あり（Instagramフォローで割引）。</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot">11</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-body">
+          <strong>注文確認・確定</strong>
+          <span>全選択内容を確認後「注文を確定する」でオーダー確定。Firebase + Printfulへ自動連携。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-title">💾 途中保存機能</div>
+      各ステップで自動的にlocalStorageへ途中保存。次回アクセス時に「続きから始める」または「無視する」を選択できる。
+    </div>
+  </section>
+
+  <!-- ===== ART GENERATION ===== -->
+  <section class="section" id="art-gen">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2 class="section-title">AIアート生成テスト結果</h2>
+    </div>
+    <p class="section-subtitle">実際にラブラドール写真を使って印象派スタイルのアート生成をテストしました。</p>
+
+    <div class="art-result">
+      <figure>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/YellowLabradorLooking_new.jpg/400px-YellowLabradorLooking_new.jpg" alt="元写真">
+        <figcaption>元写真: Yellow Labrador（テスト用）</figcaption>
+      </figure>
+      <figure>
+        <img src="https://replicate.delivery/xezq/Fey6keA8lRhk2EvYufMDfGavAz9TO4m030zl2a1x0ZRW78dZB/tmp1tsuwb9d.jpg" alt="AIアート生成結果（印象派）">
+        <figcaption>生成結果: 印象派オイルペインティング（Flux.1 Kontext Pro）</figcaption>
+      </figure>
+    </div>
+
+    <div class="callout callout-ok">
+      <div class="callout-title">✅ 生成品質評価</div>
+      <ul style="padding-left: 1.2rem; margin-top: 0.5rem;">
+        <li>犬の体型・毛色を忠実に維持しながら印象派スタイルを適用</li>
+        <li>厚塗りの筆致、鮮やかな色彩、渦巻く背景がゴッホ/モネ風に仕上がっている</li>
+        <li>生成時間：約30〜60秒（Replicateのポーリング方式）</li>
+        <li>解像度：十分な品質でプリントに対応可能</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">API仕様（/api/generate-art）</h3>
+    <table>
+      <tr>
+        <th>メソッド</th>
+        <th>パラメーター</th>
+        <th>レスポンス</th>
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td>photoDataUrl (base64), styleId, petCount</td>
+        <td>{ predictionId }</td>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td>?id={predictionId}</td>
+        <td>{ status, outputUrl }</td>
+      </tr>
+    </table>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ 観察された問題</div>
+      UIからの「AIプレビュー生成」ボタン押下時に「生成失敗」エラーが表示される事象を確認。原因：ページ内部の<code>state.photoDataUrl</code>が写真アップロード後のステップ遷移時に正しく引き継がれていない場合がある。APIへの直接呼び出しでは正常動作することを確認済み。
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">23アートスタイル一覧</h3>
+    <table>
+      <tr><th>カテゴリ</th><th>スタイルID</th><th>日本語名</th><th>参考アーティスト</th></tr>
+      <tr><td rowspan="4">油絵・クラシック</td><td>oil-impressionism</td><td>印象派</td><td>モネ / ルノワール</td></tr>
+      <tr><td>oil-baroque</td><td>バロック</td><td>レンブラント</td></tr>
+      <tr><td>oil-renaissance</td><td>ルネサンス</td><td>ダ・ヴィンチ</td></tr>
+      <tr><td>oil-expressionism</td><td>表現主義</td><td>ゴッホ</td></tr>
+      <tr><td rowspan="3">水彩画</td><td>wc-loose</td><td>にじみ水彩</td><td>—</td></tr>
+      <tr><td>wc-botanical</td><td>ボタニカル水彩</td><td>—</td></tr>
+      <tr><td>wc-wet</td><td>ウェットオンウェット</td><td>—</td></tr>
+      <tr><td rowspan="2">東洋画</td><td>ink-sumie</td><td>水墨画</td><td>—</td></tr>
+      <tr><td>ink-nanga</td><td>南画</td><td>—</td></tr>
+      <tr><td rowspan="3">ポップアート</td><td>pop-warhol</td><td>ウォーホル風</td><td>ウォーホル</td></tr>
+      <tr><td>pop-comic</td><td>アメコミ風</td><td>リキテンスタイン</td></tr>
+      <tr><td>pop-graffiti</td><td>グラフィティ</td><td>—</td></tr>
+      <tr><td rowspan="3">モノクロ</td><td>mono-hicon</td><td>ハイコントラスト</td><td>—</td></tr>
+      <tr><td>mono-charcoal</td><td>木炭デッサン</td><td>—</td></tr>
+      <tr><td>mono-noir</td><td>フィルム・ノワール</td><td>—</td></tr>
+      <tr><td rowspan="3">デジタル</td><td>future-cyber</td><td>サイバーパンク</td><td>—</td></tr>
+      <tr><td>future-neon</td><td>ネオンアート</td><td>—</td></tr>
+      <tr><td>future-glitch</td><td>グリッチアート</td><td>—</td></tr>
+      <tr><td rowspan="2">ライン</td><td>line-oneline</td><td>一筆描き</td><td>—</td></tr>
+      <tr><td>line-minimal</td><td>ミニマルライン</td><td>—</td></tr>
+      <tr><td rowspan="2">コラージュ</td><td>collage-mixed</td><td>ミクストメディア</td><td>—</td></tr>
+      <tr><td>collage-papercut</td><td>ペーパーカット</td><td>—</td></tr>
+      <tr><td>シルエット</td><td>silhouette</td><td>シルエット</td><td>—</td></tr>
+    </table>
+  </section>
+
+  <!-- ===== ACCOUNT ===== -->
+  <section class="section" id="account">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2 class="section-title">アカウント・認証</h2>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 0 0 0.8rem;">ログイン方法</h3>
+    <ul class="steps-list">
+      <li><strong>Googleでログイン</strong><span>Googleアカウントで即時認証（Firebase Auth）</span></li>
+      <li><strong>Appleでログイン</strong><span>Appleアカウントで認証</span></li>
+      <li><strong>LINEでログイン</strong><span>LINEアカウントで認証</span></li>
+      <li><strong>メールアドレスで登録</strong><span>メールアドレス + パスワードで新規登録・ログイン</span></li>
+    </ul>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">マイページ機能</h3>
+    <table>
+      <tr><th>セクション</th><th>機能</th></tr>
+      <tr><td>アカウント情報</td><td>表示名の変更、メールアドレス確認、認証済みバッジ</td></tr>
+      <tr><td>お届け先住所</td><td>注文時の住所を自動保存・次回自動反映</td></tr>
+      <tr><td>お支払い方法</td><td>Stripe経由のカード登録（Deerサーバーには保存されない）</td></tr>
+      <tr><td>保有クーポン</td><td>Instagramフォロー・新規登録で発行されるクーポン管理</td></tr>
+      <tr><td>注文履歴</td><td>過去注文の一覧表示</td></tr>
+    </table>
+  </section>
+
+  <!-- ===== API ===== -->
+  <section class="section" id="api">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2 class="section-title">API・技術スタック</h2>
+    </div>
+
+    <table>
+      <tr><th>エンドポイント</th><th>メソッド</th><th>機能</th><th>外部サービス</th></tr>
+      <tr><td>/api/generate-art</td><td>POST/GET</td><td>AIアート生成・ポーリング</td><td>Replicate (Flux.1 Kontext Pro)</td></tr>
+      <tr><td>/api/create-order</td><td>POST</td><td>注文作成</td><td>Firebase, Stripe, Printful</td></tr>
+      <tr><td>/api/stripe-payment-intent</td><td>POST</td><td>決済Intent作成</td><td>Stripe</td></tr>
+      <tr><td>/api/stripe-webhook</td><td>POST</td><td>決済完了Webhook</td><td>Stripe</td></tr>
+      <tr><td>/api/remove-bg</td><td>POST</td><td>背景除去</td><td>未確認</td></tr>
+      <tr><td>/api/validate-coupon</td><td>POST</td><td>クーポン検証</td><td>Firebase</td></tr>
+      <tr><td>/api/verify-ig-follow</td><td>POST</td><td>IGフォロー確認</td><td>Instagram API</td></tr>
+      <tr><td>/api/line-callback</td><td>GET</td><td>LINEログールコールバック</td><td>LINE</td></tr>
+      <tr><td>/api/admin-api</td><td>GET/POST</td><td>管理画面API</td><td>Firebase</td></tr>
+    </table>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">技術スタック</h3>
+    <table>
+      <tr><th>レイヤー</th><th>技術</th></tr>
+      <tr><td>フロントエンド</td><td>Vanilla HTML/CSS/JS（フレームワークなし）</td></tr>
+      <tr><td>バックエンド</td><td>Vercel Serverless Functions (Node.js)</td></tr>
+      <tr><td>データベース</td><td>Firebase Firestore</td></tr>
+      <tr><td>認証</td><td>Firebase Auth（Google/Apple/LINE/Email）</td></tr>
+      <tr><td>AIアート生成</td><td>Replicate API（Flux.1 Kontext Pro）</td></tr>
+      <tr><td>決済</td><td>Stripe（Payment Intents API）</td></tr>
+      <tr><td>印刷・配送</td><td>Printful（POD）</td></tr>
+      <tr><td>ホスティング</td><td>Vercel</td></tr>
+      <tr><td>ドメイン</td><td>custom.deer.gift</td></tr>
+    </table>
+  </section>
+
+  <!-- ===== ISSUES ===== -->
+  <section class="section" id="issues">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2 class="section-title">発見した問題点・改善提案</h2>
+    </div>
+    <p class="section-subtitle">実際の操作テストで発見した問題を重要度順に記載します。</p>
+
+    <ul class="issue-list">
+      <li class="issue-item">
+        <div class="issue-badge issue-high">高</div>
+        <div class="issue-body">
+          <strong>【UX】AIプレビュー生成が失敗する場合がある</strong>
+          <span>スタイル選択ステップで「✨ AIプレビュー生成」ボタンを押すと「生成失敗 再試行してください」が表示される。原因はstate.photoDataUrlがステップ遷移時に失われるケースがあること。実際のAPI呼び出しでは正常動作するため、フロントエンド側の状態管理の問題。ユーザーに再試行を強いる体験は離脱リスクが高い。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-high">高</div>
+        <div class="issue-body">
+          <strong>【UX】11ステップは多すぎる・離脱リスク高</strong>
+          <span>商品選択→配置→カラー→サイズ→写真→スタイル→背景→名前→住所→支払い→確認の11ステップはECサービスとして非常に多い。競合（Zazzle等）は4〜5ステップが主流。特に「配置→カラー→サイズ」を1画面に統合するだけで3ステップ削減可能。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-high">高</div>
+        <div class="issue-body">
+          <strong>【UX】「前回の途中保存」バナーがフロー開始を邪魔する</strong>
+          <span>途中保存バナーが表示された状態では、商品一覧カードが選択できても次ステップに進まない。「無視する」をクリックして初めて新規フローが開始できる。バナーが表示されていることに気づかないユーザーは困惑する。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-mid">中</div>
+        <div class="issue-body">
+          <strong>【機能】生成待機中のフィードバックが不十分</strong>
+          <span>AIプレビュー生成中の進捗表示がなく、30〜60秒の待機中にユーザーは何も情報を得られない。プログレスバーや推定残り時間の表示が必要。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-mid">中</div>
+        <div class="issue-body">
+          <strong>【SEO】og:urlとcanonicalにvercel.appドメインが残存</strong>
+          <span>index.htmlのOGタグ（og:url、canonical）がhttps://deer-brand.vercel.appになっており、本番ドメインcustom.deer.giftと不一致。SEO/SNSシェア時に不利。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-mid">中</div>
+        <div class="issue-body">
+          <strong>【機能】注文履歴に詳細閲覧リンクがない</strong>
+          <span>マイページの注文履歴は「注文がありません」表示のみ（テスト時点）。注文後の詳細確認・配送追跡への導線が不明。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-mid">中</div>
+        <div class="issue-body">
+          <strong>【セキュリティ】ALLOWED_ORIGINにvercel.app残存</strong>
+          <span>create-order.jsのCORS設定でALLOWED_ORIGINがdeer-brand.vercel.appにデフォルト設定されており、環境変数未設定時に旧ドメインになる。本番環境での設定確認が必要。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-low">低</div>
+        <div class="issue-body">
+          <strong>【UX】アートスタイルページのタイトルが「全22アートスタイル」（実際は23）</strong>
+          <span>ページタイトル（&lt;title&gt;全22アートスタイル — Deer&lt;/title&gt;）が23スタイルに更新されていない。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-low">低</div>
+        <div class="issue-body">
+          <strong>【UX】モバイルでのナビゲーションが限定的</strong>
+          <span>スクリーンショット幅からモバイル対応は確認できるが、11ステップの進捗が上部バーに小さく表示されるのみで、何ステップ目かが直感的にわかりにくい。</span>
+        </div>
+      </li>
+      <li class="issue-item">
+        <div class="issue-badge issue-low">低</div>
+        <div class="issue-body">
+          <strong>【機能】写真ガイドラインが弱い</strong>
+          <span>「顔がはっきり写っている正面〜やや斜めの写真」などのコツは記載があるが、良い例・悪い例の画像比較がない。AI生成品質に直結するため、ビジュアルガイドの追加を推奨。</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===== EVALUATION ===== -->
+  <section class="section" id="evaluation">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2 class="section-title">システム総合評価</h2>
+    </div>
+
+    <div class="score-card">
+      <div class="score-number">72</div>
+      <div class="score-label">/ 100点</div>
+      <div class="score-breakdown">
+        <div class="score-item">
+          <div class="score-item-label">AI品質</div>
+          <div class="score-item-bar"><div class="score-item-fill" style="width:90%"></div></div>
+          <div class="score-item-val">90点 — Flux.1 Kontext Proによる高品質な生成</div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">デザイン</div>
+          <div class="score-item-bar"><div class="score-item-fill" style="width:85%"></div></div>
+          <div class="score-item-val">85点 — 洗練されたビジュアル・ブランド一貫性</div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">UXフロー</div>
+          <div class="score-item-bar"><div class="score-item-fill" style="width:55%"></div></div>
+          <div class="score-item-val">55点 — 11ステップは多く、生成エラーが頻発</div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">機能完成度</div>
+          <div class="score-item-bar"><div class="score-item-fill" style="width:70%"></div></div>
+          <div class="score-item-val">70点 — 主要機能は動作するが細部にバグ</div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">技術基盤</div>
+          <div class="score-item-bar"><div class="score-item-fill" style="width:80%"></div></div>
+          <div class="score-item-val">80点 — Vercel+Firebase+Stripe+Printfulの安定構成</div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">SEO/メタ</div>
+          <div class="score-item-bar"><div class="score-item-fill" style="width:50%"></div></div>
+          <div class="score-item-val">50点 — OGタグ・canonicalにドメイン不一致</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">強み</h3>
+    <div class="callout callout-ok">
+      <ul style="padding-left: 1.2rem;">
+        <li><strong>AI品質が非常に高い</strong> — Flux.1 Kontext Proによる生成結果は市場最高水準。ペットの特徴を忠実に維持しながら高品質なアートスタイル変換を実現。</li>
+        <li><strong>ブランドデザインが洗練されている</strong> — アイボリー・テラコッタ・ゴールドの一貫したトーン、高品質な写真・イラスト素材。</li>
+        <li><strong>23スタイルの充実したラインナップ</strong> — 油絵からデジタルアートまで幅広く対応。</li>
+        <li><strong>途中保存機能</strong> — ユーザーが途中離脱しても再開できる。</li>
+        <li><strong>Printfulとの統合</strong> — 在庫不要・PODでの製造・配送体制が整っている。</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--charcoal); margin: 1.5rem 0 0.8rem;">優先改善事項（トップ3）</h3>
+    <ol style="padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem; margin: 0;">
+      <li style="padding: 0.8rem 1rem; background: var(--white); border-radius: 8px; border: 1px solid var(--border);">
+        <strong style="color: var(--red);">【最優先】AIプレビュー生成エラーの修正</strong><br>
+        <span style="font-size: 0.82rem; color: var(--text-mid);">state.photoDataUrlの引き継ぎバグを修正。コア機能のエラーは直接的なコンバージョン低下につながる。</span>
+      </li>
+      <li style="padding: 0.8rem 1rem; background: var(--white); border-radius: 8px; border: 1px solid var(--border);">
+        <strong style="color: var(--orange);">【高優先】ステップ数の削減</strong><br>
+        <span style="font-size: 0.82rem; color: var(--text-mid);">「配置・カラー・サイズ」を1画面に統合し11→8ステップへ。カート放棄率の改善が期待できる。</span>
+      </li>
+      <li style="padding: 0.8rem 1rem; background: var(--white); border-radius: 8px; border: 1px solid var(--border);">
+        <strong style="color: var(--orange);">【高優先】SEOメタデータの修正</strong><br>
+        <span style="font-size: 0.82rem; color: var(--text-mid);">canonical/og:urlをcustom.deer.giftに統一。SNSシェア流入とオーガニック検索の改善に直結。</span>
+      </li>
+    </ol>
+  </section>
+
+</main>
+
+<footer style="background: var(--charcoal); color: rgba(255,255,255,0.6); text-align:center; padding: 1.5rem; font-size: 0.78rem;">
+  <p>Deer ユーザーマニュアル — テスト実施: 2026年4月4日 | 作成: Claude Code自動テストエージェント</p>
+  <p style="margin-top: 0.3rem;">テスト環境: macOS / Chrome / custom.deer.gift</p>
+</footer>
+
+</body>
+</html>
