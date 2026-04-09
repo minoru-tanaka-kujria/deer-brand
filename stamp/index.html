@@ -2658,6 +2658,20 @@
         const tick = () => {
           if (i >= steps.length) {
             setTimeout(() => {
+              const grid = document.getElementById("resultGrid");
+              const samples = [
+                { img: "../img/stamps/01-ohayou.png", label: "おはよう！" },
+                { img: "../img/stamps/02-arigatou.png", label: "ありがとう" },
+                { img: "../img/stamps/03-gomenne.png", label: "ごめんね…" },
+                { img: "../img/stamps/04-ok.png", label: "OK！" },
+                { img: "../img/stamps/05-otsukare.png", label: "おつかれ〜" },
+                { img: "../img/stamps/06-yatta.png", label: "やったー！" },
+                { img: "../img/stamps/07-ganbare.png", label: "がんばれ！" },
+                { img: "../img/stamps/08-oyasumi.png", label: "おやすみ" },
+              ];
+              grid.innerHTML = samples.map(s =>
+                `<div class="stamp"><img src="${s.img}" alt="${s.label}" class="stamp-img"/><div class="jp">${s.label}</div></div>`
+              ).join("");
               result.classList.add("show");
               result.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 500);
