@@ -464,10 +464,17 @@
       /* HERO VISUAL — Locket */
       .hero-visual {
         position: relative;
-        aspect-ratio: 1;
         width: 100%;
         max-width: 520px;
+        min-height: 420px;
+        aspect-ratio: 1;
         margin: 0 auto;
+      }
+      @media (max-width: 980px) {
+        .hero-visual {
+          min-height: 340px;
+          max-width: 400px;
+        }
       }
       .locket {
         position: absolute;
@@ -2590,7 +2597,7 @@
             }
           });
         },
-        { threshold: 0.12 },
+        { threshold: 0, rootMargin: "0px 0px 200px 0px" },
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
