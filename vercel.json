@@ -1,8 +1,7 @@
 {
   "cleanUrls": true,
   "functions": {
-    "api/generate-art.js": { "maxDuration": 60 },
-    "api/stamp/generate.js": { "maxDuration": 60 }
+    "api/generate-art.js": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/stamp", "destination": "/stamp/index.html" }

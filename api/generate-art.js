@@ -123,6 +123,37 @@ const STYLE_PROMPTS = {
     "Place this pet against a night city skyline background with lights. Keep the pet as the main subject.",
 };
 
+// ── LINEスタンプ用の表情プロンプト（mode: "stamp"）──────────────
+const STAMP_PROMPTS = {
+  happy:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is smiling happily with sparkly eyes. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  sad:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet has a sad droopy expression with teary eyes. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  angry:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet has a comically angry puffed-up expression. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  surprised:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet has wide surprised eyes and an open mouth. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  sleepy:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is sleepy with half-closed eyes and a peaceful expression. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  love:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet has heart eyes showing love, with small hearts floating around. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  wink:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is winking playfully with one eye closed. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  eating:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is happily eating with a food bowl. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  greeting:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is waving a paw in greeting. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  thankyou:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is bowing politely in a thank you gesture. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  sorry:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet looks apologetic with lowered ears and eyes looking up. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  celebrate:
+    "Transform this pet photo into a cute cartoon sticker illustration. The pet is celebrating with confetti and a party hat. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+};
+
+const DEFAULT_STAMP_PROMPT =
+  "Transform this pet photo into a cute cartoon sticker illustration. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.";
+
 const DEFAULT_PROMPT =
   "Transform this pet photo into a beautiful artistic illustration. High quality, detailed, keep the pet's face and features clearly recognizable.";
 
@@ -178,6 +209,32 @@ export default async function handler(req, res) {
     }
 
     const { photoDataUrl, styleId, customPrompt, mode, petCount } = body;
+
+    // ── LINEスタンプモード ──────────────────────────────────
+    if (mode === "stamp") {
+      if (!photoDataUrl) {
+        return res.status(400).json({ error: "不正なリクエストです" });
+      }
+      const { expression } = body;
+      const stampPrompt = STAMP_PROMPTS[expression] || DEFAULT_STAMP_PROMPT;
+      try {
+        const { id } = await createPrediction({
+          token,
+          model: `${MODEL_OWNER}/${MODEL_NAME}`,
+          input: {
+            input_image: photoDataUrl,
+            prompt: stampPrompt,
+            aspect_ratio: "1:1",
+            output_format: "png",
+            safety_tolerance: 6,
+          },
+        });
+        return res.json({ predictionId: id });
+      } catch (error) {
+        console.error("[generate-art/stamp] Replicate error:", error);
+        return res.status(502).json({ error: "画像を生成できませんでした" });
+      }
+    }
 
     // ── テキスト→画像モード（背景サンプル生成用）──────────────
     if (mode === "txt2img") {
