@@ -829,6 +829,12 @@
       .step-circle .emo {
         font-size: 52px;
       }
+      .step-circle .step-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
       .step-num {
         position: absolute;
         top: -10px;
@@ -1322,6 +1328,7 @@
         opacity: 0.3;
       }
       .drop-zone {
+        display: block;
         border: 3px dashed var(--c-gold);
         border-radius: 22px;
         padding: 56px 24px;
@@ -2005,7 +2012,7 @@
           <div class="how-connector"></div>
           <div class="step reveal">
             <div class="step-circle">
-              <span class="emo">🦌</span>
+              <img class="step-icon" src="../img/icon-step1-purchase.png" alt="購入" />
               <div class="step-num">1</div>
             </div>
             <h3>Deerを購入する</h3>
@@ -2016,7 +2023,7 @@
           </div>
           <div class="step reveal">
             <div class="step-circle">
-              <span class="emo">📸</span>
+              <img class="step-icon" src="../img/icon-step2-upload.png" alt="アップロード" />
               <div class="step-num">2</div>
             </div>
             <h3>写真をアップ</h3>
@@ -2027,7 +2034,7 @@
           </div>
           <div class="step reveal">
             <div class="step-circle">
-              <span class="emo">✨</span>
+              <img class="step-icon" src="../img/icon-step3-generate.png" alt="AI生成" />
               <div class="step-num">3</div>
             </div>
             <h3>AIが自動生成</h3>
@@ -2038,7 +2045,7 @@
           </div>
           <div class="step reveal">
             <div class="step-circle">
-              <span class="emo">📦</span>
+              <img class="step-icon" src="../img/icon-step4-download.png" alt="ダウンロード" />
               <div class="step-num">4</div>
             </div>
             <h3>ZIPダウンロード</h3>
