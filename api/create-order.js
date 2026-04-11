@@ -17,7 +17,9 @@ const STATUS_ORDER = {
 };
 
 function canAdvanceStatus(currentStatus, nextStatus) {
-  return (STATUS_ORDER[nextStatus] ?? -1) >= (STATUS_ORDER[currentStatus] ?? -1);
+  return (
+    (STATUS_ORDER[nextStatus] ?? -1) >= (STATUS_ORDER[currentStatus] ?? -1)
+  );
 }
 
 function normalizeCheckoutItem(body, fallbackItem) {
@@ -26,7 +28,8 @@ function normalizeCheckoutItem(body, fallbackItem) {
     item: body?.item ?? body?.product ?? source.item,
     productName: body?.productName ?? source.productName ?? null,
     placementId: body?.placementId ?? source.placementId ?? body?.placement,
-    placementName: body?.placementName ?? source.placementName ?? body?.placement ?? null,
+    placementName:
+      body?.placementName ?? source.placementName ?? body?.placement ?? null,
     colorId: body?.colorId ?? source.colorId ?? body?.color ?? null,
     colorName: body?.colorName ?? source.colorName ?? body?.color ?? null,
     size: body?.size ?? source.size ?? null,
@@ -59,9 +62,11 @@ export default async function handler(req, res) {
     process.env.ALLOWED_ORIGIN,
   ].filter(Boolean);
   const origin = (req.headers.origin || "").trim();
-  const corsOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app")
-    ? origin
-    : ALLOWED_ORIGINS[0];
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
   res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -82,7 +87,11 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "UNAUTHORIZED" });
   }
 
-  const { paymentIntentId, orderId: requestedOrderId, shippingAddress } = req.body ?? {};
+  const {
+    paymentIntentId,
+    orderId: requestedOrderId,
+    shippingAddress,
+  } = req.body ?? {};
   if (!paymentIntentId && !requestedOrderId) {
     return res.status(400).json({ error: "INVALID_REQUEST" });
   }
@@ -119,7 +128,9 @@ export default async function handler(req, res) {
         .collection("orders")
         .where("paymentIntentId", "==", paymentIntentId)
         .get();
-      const duplicateDocs = duplicateSnap.docs.filter((doc) => doc.id !== orderId);
+      const duplicateDocs = duplicateSnap.docs.filter(
+        (doc) => doc.id !== orderId,
+      );
       if (duplicateDocs.length > 0) {
         return res.status(409).json({ error: "PAYMENT_INTENT_ALREADY_USED" });
       }
@@ -138,10 +149,15 @@ export default async function handler(req, res) {
       if (reservedOrder.uid !== authUser.uid) {
         throw new Error("FORBIDDEN");
       }
-      if ((reservedOrder.paymentIntentId ?? null) !== (paymentIntentId ?? null)) {
+      if (
+        (reservedOrder.paymentIntentId ?? null) !== (paymentIntentId ?? null)
+      ) {
         throw new Error("PAYMENT_MISMATCH");
       }
-      if (reservedOrder.status !== "pending_payment" && reservedOrder.status !== "paid") {
+      if (
+        reservedOrder.status !== "pending_payment" &&
+        reservedOrder.status !== "paid"
+      ) {
         throw new Error("ORDER_ALREADY_FINALIZED");
       }
 
@@ -204,7 +220,10 @@ export default async function handler(req, res) {
           couponCode: reservedOrder.couponCode ?? null,
           couponDiscount: reservedOrder.couponDiscount ?? 0,
           igDiscount: reservedOrder.igDiscount ?? 0,
-          shippingAddress: sanitizeShipping(shippingAddress) ?? reservedOrder.shippingAddress ?? null,
+          shippingAddress:
+            sanitizeShipping(shippingAddress) ??
+            reservedOrder.shippingAddress ??
+            null,
           status: nextStatus,
           paidAt: reservedOrder.paidAt ?? now,
           finalizedAt: now,

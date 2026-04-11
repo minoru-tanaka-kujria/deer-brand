@@ -15,9 +15,11 @@ export default async function handler(req, res) {
     process.env.ALLOWED_ORIGIN,
   ].filter(Boolean);
   const origin = (req.headers.origin || "").trim();
-  const corsOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app")
-    ? origin
-    : ALLOWED_ORIGINS[0];
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
   res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -50,7 +52,9 @@ export default async function handler(req, res) {
     const userRef = db.collection("users").doc(authUser.uid);
     const userSnap = await userRef.get();
 
-    let customerId = userSnap.exists ? userSnap.data()?.stripeCustomerId ?? null : null;
+    let customerId = userSnap.exists
+      ? (userSnap.data()?.stripeCustomerId ?? null)
+      : null;
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: authUser.email ?? undefined,

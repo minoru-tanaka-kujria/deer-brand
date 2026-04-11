@@ -41,17 +41,17 @@
         --sans: "Zen Maru Gothic", sans-serif;
 
         /* New design tokens */
-        --c-brand:    #C97A42;
-        --c-brand-dk: #A86332;
-        --c-brand-lt: #F5EDE3;
-        --c-brand-bg: #FDF8F3;
-        --c-success:  #3DAA6F;
-        --c-text:     #1A1A1A;
-        --c-text-2:   #555;
-        --c-text-3:   #999;
-        --c-border:   #E5DDD4;
-        --c-bg:       #F0EBE3;
-        --c-white:    #FFFFFF;
+        --c-brand: #c97a42;
+        --c-brand-dk: #a86332;
+        --c-brand-lt: #f5ede3;
+        --c-brand-bg: #fdf8f3;
+        --c-success: #3daa6f;
+        --c-text: #1a1a1a;
+        --c-text-2: #555;
+        --c-text-3: #999;
+        --c-border: #e5ddd4;
+        --c-bg: #f0ebe3;
+        --c-white: #ffffff;
       }
       *,
       *::before,
@@ -100,7 +100,7 @@
         flex-shrink: 1;
       }
       .nav-logo {
-        font-family: -apple-system, 'Hiragino Sans', sans-serif;
+        font-family: -apple-system, "Hiragino Sans", sans-serif;
         font-size: 1.2rem;
         font-weight: 900;
         letter-spacing: -0.5px;
@@ -210,7 +210,7 @@
         position: absolute;
         bottom: 6px;
         right: 6px;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         color: #fff;
         font-size: 0.6rem;
         padding: 0.2rem 0.4rem;
@@ -231,7 +231,7 @@
       .loading-overlay {
         position: absolute;
         inset: 0;
-        background: rgba(255,255,255,0.82);
+        background: rgba(255, 255, 255, 0.82);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1541,11 +1541,14 @@
         margin-bottom: 1rem;
       }
       .art-color-swatch {
-        width: 32px; height: 32px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         border: 2.5px solid transparent;
         cursor: pointer;
-        transition: transform 0.15s, border-color 0.15s;
+        transition:
+          transform 0.15s,
+          border-color 0.15s;
         flex-shrink: 0;
       }
       .art-color-swatch.selected {
@@ -1555,12 +1558,14 @@
       #outlineToggle::after {
         content: "";
         position: absolute;
-        top: 2px; left: 2px;
-        width: 20px; height: 20px;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
         background: #fff;
         border-radius: 50%;
         transition: transform 0.2s;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
       }
       #outlineToggle:checked::after {
         transform: translateX(20px);
@@ -1569,25 +1574,94 @@
   </head>
   <body>
     <!-- NAV -->
-    <nav class="nav" style="position:sticky;top:0;z-index:100">
-      <a href="index.html" class="nav-logo"><img src="img/logo.svg" alt="Deer" style="height:2rem"></a>
+    <nav class="nav" style="position: sticky; top: 0; z-index: 100">
+      <a href="index.html" class="nav-logo"
+        ><img src="img/logo.svg" alt="Deer" style="height: 2rem"
+      /></a>
       <div class="nav-right">
-        <button onclick="saveOrderDraftToLocal()" id="saveDraftBtn" style="background:transparent;border:1.5px solid var(--c-brand);color:var(--c-brand);padding:0.35rem 0.6rem;border-radius:2rem;font-family:var(--sans);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;display:flex;align-items:center;gap:0.3rem"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>途中保存</button>
+        <button
+          onclick="saveOrderDraftToLocal()"
+          id="saveDraftBtn"
+          style="
+            background: transparent;
+            border: 1.5px solid var(--c-brand);
+            color: var(--c-brand);
+            padding: 0.35rem 0.6rem;
+            border-radius: 2rem;
+            font-family: var(--sans);
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+          "
+        >
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg
+          >途中保存
+        </button>
         <!-- ログインボタン（未ログイン時） -->
-        <button class="nav-login-btn" id="navLoginBtn" onclick="DeerAuth.openModal()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <button
+          class="nav-login-btn"
+          id="navLoginBtn"
+          onclick="DeerAuth.openModal()"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>
           ログイン
         </button>
         <!-- マイページボタン（ログイン後） -->
-        <a href="account" class="nav-account-btn" id="navAccountBtn" style="display:none">
-          <img class="nav-account-avatar" id="navUserAvatar" src="" alt="" style="width:22px;height:22px;min-width:22px;border-radius:50%;object-fit:cover;flex-shrink:0"/>
+        <a
+          href="account"
+          class="nav-account-btn"
+          id="navAccountBtn"
+          style="display: none"
+        >
+          <img
+            class="nav-account-avatar"
+            id="navUserAvatar"
+            src=""
+            alt=""
+            style="
+              width: 22px;
+              height: 22px;
+              min-width: 22px;
+              border-radius: 50%;
+              object-fit: cover;
+              flex-shrink: 0;
+            "
+          />
           <span id="navUserName">マイページ</span>
         </a>
       </div>
     </nav>
 
     <!-- PROGRESS BAR -->
-    <div class="progress-bar" style="position:sticky;top:3.5rem;z-index:99">
+    <div
+      class="progress-bar"
+      style="position: sticky; top: 3.5rem; z-index: 99"
+    >
       <div class="progress-steps" id="progressSteps">
         <!-- built by JS -->
       </div>
@@ -1597,14 +1671,67 @@
     <main class="main">
       <!-- ========== STEP 1: LOOKBOOK ========== -->
       <!-- 途中保存バナー -->
-      <div id="draftResumeBanner" style="display:none;background:linear-gradient(135deg,#fff8f0,#fff3e6);border:1.5px solid var(--c-brand);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.2rem;display:none;align-items:center;gap:1rem;flex-wrap:wrap">
-        <div style="flex:1;min-width:180px">
-          <p style="margin:0;font-size:0.88rem;font-weight:700;color:var(--c-text)">📂 前回の途中保存があります</p>
-          <p style="margin:0.2rem 0 0;font-size:0.78rem;color:#888" id="draftResumeDesc"></p>
+      <div
+        id="draftResumeBanner"
+        style="
+          display: none;
+          background: linear-gradient(135deg, #fff8f0, #fff3e6);
+          border: 1.5px solid var(--c-brand);
+          border-radius: 14px;
+          padding: 1rem 1.2rem;
+          margin-bottom: 1.2rem;
+          display: none;
+          align-items: center;
+          gap: 1rem;
+          flex-wrap: wrap;
+        "
+      >
+        <div style="flex: 1; min-width: 180px">
+          <p
+            style="
+              margin: 0;
+              font-size: 0.88rem;
+              font-weight: 700;
+              color: var(--c-text);
+            "
+          >
+            📂 前回の途中保存があります
+          </p>
+          <p
+            style="margin: 0.2rem 0 0; font-size: 0.78rem; color: #888"
+            id="draftResumeDesc"
+          ></p>
         </div>
-        <div style="display:flex;gap:0.6rem;flex-shrink:0">
-          <button onclick="resumeDraft()" style="background:var(--c-brand);color:#fff;border:none;border-radius:2rem;padding:0.45rem 1.1rem;font-size:0.82rem;font-weight:700;cursor:pointer">続きから始める</button>
-          <button onclick="dismissDraftBanner()" style="background:transparent;border:1.5px solid #ccc;color:#888;border-radius:2rem;padding:0.45rem 0.9rem;font-size:0.78rem;cursor:pointer">無視する</button>
+        <div style="display: flex; gap: 0.6rem; flex-shrink: 0">
+          <button
+            onclick="resumeDraft()"
+            style="
+              background: var(--c-brand);
+              color: #fff;
+              border: none;
+              border-radius: 2rem;
+              padding: 0.45rem 1.1rem;
+              font-size: 0.82rem;
+              font-weight: 700;
+              cursor: pointer;
+            "
+          >
+            続きから始める
+          </button>
+          <button
+            onclick="dismissDraftBanner()"
+            style="
+              background: transparent;
+              border: 1.5px solid #ccc;
+              color: #888;
+              border-radius: 2rem;
+              padding: 0.45rem 0.9rem;
+              font-size: 0.78rem;
+              cursor: pointer;
+            "
+          >
+            無視する
+          </button>
         </div>
       </div>
 
@@ -1641,7 +1768,7 @@
           <a href="art-styles">全23スタイルを見る &rarr;</a>
         </div>
 
-        <div class="btn-row" style="margin-top: 2rem; display:none">
+        <div class="btn-row" style="margin-top: 2rem; display: none">
           <button class="btn-primary" id="btnItemSelectNext" disabled>
             このアイテムを選ぶ
           </button>
@@ -1661,7 +1788,12 @@
 
         <div class="btn-row">
           <button class="btn-back" onclick="goBack()">戻る</button>
-          <button class="btn-primary" id="btnPlacementNext" disabled style="display:none">
+          <button
+            class="btn-primary"
+            id="btnPlacementNext"
+            disabled
+            style="display: none"
+          >
             次へ — カラー選択
           </button>
         </div>
@@ -1680,7 +1812,12 @@
 
         <div class="btn-row">
           <button class="btn-back" onclick="goBack()">戻る</button>
-          <button class="btn-primary" id="btnColorNext" disabled style="display:none">
+          <button
+            class="btn-primary"
+            id="btnColorNext"
+            disabled
+            style="display: none"
+          >
             次へ — サイズ選択
           </button>
         </div>
@@ -2012,7 +2149,16 @@
         <!-- 1. 頭数選択 -->
         <div class="pet-count-section">
           <p class="section-label">写真に写っているペットの頭数</p>
-          <p style="font-size:0.72rem;color:var(--text-mid);margin-bottom:0.8rem">※ 複数頭いる場合は1枚の写真をそのままアップロードしてOKです。全員まとめてアートに変換します。</p>
+          <p
+            style="
+              font-size: 0.72rem;
+              color: var(--text-mid);
+              margin-bottom: 0.8rem;
+            "
+          >
+            ※
+            複数頭いる場合は1枚の写真をそのままアップロードしてOKです。全員まとめてアートに変換します。
+          </p>
           <div class="pet-count-grid" id="petCountGrid">
             <div
               class="pet-count-card selected"
@@ -2066,7 +2212,11 @@
         />
 
         <!-- 名前入力セクションはStep6（アート確認）に移動 -->
-        <div class="name-input-section" id="nameInputSection" style="display:none !important">
+        <div
+          class="name-input-section"
+          id="nameInputSection"
+          style="display: none !important"
+        >
           <!-- 名前入力フィールド（頭数分） -->
           <div id="petNameFields">
             <!-- built by JS -->
@@ -2165,28 +2315,70 @@
           </div>
 
           <!-- フォントカラー・スタイル -->
-          <div class="font-section" style="margin-top:1.2rem">
+          <div class="font-section" style="margin-top: 1.2rem">
             <p class="section-label">文字カラー</p>
-            <div id="fontColorSwatches" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <div
+              id="fontColorSwatches"
+              style="
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                margin-bottom: 1rem;
+              "
+            >
               <!-- built by JS -->
             </div>
-            <p class="section-label" style="margin-top:0.8rem">文字スタイル</p>
-            <div style="display:flex;gap:0.5rem">
-              <button id="btnBold" onclick="toggleFontBold()"
-                style="padding:0.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:var(--sans);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text)">
+            <p class="section-label" style="margin-top: 0.8rem">文字スタイル</p>
+            <div style="display: flex; gap: 0.5rem">
+              <button
+                id="btnBold"
+                onclick="toggleFontBold()"
+                style="
+                  padding: 0.45rem 1.1rem;
+                  border: 1.5px solid var(--border);
+                  border-radius: 8px;
+                  background: #fff;
+                  font-family: var(--sans);
+                  font-size: 0.85rem;
+                  font-weight: 700;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                  color: var(--text);
+                "
+              >
                 B
               </button>
-              <button id="btnItalic" onclick="toggleFontItalic()"
-                style="padding:0.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:var(--sans);font-size:0.85rem;font-style:italic;cursor:pointer;transition:all 0.2s;color:var(--text)">
+              <button
+                id="btnItalic"
+                onclick="toggleFontItalic()"
+                style="
+                  padding: 0.45rem 1.1rem;
+                  border: 1.5px solid var(--border);
+                  border-radius: 8px;
+                  background: #fff;
+                  font-family: var(--sans);
+                  font-size: 0.85rem;
+                  font-style: italic;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                  color: var(--text);
+                "
+              >
                 I
               </button>
             </div>
           </div>
 
           <!-- 配置コントロール（旧Step5 — 非表示） -->
-          <div class="position-section" style="display:none">
+          <div class="position-section" style="display: none">
             <div class="position-preview-area" id="positionPreview">
-              <div class="name-overlay" id="nameOverlayOld" style="left:50%;top:90%">サンプル</div>
+              <div
+                class="name-overlay"
+                id="nameOverlayOld"
+                style="left: 50%; top: 90%"
+              >
+                サンプル
+              </div>
             </div>
             <div class="position-controls">
               <div
@@ -2271,198 +2463,1001 @@
 
         <div class="btn-row">
           <button class="btn-back" onclick="goBack()">戻る</button>
-          <button class="btn-primary" id="btnPhotoNext" disabled>
-            次へ
-          </button>
+          <button class="btn-primary" id="btnPhotoNext" disabled>次へ</button>
         </div>
       </section>
 
       <!-- ========== STEP NEW-3: STYLE SELECTION ========== -->
       <section class="step-section" id="step-style-select">
-        <p style="font-size:0.72rem;font-weight:600;color:var(--text-light);letter-spacing:1px;margin-bottom:0.8rem">PAGE 1 / スタイルを選ぶ</p>
-        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem">
-          <h2 class="step-title" style="margin-bottom:0">③ スタイルを選ぶ</h2>
-          <span style="background:var(--c-brand);color:#fff;font-size:0.6rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:1rem;letter-spacing:0.5px">NEW</span>
+        <p
+          style="
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+          "
+        >
+          PAGE 1 / スタイルを選ぶ
+        </p>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.4rem;
+          "
+        >
+          <h2 class="step-title" style="margin-bottom: 0">③ スタイルを選ぶ</h2>
+          <span
+            style="
+              background: var(--c-brand);
+              color: #fff;
+              font-size: 0.6rem;
+              font-weight: 700;
+              padding: 0.2rem 0.5rem;
+              border-radius: 1rem;
+              letter-spacing: 0.5px;
+            "
+            >NEW</span
+          >
         </div>
-        <p class="step-subtitle">気になるスタイルを生成してみよう。「決定する」を押すと背景選択へ進みます。</p>
-        <p style="font-size:0.72rem;color:var(--text-mid);margin-bottom:1.2rem">
-          <span style="display:inline-flex;align-items:center;gap:0.3rem"><span style="width:10px;height:10px;border-radius:50%;border:2px solid var(--c-text-3);display:inline-block"></span>サンプル（押す前）</span>
+        <p class="step-subtitle">
+          気になるスタイルを生成してみよう。「決定する」を押すと背景選択へ進みます。
+        </p>
+        <p
+          style="
+            font-size: 0.72rem;
+            color: var(--text-mid);
+            margin-bottom: 1.2rem;
+          "
+        >
+          <span style="display: inline-flex; align-items: center; gap: 0.3rem"
+            ><span
+              style="
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                border: 2px solid var(--c-text-3);
+                display: inline-block;
+              "
+            ></span
+            >サンプル（押す前）</span
+          >
           &nbsp;&nbsp;
-          <span style="display:inline-flex;align-items:center;gap:0.3rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--c-success);display:inline-block"></span>生成完了→決定できます</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.3rem"
+            ><span
+              style="
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: var(--c-success);
+                display: inline-block;
+              "
+            ></span
+            >生成完了→決定できます</span
+          >
         </p>
         <div class="style-card-grid" id="styleCardGrid"></div>
-        <div class="btn-row" style="margin-top:1.5rem">
+        <div class="btn-row" style="margin-top: 1.5rem">
           <button class="btn-back" onclick="goBack()">戻る</button>
         </div>
       </section>
 
       <!-- ========== STEP NEW-4: BACKGROUND SELECTION ========== -->
       <section class="step-section" id="step-bg-select">
-        <p style="font-size:0.72rem;font-weight:600;color:var(--text-light);letter-spacing:1px;margin-bottom:0.8rem">PAGE 2 / 背景を選ぶ（オプション）</p>
-        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem">
-          <h2 class="step-title" style="margin-bottom:0">④ 背景を選ぶ</h2>
-          <span style="background:var(--c-brand);color:#fff;font-size:0.6rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:1rem;letter-spacing:0.5px">NEW</span>
+        <p
+          style="
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+          "
+        >
+          PAGE 2 / 背景を選ぶ（オプション）
+        </p>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.4rem;
+          "
+        >
+          <h2 class="step-title" style="margin-bottom: 0">④ 背景を選ぶ</h2>
+          <span
+            style="
+              background: var(--c-brand);
+              color: #fff;
+              font-size: 0.6rem;
+              font-weight: 700;
+              padding: 0.2rem 0.5rem;
+              border-radius: 1rem;
+              letter-spacing: 0.5px;
+            "
+            >NEW</span
+          >
         </div>
-        <p class="step-subtitle">背景なし（切り抜き）か、お好みの背景を選んで生成。「決定する」で次へ。スキップもOK。</p>
-        <p style="font-size:0.72rem;color:var(--text-mid);margin-bottom:1.2rem">
-          <span style="display:inline-flex;align-items:center;gap:0.3rem"><span style="width:10px;height:10px;border-radius:50%;border:2px solid var(--c-text-3);display:inline-block"></span>サンプル（押す前）</span>
+        <p class="step-subtitle">
+          背景なし（切り抜き）か、お好みの背景を選んで生成。「決定する」で次へ。スキップもOK。
+        </p>
+        <p
+          style="
+            font-size: 0.72rem;
+            color: var(--text-mid);
+            margin-bottom: 1.2rem;
+          "
+        >
+          <span style="display: inline-flex; align-items: center; gap: 0.3rem"
+            ><span
+              style="
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                border: 2px solid var(--c-text-3);
+                display: inline-block;
+              "
+            ></span
+            >サンプル（押す前）</span
+          >
           &nbsp;&nbsp;
-          <span style="display:inline-flex;align-items:center;gap:0.3rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--c-success);display:inline-block"></span>生成完了→決定できます</span>
+          <span style="display: inline-flex; align-items: center; gap: 0.3rem"
+            ><span
+              style="
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: var(--c-success);
+                display: inline-block;
+              "
+            ></span
+            >生成完了→決定できます</span
+          >
         </p>
         <div class="style-card-grid" id="bgCardGrid"></div>
-        <div style="margin-top:1.5rem">
-          <button class="btn-secondary" onclick="skipBgAndProceed()">スキップ（背景なしで次へ）</button>
+        <div style="margin-top: 1.5rem">
+          <button class="btn-secondary" onclick="skipBgAndProceed()">
+            スキップ（背景なしで次へ）
+          </button>
         </div>
-        <div class="btn-row" style="margin-top:0.6rem">
+        <div class="btn-row" style="margin-top: 0.6rem">
           <button class="btn-back" onclick="goBack()">戻る</button>
         </div>
       </section>
 
       <!-- ========== STEP NEW-5: TEXT & ORDER ========== -->
       <section class="step-section" id="step-text-order">
-        <p style="font-size:0.72rem;font-weight:600;color:var(--text-light);letter-spacing:1px;margin-bottom:0.8rem">PAGE 3 / 名前・文字入れ</p>
-        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem">
-          <h2 class="step-title" style="margin-bottom:0">⑤ 名前・文字入れ</h2>
-          <span style="background:var(--c-brand);color:#fff;font-size:0.6rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:1rem;letter-spacing:0.5px">NEW</span>
+        <p
+          style="
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+          "
+        >
+          PAGE 3 / 名前・文字入れ
+        </p>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.4rem;
+          "
+        >
+          <h2 class="step-title" style="margin-bottom: 0">⑤ 名前・文字入れ</h2>
+          <span
+            style="
+              background: var(--c-brand);
+              color: #fff;
+              font-size: 0.6rem;
+              font-weight: 700;
+              padding: 0.2rem 0.5rem;
+              border-radius: 1rem;
+              letter-spacing: 0.5px;
+            "
+            >NEW</span
+          >
         </div>
-        <p class="step-subtitle">設定はリアルタイムでプレビューに反映されます</p>
+        <p class="step-subtitle">
+          設定はリアルタイムでプレビューに反映されます
+        </p>
 
         <!-- スティッキープレビュー -->
         <div class="text-step-preview-sticky">
-          <div style="text-align:center;font-size:0.6rem;color:var(--c-brand);font-weight:600;margin-bottom:0.3rem">← 最大15cm →</div>
-          <div style="max-width:200px;margin:0 auto;aspect-ratio:1;border:2px dashed var(--c-brand);border-radius:12px;overflow:hidden;background:#fff;position:relative">
-            <canvas id="artPreviewCanvas" style="width:100%;height:100%;display:block"></canvas>
+          <div
+            style="
+              text-align: center;
+              font-size: 0.6rem;
+              color: var(--c-brand);
+              font-weight: 600;
+              margin-bottom: 0.3rem;
+            "
+          >
+            ← 最大15cm →
+          </div>
+          <div
+            style="
+              max-width: 200px;
+              margin: 0 auto;
+              aspect-ratio: 1;
+              border: 2px dashed var(--c-brand);
+              border-radius: 12px;
+              overflow: hidden;
+              background: #fff;
+              position: relative;
+            "
+          >
+            <canvas
+              id="artPreviewCanvas"
+              style="width: 100%; height: 100%; display: block"
+            ></canvas>
             <!-- AI生成中オーバーレイ -->
-            <div id="artGeneratingOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.55);border-radius:12px;flex-direction:column;align-items:center;justify-content:center;gap:0.4rem">
-              <div style="width:28px;height:28px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div>
-              <span style="color:#fff;font-size:0.62rem;font-weight:600;text-align:center;line-height:1.3">AIで生成中…<br>しばらくお待ちください</span>
+            <div
+              id="artGeneratingOverlay"
+              style="
+                display: none;
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.55);
+                border-radius: 12px;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4rem;
+              "
+            >
+              <div
+                style="
+                  width: 28px;
+                  height: 28px;
+                  border: 3px solid rgba(255, 255, 255, 0.3);
+                  border-top-color: #fff;
+                  border-radius: 50%;
+                  animation: spin 0.8s linear infinite;
+                "
+              ></div>
+              <span
+                style="
+                  color: #fff;
+                  font-size: 0.62rem;
+                  font-weight: 600;
+                  text-align: center;
+                  line-height: 1.3;
+                "
+                >AIで生成中…<br />しばらくお待ちください</span
+              >
             </div>
           </div>
         </div>
 
         <!-- ① テキスト -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin-bottom:0.6rem">① テキスト</p>
-          <input type="text" id="artTextInput" maxlength="20" placeholder="名前やメッセージを入力" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--c-border);border-radius:8px;font-family:var(--sans);font-size:0.85rem;color:var(--c-text);background:#fff;transition:border-color 0.3s" oninput="updateArtCanvas()">
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--c-text);
+              margin-bottom: 0.6rem;
+            "
+          >
+            ① テキスト
+          </p>
+          <input
+            type="text"
+            id="artTextInput"
+            maxlength="20"
+            placeholder="名前やメッセージを入力"
+            style="
+              width: 100%;
+              padding: 0.7rem 1rem;
+              border: 1.5px solid var(--c-border);
+              border-radius: 8px;
+              font-family: var(--sans);
+              font-size: 0.85rem;
+              color: var(--c-text);
+              background: #fff;
+              transition: border-color 0.3s;
+            "
+            oninput="updateArtCanvas()"
+          />
         </div>
 
         <!-- ② フォント -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin-bottom:0.6rem">② フォント</p>
-          <div id="artFontGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem"></div>
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--c-text);
+              margin-bottom: 0.6rem;
+            "
+          >
+            ② フォント
+          </p>
+          <div
+            id="artFontGrid"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem"
+          ></div>
         </div>
 
         <!-- ③ スタイル -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin-bottom:0.6rem">③ スタイル</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-            <button id="artBoldBtn" onclick="toggleArtBold()" style="padding:0.7rem;border:1.5px solid var(--c-border);border-radius:8px;background:#fff;font-family:var(--sans);font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--c-text);min-height:48px"><strong>太字</strong></button>
-            <button id="artItalicBtn" onclick="toggleArtItalic()" style="padding:0.7rem;border:1.5px solid var(--c-border);border-radius:8px;background:#fff;font-family:var(--sans);font-size:1rem;font-style:italic;cursor:pointer;transition:all 0.2s;color:var(--c-text);min-height:48px"><em>斜体</em></button>
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--c-text);
+              margin-bottom: 0.6rem;
+            "
+          >
+            ③ スタイル
+          </p>
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem"
+          >
+            <button
+              id="artBoldBtn"
+              onclick="toggleArtBold()"
+              style="
+                padding: 0.7rem;
+                border: 1.5px solid var(--c-border);
+                border-radius: 8px;
+                background: #fff;
+                font-family: var(--sans);
+                font-size: 1rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s;
+                color: var(--c-text);
+                min-height: 48px;
+              "
+            >
+              <strong>太字</strong>
+            </button>
+            <button
+              id="artItalicBtn"
+              onclick="toggleArtItalic()"
+              style="
+                padding: 0.7rem;
+                border: 1.5px solid var(--c-border);
+                border-radius: 8px;
+                background: #fff;
+                font-family: var(--sans);
+                font-size: 1rem;
+                font-style: italic;
+                cursor: pointer;
+                transition: all 0.2s;
+                color: var(--c-text);
+                min-height: 48px;
+              "
+            >
+              <em>斜体</em>
+            </button>
           </div>
         </div>
 
         <!-- ④ カラー -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin-bottom:0.8rem">④ カラー</p>
-          <div style="display:flex;gap:0.55rem;flex-wrap:wrap;align-items:center">
-            <button class="art-color-swatch selected" id="swatch-fff" onclick="selectArtColor('#ffffff')" style="background:#ffffff;box-shadow:0 0 0 1px #ddd" title="ホワイト"></button>
-            <button class="art-color-swatch" id="swatch-1a1" onclick="selectArtColor('#1a1a1a')" style="background:#1a1a1a" title="ブラック"></button>
-            <button class="art-color-swatch" id="swatch-c4a" onclick="selectArtColor('#c4a265')" style="background:#c4a265" title="ゴールド"></button>
-            <button class="art-color-swatch" id="swatch-c97" onclick="selectArtColor('#c97a42')" style="background:#c97a42" title="ブランドオレンジ"></button>
-            <button class="art-color-swatch" id="swatch-e05" onclick="selectArtColor('#e05c4b')" style="background:#e05c4b" title="レッド"></button>
-            <button class="art-color-swatch" id="swatch-2d5" onclick="selectArtColor('#2d5aa0')" style="background:#2d5aa0" title="ネイビー"></button>
-            <button class="art-color-swatch" id="swatch-3da" onclick="selectArtColor('#3daa6f')" style="background:#3daa6f" title="グリーン"></button>
-            <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.7rem;color:var(--c-text-2);cursor:pointer">
-              <input type="color" id="artColorCustom" value="#ffffff" oninput="selectArtColor(this.value)" style="width:32px;height:32px;border:none;border-radius:50%;cursor:pointer;padding:0">カスタム
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--c-text);
+              margin-bottom: 0.8rem;
+            "
+          >
+            ④ カラー
+          </p>
+          <div
+            style="
+              display: flex;
+              gap: 0.55rem;
+              flex-wrap: wrap;
+              align-items: center;
+            "
+          >
+            <button
+              class="art-color-swatch selected"
+              id="swatch-fff"
+              onclick="selectArtColor('#ffffff')"
+              style="background: #ffffff; box-shadow: 0 0 0 1px #ddd"
+              title="ホワイト"
+            ></button>
+            <button
+              class="art-color-swatch"
+              id="swatch-1a1"
+              onclick="selectArtColor('#1a1a1a')"
+              style="background: #1a1a1a"
+              title="ブラック"
+            ></button>
+            <button
+              class="art-color-swatch"
+              id="swatch-c4a"
+              onclick="selectArtColor('#c4a265')"
+              style="background: #c4a265"
+              title="ゴールド"
+            ></button>
+            <button
+              class="art-color-swatch"
+              id="swatch-c97"
+              onclick="selectArtColor('#c97a42')"
+              style="background: #c97a42"
+              title="ブランドオレンジ"
+            ></button>
+            <button
+              class="art-color-swatch"
+              id="swatch-e05"
+              onclick="selectArtColor('#e05c4b')"
+              style="background: #e05c4b"
+              title="レッド"
+            ></button>
+            <button
+              class="art-color-swatch"
+              id="swatch-2d5"
+              onclick="selectArtColor('#2d5aa0')"
+              style="background: #2d5aa0"
+              title="ネイビー"
+            ></button>
+            <button
+              class="art-color-swatch"
+              id="swatch-3da"
+              onclick="selectArtColor('#3daa6f')"
+              style="background: #3daa6f"
+              title="グリーン"
+            ></button>
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+                font-size: 0.7rem;
+                color: var(--c-text-2);
+                cursor: pointer;
+              "
+            >
+              <input
+                type="color"
+                id="artColorCustom"
+                value="#ffffff"
+                oninput="selectArtColor(this.value)"
+                style="
+                  width: 32px;
+                  height: 32px;
+                  border: none;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  padding: 0;
+                "
+              />カスタム
             </label>
           </div>
         </div>
 
         <!-- ④b 縁取り -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem">
-            <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin:0">縁取り（アウトライン）</p>
-            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
-              <span style="font-size:0.75rem;color:var(--c-text-2)" id="outlineLabel">OFF</span>
-              <input type="checkbox" id="outlineToggle" onchange="toggleOutline()" style="width:44px;height:24px;appearance:none;-webkit-appearance:none;background:#ddd;border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;outline:none">
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 0.6rem;
+            "
+          >
+            <p
+              style="
+                font-size: 0.82rem;
+                font-weight: 600;
+                color: var(--c-text);
+                margin: 0;
+              "
+            >
+              縁取り（アウトライン）
+            </p>
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+              "
+            >
+              <span
+                style="font-size: 0.75rem; color: var(--c-text-2)"
+                id="outlineLabel"
+                >OFF</span
+              >
+              <input
+                type="checkbox"
+                id="outlineToggle"
+                onchange="toggleOutline()"
+                style="
+                  width: 44px;
+                  height: 24px;
+                  appearance: none;
+                  -webkit-appearance: none;
+                  background: #ddd;
+                  border-radius: 12px;
+                  position: relative;
+                  cursor: pointer;
+                  transition: background 0.2s;
+                  outline: none;
+                "
+              />
             </label>
           </div>
-          <div id="outlineOptions" style="display:none">
-            <p style="font-size:0.72rem;color:var(--c-text-2);margin-bottom:0.5rem">縁取りカラー</p>
-            <div style="display:flex;gap:0.55rem;flex-wrap:wrap;align-items:center">
-              <button class="art-color-swatch outline-swatch selected" onclick="selectOutlineColor('#ffffff')" style="background:#ffffff;box-shadow:0 0 0 1px #ddd" title="ホワイト"></button>
-              <button class="art-color-swatch outline-swatch" onclick="selectOutlineColor('#1a1a1a')" style="background:#1a1a1a" title="ブラック"></button>
-              <button class="art-color-swatch outline-swatch" onclick="selectOutlineColor('#c4a265')" style="background:#c4a265" title="ゴールド"></button>
-              <button class="art-color-swatch outline-swatch" onclick="selectOutlineColor('#e05c4b')" style="background:#e05c4b" title="レッド"></button>
-              <button class="art-color-swatch outline-swatch" onclick="selectOutlineColor('#2d5aa0')" style="background:#2d5aa0" title="ネイビー"></button>
-              <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.7rem;color:var(--c-text-2);cursor:pointer">
-                <input type="color" id="outlineColorCustom" value="#ffffff" oninput="selectOutlineColor(this.value)" style="width:32px;height:32px;border:none;border-radius:50%;cursor:pointer;padding:0">カスタム
+          <div id="outlineOptions" style="display: none">
+            <p
+              style="
+                font-size: 0.72rem;
+                color: var(--c-text-2);
+                margin-bottom: 0.5rem;
+              "
+            >
+              縁取りカラー
+            </p>
+            <div
+              style="
+                display: flex;
+                gap: 0.55rem;
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            >
+              <button
+                class="art-color-swatch outline-swatch selected"
+                onclick="selectOutlineColor('#ffffff')"
+                style="background: #ffffff; box-shadow: 0 0 0 1px #ddd"
+                title="ホワイト"
+              ></button>
+              <button
+                class="art-color-swatch outline-swatch"
+                onclick="selectOutlineColor('#1a1a1a')"
+                style="background: #1a1a1a"
+                title="ブラック"
+              ></button>
+              <button
+                class="art-color-swatch outline-swatch"
+                onclick="selectOutlineColor('#c4a265')"
+                style="background: #c4a265"
+                title="ゴールド"
+              ></button>
+              <button
+                class="art-color-swatch outline-swatch"
+                onclick="selectOutlineColor('#e05c4b')"
+                style="background: #e05c4b"
+                title="レッド"
+              ></button>
+              <button
+                class="art-color-swatch outline-swatch"
+                onclick="selectOutlineColor('#2d5aa0')"
+                style="background: #2d5aa0"
+                title="ネイビー"
+              ></button>
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 0.3rem;
+                  font-size: 0.7rem;
+                  color: var(--c-text-2);
+                  cursor: pointer;
+                "
+              >
+                <input
+                  type="color"
+                  id="outlineColorCustom"
+                  value="#ffffff"
+                  oninput="selectOutlineColor(this.value)"
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border: none;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    padding: 0;
+                  "
+                />カスタム
               </label>
             </div>
           </div>
         </div>
 
         <!-- ⑤ 文字位置 -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin-bottom:0.8rem">⑤ 文字位置</p>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:0.35rem">
-            <button onmousedown="startArtMove('up')" onmouseup="stopArtMove()" onmouseleave="stopArtMove()" ontouchstart="startArtMove('up')" ontouchend="stopArtMove()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;touch-action:none">▲</button>
-            <div style="display:flex;gap:0.35rem;align-items:center">
-              <button onmousedown="startArtMove('left')" onmouseup="stopArtMove()" onmouseleave="stopArtMove()" ontouchstart="startArtMove('left')" ontouchend="stopArtMove()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;touch-action:none">◀</button>
-              <button onclick="resetArtTextPos()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:0.7rem;font-weight:600;color:var(--c-text-2);cursor:pointer;display:flex;align-items:center;justify-content:center">中央</button>
-              <button onmousedown="startArtMove('right')" onmouseup="stopArtMove()" onmouseleave="stopArtMove()" ontouchstart="startArtMove('right')" ontouchend="stopArtMove()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;touch-action:none">▶</button>
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--c-text);
+              margin-bottom: 0.8rem;
+            "
+          >
+            ⑤ 文字位置
+          </p>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 0.35rem;
+            "
+          >
+            <button
+              onmousedown="startArtMove('up')"
+              onmouseup="stopArtMove()"
+              onmouseleave="stopArtMove()"
+              ontouchstart="startArtMove('up')"
+              ontouchend="stopArtMove()"
+              style="
+                width: 52px;
+                height: 52px;
+                border: 1.5px solid var(--c-border);
+                border-radius: 10px;
+                background: #fff;
+                font-size: 1.3rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                -webkit-user-select: none;
+                user-select: none;
+                touch-action: none;
+              "
+            >
+              ▲
+            </button>
+            <div style="display: flex; gap: 0.35rem; align-items: center">
+              <button
+                onmousedown="startArtMove('left')"
+                onmouseup="stopArtMove()"
+                onmouseleave="stopArtMove()"
+                ontouchstart="startArtMove('left')"
+                ontouchend="stopArtMove()"
+                style="
+                  width: 52px;
+                  height: 52px;
+                  border: 1.5px solid var(--c-border);
+                  border-radius: 10px;
+                  background: #fff;
+                  font-size: 1.3rem;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  -webkit-user-select: none;
+                  user-select: none;
+                  touch-action: none;
+                "
+              >
+                ◀
+              </button>
+              <button
+                onclick="resetArtTextPos()"
+                style="
+                  width: 52px;
+                  height: 52px;
+                  border: 1.5px solid var(--c-border);
+                  border-radius: 10px;
+                  background: #fff;
+                  font-size: 0.7rem;
+                  font-weight: 600;
+                  color: var(--c-text-2);
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                中央
+              </button>
+              <button
+                onmousedown="startArtMove('right')"
+                onmouseup="stopArtMove()"
+                onmouseleave="stopArtMove()"
+                ontouchstart="startArtMove('right')"
+                ontouchend="stopArtMove()"
+                style="
+                  width: 52px;
+                  height: 52px;
+                  border: 1.5px solid var(--c-border);
+                  border-radius: 10px;
+                  background: #fff;
+                  font-size: 1.3rem;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  -webkit-user-select: none;
+                  user-select: none;
+                  touch-action: none;
+                "
+              >
+                ▶
+              </button>
             </div>
-            <button onmousedown="startArtMove('down')" onmouseup="stopArtMove()" onmouseleave="stopArtMove()" ontouchstart="startArtMove('down')" ontouchend="stopArtMove()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none;touch-action:none">▼</button>
+            <button
+              onmousedown="startArtMove('down')"
+              onmouseup="stopArtMove()"
+              onmouseleave="stopArtMove()"
+              ontouchstart="startArtMove('down')"
+              ontouchend="stopArtMove()"
+              style="
+                width: 52px;
+                height: 52px;
+                border: 1.5px solid var(--c-border);
+                border-radius: 10px;
+                background: #fff;
+                font-size: 1.3rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                -webkit-user-select: none;
+                user-select: none;
+                touch-action: none;
+              "
+            >
+              ▼
+            </button>
           </div>
-          <p style="font-size:0.68rem;color:var(--c-text-3);text-align:center;margin-top:0.6rem">押し続けると連続移動</p>
+          <p
+            style="
+              font-size: 0.68rem;
+              color: var(--c-text-3);
+              text-align: center;
+              margin-top: 0.6rem;
+            "
+          >
+            押し続けると連続移動
+          </p>
         </div>
 
         <!-- ⑥ サイズ -->
-        <div style="background:#fff;border-radius:12px;border:1px solid var(--c-border);padding:1.2rem;margin-bottom:0.75rem">
-          <p style="font-size:0.82rem;font-weight:600;color:var(--c-text);margin-bottom:0.8rem">⑥ サイズ</p>
-          <div style="display:flex;align-items:center;gap:0.75rem">
-            <button onclick="decreasePrintSize()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:1.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:300;color:var(--c-text);transition:all 0.2s;min-height:48px">−</button>
-            <div style="flex:1;text-align:center">
-              <span id="printSizeLabel" style="font-size:0.9rem;font-weight:700;color:var(--c-text)">100%（約15cm）</span>
+        <div
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--c-text);
+              margin-bottom: 0.8rem;
+            "
+          >
+            ⑥ サイズ
+          </p>
+          <div style="display: flex; align-items: center; gap: 0.75rem">
+            <button
+              onclick="decreasePrintSize()"
+              style="
+                width: 52px;
+                height: 52px;
+                border: 1.5px solid var(--c-border);
+                border-radius: 10px;
+                background: #fff;
+                font-size: 1.6rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 300;
+                color: var(--c-text);
+                transition: all 0.2s;
+                min-height: 48px;
+              "
+            >
+              −
+            </button>
+            <div style="flex: 1; text-align: center">
+              <span
+                id="printSizeLabel"
+                style="
+                  font-size: 0.9rem;
+                  font-weight: 700;
+                  color: var(--c-text);
+                "
+                >100%（約15cm）</span
+              >
             </div>
-            <button onclick="increasePrintSize()" style="width:52px;height:52px;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-size:1.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:300;color:var(--c-text);transition:all 0.2s;min-height:48px">＋</button>
+            <button
+              onclick="increasePrintSize()"
+              style="
+                width: 52px;
+                height: 52px;
+                border: 1.5px solid var(--c-border);
+                border-radius: 10px;
+                background: #fff;
+                font-size: 1.6rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 300;
+                color: var(--c-text);
+                transition: all 0.2s;
+                min-height: 48px;
+              "
+            >
+              ＋
+            </button>
           </div>
-          <input type="range" id="printSizeSlider" min="30" max="130" step="5" value="100"
-            oninput="state.artPrintSize=parseInt(this.value);updatePrintSizeLabel();updateArtCanvas()"
-            style="width:100%;margin-top:0.8rem;accent-color:var(--c-brand);height:6px;cursor:pointer">
-          <p style="font-size:0.68rem;color:var(--c-text-3);text-align:center;margin-top:0.4rem">30%〜130%（最大約19cm）</p>
+          <input
+            type="range"
+            id="printSizeSlider"
+            min="30"
+            max="130"
+            step="5"
+            value="100"
+            oninput="
+              state.artPrintSize = parseInt(this.value);
+              updatePrintSizeLabel();
+              updateArtCanvas();
+            "
+            style="
+              width: 100%;
+              margin-top: 0.8rem;
+              accent-color: var(--c-brand);
+              height: 6px;
+              cursor: pointer;
+            "
+          />
+          <p
+            style="
+              font-size: 0.68rem;
+              color: var(--c-text-3);
+              text-align: center;
+              margin-top: 0.4rem;
+            "
+          >
+            30%〜130%（最大約19cm）
+          </p>
         </div>
 
         <!-- ダウンロードボタン -->
-        <button onclick="downloadWithWatermark()" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;width:100%;padding:0.85rem;border:1.5px solid var(--c-border);border-radius:10px;background:#fff;font-family:var(--sans);font-size:0.85rem;font-weight:500;color:var(--c-text-2);cursor:pointer;margin-bottom:1rem;transition:background 0.2s;min-height:48px">
+        <button
+          onclick="downloadWithWatermark()"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            width: 100%;
+            padding: 0.85rem;
+            border: 1.5px solid var(--c-border);
+            border-radius: 10px;
+            background: #fff;
+            font-family: var(--sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--c-text-2);
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: background 0.2s;
+            min-height: 48px;
+          "
+        >
           ⬇️ このイラストをダウンロード（透かしあり）
         </button>
 
         <div class="btn-row">
           <button class="btn-back" onclick="goBack()">戻る</button>
-          <button onclick="proceedToOrderConfirm()" style="flex:1;padding:1rem;background:#1a1a1a;color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:0.92rem;font-weight:800;letter-spacing:1px;cursor:pointer;transition:all 0.2s;min-height:48px">注文確認へ進む</button>
+          <button
+            onclick="proceedToOrderConfirm()"
+            style="
+              flex: 1;
+              padding: 1rem;
+              background: #1a1a1a;
+              color: #fff;
+              border: none;
+              border-radius: 10px;
+              font-family: var(--sans);
+              font-size: 0.92rem;
+              font-weight: 800;
+              letter-spacing: 1px;
+              cursor: pointer;
+              transition: all 0.2s;
+              min-height: 48px;
+            "
+          >
+            注文確認へ進む
+          </button>
         </div>
       </section>
 
       <!-- ========== STEP 6: ART PREVIEW + NAME ========== -->
       <section class="step-section" id="step-preview">
         <h2 class="step-title">アート確認・文字入れ</h2>
-        <p class="step-subtitle">生成されたアートを確認し、文字を追加できます</p>
+        <p class="step-subtitle">
+          生成されたアートを確認し、文字を追加できます
+        </p>
 
         <!-- ローディング -->
         <div class="mockup-loader" id="mockupLoader">
           <div class="spinner"></div>
           <p id="mockupLoaderMsg">アートを生成中...</p>
-          <p style="font-size:0.72rem;color:var(--text-light)">通常30秒〜1分ほどかかります</p>
+          <p style="font-size: 0.72rem; color: var(--text-light)">
+            通常30秒〜1分ほどかかります
+          </p>
         </div>
 
         <!-- 生成済みアート＋テキストオーバーレイ -->
-        <div id="artResultArea" style="display:none">
-
+        <div id="artResultArea" style="display: none">
           <!-- アート画像（テキストオーバーレイ付き） -->
-          <div class="position-preview-area" id="artOverlayArea" style="margin-bottom:1.5rem;border-radius:16px;overflow:hidden">
-            <img id="mockupImg" class="mockup-img" style="width:100%;display:block;border-radius:16px" alt="生成されたアート"/>
-            <div class="name-overlay" id="nameOverlay" style="left:50%;top:90%">サンプル</div>
+          <div
+            class="position-preview-area"
+            id="artOverlayArea"
+            style="margin-bottom: 1.5rem; border-radius: 16px; overflow: hidden"
+          >
+            <img
+              id="mockupImg"
+              class="mockup-img"
+              style="width: 100%; display: block; border-radius: 16px"
+              alt="生成されたアート"
+            />
+            <div
+              class="name-overlay"
+              id="nameOverlay"
+              style="left: 50%; top: 90%"
+            >
+              サンプル
+            </div>
           </div>
 
           <!-- 名前を入れる トグル -->
@@ -2470,10 +3465,16 @@
             <div class="toggle-row">
               <div>
                 <div class="toggle-label">名前を入れる</div>
-                <div class="toggle-sublabel">ペットの名前をアートに入れられます（任意）</div>
+                <div class="toggle-sublabel">
+                  ペットの名前をアートに入れられます（任意）
+                </div>
               </div>
               <label class="toggle-switch">
-                <input type="checkbox" id="nameToggle" onchange="toggleNameSection()"/>
+                <input
+                  type="checkbox"
+                  id="nameToggle"
+                  onchange="toggleNameSection()"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -2486,73 +3487,216 @@
             <div class="font-section">
               <p class="section-label">フォントを選択</p>
               <div class="font-grid" id="fontGrid">
-                <div class="font-card selected" data-font="gothic" onclick="selectFont('gothic')">
+                <div
+                  class="font-card selected"
+                  data-font="gothic"
+                  onclick="selectFont('gothic')"
+                >
                   <div class="font-radio"></div>
                   <div class="font-info">
                     <div class="font-name">ゴシック</div>
-                    <div class="font-preview" style="font-family:&quot;Noto Sans JP&quot;,sans-serif" id="fontPreviewGothic">サンプル</div>
+                    <div
+                      class="font-preview"
+                      style="font-family: &quot;Noto Sans JP&quot;, sans-serif"
+                      id="fontPreviewGothic"
+                    >
+                      サンプル
+                    </div>
                   </div>
                 </div>
-                <div class="font-card" data-font="mincho" onclick="selectFont('mincho')">
+                <div
+                  class="font-card"
+                  data-font="mincho"
+                  onclick="selectFont('mincho')"
+                >
                   <div class="font-radio"></div>
                   <div class="font-info">
                     <div class="font-name">明朝</div>
-                    <div class="font-preview" style="font-family:&quot;Noto Serif JP&quot;,serif" id="fontPreviewMincho">サンプル</div>
+                    <div
+                      class="font-preview"
+                      style="font-family: &quot;Noto Serif JP&quot;, serif"
+                      id="fontPreviewMincho"
+                    >
+                      サンプル
+                    </div>
                   </div>
                 </div>
-                <div class="font-card" data-font="maru" onclick="selectFont('maru')">
+                <div
+                  class="font-card"
+                  data-font="maru"
+                  onclick="selectFont('maru')"
+                >
                   <div class="font-radio"></div>
                   <div class="font-info">
                     <div class="font-name">丸ゴシック</div>
-                    <div class="font-preview" style="font-family:&quot;Zen Maru Gothic&quot;,sans-serif" id="fontPreviewMaru">サンプル</div>
+                    <div
+                      class="font-preview"
+                      style="
+                        font-family: &quot;Zen Maru Gothic&quot;, sans-serif;
+                      "
+                      id="fontPreviewMaru"
+                    >
+                      サンプル
+                    </div>
                   </div>
                 </div>
-                <div class="font-card" data-font="tegaki" onclick="selectFont('tegaki')">
+                <div
+                  class="font-card"
+                  data-font="tegaki"
+                  onclick="selectFont('tegaki')"
+                >
                   <div class="font-radio"></div>
                   <div class="font-info">
                     <div class="font-name">手書き風</div>
-                    <div class="font-preview" style="font-family:&quot;Yomogi&quot;,cursive" id="fontPreviewTegaki">サンプル</div>
+                    <div
+                      class="font-preview"
+                      style="font-family: &quot;Yomogi&quot;, cursive"
+                      id="fontPreviewTegaki"
+                    >
+                      サンプル
+                    </div>
                   </div>
                 </div>
-                <div class="font-card" data-font="cursive" onclick="selectFont('cursive')">
+                <div
+                  class="font-card"
+                  data-font="cursive"
+                  onclick="selectFont('cursive')"
+                >
                   <div class="font-radio"></div>
                   <div class="font-info">
                     <div class="font-name">筆記体</div>
-                    <div class="font-preview" style="font-family:&quot;Dancing Script&quot;,cursive" id="fontPreviewCursive">サンプル</div>
+                    <div
+                      class="font-preview"
+                      style="font-family: &quot;Dancing Script&quot;, cursive"
+                      id="fontPreviewCursive"
+                    >
+                      サンプル
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="font-section" style="margin-top:1.2rem">
+            <div class="font-section" style="margin-top: 1.2rem">
               <p class="section-label">文字カラー</p>
-              <div id="fontColorSwatches" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem"><!-- built by JS --></div>
-              <p class="section-label" style="margin-top:0.8rem">文字スタイル</p>
-              <div style="display:flex;gap:0.5rem">
-                <button id="btnBold" onclick="toggleFontBold()"
-                  style="padding:0.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:var(--sans);font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--text)">B</button>
-                <button id="btnItalic" onclick="toggleFontItalic()"
-                  style="padding:0.45rem 1.1rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:var(--sans);font-size:0.85rem;font-style:italic;cursor:pointer;transition:all 0.2s;color:var(--text)">I</button>
+              <div
+                id="fontColorSwatches"
+                style="
+                  display: flex;
+                  gap: 0.5rem;
+                  flex-wrap: wrap;
+                  margin-bottom: 1rem;
+                "
+              >
+                <!-- built by JS -->
+              </div>
+              <p class="section-label" style="margin-top: 0.8rem">
+                文字スタイル
+              </p>
+              <div style="display: flex; gap: 0.5rem">
+                <button
+                  id="btnBold"
+                  onclick="toggleFontBold()"
+                  style="
+                    padding: 0.45rem 1.1rem;
+                    border: 1.5px solid var(--border);
+                    border-radius: 8px;
+                    background: #fff;
+                    font-family: var(--sans);
+                    font-size: 0.85rem;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    color: var(--text);
+                  "
+                >
+                  B
+                </button>
+                <button
+                  id="btnItalic"
+                  onclick="toggleFontItalic()"
+                  style="
+                    padding: 0.45rem 1.1rem;
+                    border: 1.5px solid var(--border);
+                    border-radius: 8px;
+                    background: #fff;
+                    font-family: var(--sans);
+                    font-size: 0.85rem;
+                    font-style: italic;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    color: var(--text);
+                  "
+                >
+                  I
+                </button>
               </div>
             </div>
 
             <div class="position-section">
               <p class="section-label">名前の配置位置</p>
               <div class="position-controls">
-                <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem">
-                  <button class="pos-btn" data-dir="up" onmousedown="startMove('up')" onmouseup="stopMove()" onmouseleave="stopMove()" ontouchstart="startMove('up')" ontouchend="stopMove()">
-                    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 0.3rem;
+                  "
+                >
+                  <button
+                    class="pos-btn"
+                    data-dir="up"
+                    onmousedown="startMove('up')"
+                    onmouseup="stopMove()"
+                    onmouseleave="stopMove()"
+                    ontouchstart="startMove('up')"
+                    ontouchend="stopMove()"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="18 15 12 9 6 15" />
+                    </svg>
                   </button>
                   <div class="pos-row">
-                    <button class="pos-btn" data-dir="left" onmousedown="startMove('left')" onmouseup="stopMove()" onmouseleave="stopMove()" ontouchstart="startMove('left')" ontouchend="stopMove()">
-                      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                    <button
+                      class="pos-btn"
+                      data-dir="left"
+                      onmousedown="startMove('left')"
+                      onmouseup="stopMove()"
+                      onmouseleave="stopMove()"
+                      ontouchstart="startMove('left')"
+                      ontouchend="stopMove()"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
                     </button>
-                    <button class="pos-btn" data-dir="right" onmousedown="startMove('right')" onmouseup="stopMove()" onmouseleave="stopMove()" ontouchstart="startMove('right')" ontouchend="stopMove()">
-                      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    <button
+                      class="pos-btn"
+                      data-dir="right"
+                      onmousedown="startMove('right')"
+                      onmouseup="stopMove()"
+                      onmouseleave="stopMove()"
+                      ontouchstart="startMove('right')"
+                      ontouchend="stopMove()"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
                     </button>
                   </div>
-                  <button class="pos-btn" data-dir="down" onmousedown="startMove('down')" onmouseup="stopMove()" onmouseleave="stopMove()" ontouchstart="startMove('down')" ontouchend="stopMove()">
-                    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                  <button
+                    class="pos-btn"
+                    data-dir="down"
+                    onmousedown="startMove('down')"
+                    onmouseup="stopMove()"
+                    onmouseleave="stopMove()"
+                    ontouchstart="startMove('down')"
+                    ontouchend="stopMove()"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -2560,22 +3704,42 @@
           </div>
 
           <!-- 注文サマリー -->
-          <div class="order-summary-mini" id="previewSummary" style="margin-top:1.5rem"><!-- built by JS --></div>
-
-          <div class="btn-row" style="margin-top:1.2rem">
-            <button class="btn-back" onclick="goBack()">戻る</button>
-            <button class="btn-primary" id="btnPreviewNext">この仕上がりで注文する</button>
+          <div
+            class="order-summary-mini"
+            id="previewSummary"
+            style="margin-top: 1.5rem"
+          >
+            <!-- built by JS -->
           </div>
-          <button class="btn-secondary" id="btnRetry" style="margin-top:0.8rem;width:100%" onclick="retryGenerate()">
+
+          <div class="btn-row" style="margin-top: 1.2rem">
+            <button class="btn-back" onclick="goBack()">戻る</button>
+            <button class="btn-primary" id="btnPreviewNext">
+              この仕上がりで注文する
+            </button>
+          </div>
+          <button
+            class="btn-secondary"
+            id="btnRetry"
+            style="margin-top: 0.8rem; width: 100%"
+            onclick="retryGenerate()"
+          >
             別のパターンで再生成する
           </button>
         </div>
 
         <!-- 生成失敗時 -->
-        <div id="artErrorArea" style="display:none;text-align:center;padding:2rem 0">
-          <p style="color:var(--terracotta);margin-bottom:1rem">アートの生成に失敗しました</p>
-          <button class="btn-secondary" onclick="retryGenerate()">再試行する</button>
-          <div class="btn-row" style="margin-top:1rem">
+        <div
+          id="artErrorArea"
+          style="display: none; text-align: center; padding: 2rem 0"
+        >
+          <p style="color: var(--terracotta); margin-bottom: 1rem">
+            アートの生成に失敗しました
+          </p>
+          <button class="btn-secondary" onclick="retryGenerate()">
+            再試行する
+          </button>
+          <div class="btn-row" style="margin-top: 1rem">
             <button class="btn-back" onclick="goBack()">戻る</button>
           </div>
         </div>
@@ -2588,7 +3752,12 @@
 
         <div class="form-group">
           <label>お名前（フルネーム）<span class="req">*</span></label>
-          <input type="text" id="fullName" placeholder="山田 花子" autocomplete="name" />
+          <input
+            type="text"
+            id="fullName"
+            placeholder="山田 花子"
+            autocomplete="name"
+          />
           <div class="field-error" id="fullName-error"></div>
         </div>
         <div class="form-group">
@@ -2710,15 +3879,31 @@
             ></span>
             <span class="pay-label">クレジットカード</span>
           </div>
-          <div class="payment-option" style="opacity:0.45;cursor:not-allowed;pointer-events:none">
+          <div
+            class="payment-option"
+            style="opacity: 0.45; cursor: not-allowed; pointer-events: none"
+          >
             <div class="radio-dot"></div>
             <span class="pay-icon">&#63743;</span>
-            <span class="pay-label">Apple Pay <small style="font-size:0.6rem;color:#999">（近日対応）</small></span>
+            <span class="pay-label"
+              >Apple Pay
+              <small style="font-size: 0.6rem; color: #999"
+                >（近日対応）</small
+              ></span
+            >
           </div>
-          <div class="payment-option" style="opacity:0.45;cursor:not-allowed;pointer-events:none">
+          <div
+            class="payment-option"
+            style="opacity: 0.45; cursor: not-allowed; pointer-events: none"
+          >
             <div class="radio-dot"></div>
             <span class="pay-icon">G</span>
-            <span class="pay-label">Google Pay <small style="font-size:0.6rem;color:#999">（近日対応）</small></span>
+            <span class="pay-label"
+              >Google Pay
+              <small style="font-size: 0.6rem; color: #999"
+                >（近日対応）</small
+              ></span
+            >
           </div>
         </div>
 
@@ -2731,7 +3916,15 @@
           <!-- 新しいカードを追加 -->
           <div id="newCardSection">
             <div style="margin-bottom: 0.5rem">
-              <label style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.3rem; display: block">カード番号</label>
+              <label
+                style="
+                  font-size: 0.72rem;
+                  color: var(--text-light);
+                  margin-bottom: 0.3rem;
+                  display: block;
+                "
+                >カード番号</label
+              >
               <div
                 id="card-number-element"
                 style="
@@ -2744,7 +3937,15 @@
             </div>
             <div style="display: flex; gap: 0.75rem; margin-bottom: 0.5rem">
               <div style="flex: 1">
-                <label style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.3rem; display: block">有効期限</label>
+                <label
+                  style="
+                    font-size: 0.72rem;
+                    color: var(--text-light);
+                    margin-bottom: 0.3rem;
+                    display: block;
+                  "
+                  >有効期限</label
+                >
                 <div
                   id="card-expiry-element"
                   style="
@@ -2756,7 +3957,15 @@
                 ></div>
               </div>
               <div style="flex: 1">
-                <label style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.3rem; display: block">セキュリティコード</label>
+                <label
+                  style="
+                    font-size: 0.72rem;
+                    color: var(--text-light);
+                    margin-bottom: 0.3rem;
+                    display: block;
+                  "
+                  >セキュリティコード</label
+                >
                 <div
                   id="card-cvc-element"
                   style="
@@ -3542,18 +4751,33 @@
       // ============================================================
       //  操作ログ（常時有効 — コンソールで _deerLog を参照）
       // ============================================================
-      const DEER_DEBUG = true;  // 常時有効
+      const DEER_DEBUG = true; // 常時有効
       const _deerLog = [];
       function dlog(category, msg, data) {
-        const entry = { t: new Date().toISOString().slice(11, 23), cat: category, msg };
-        if (data !== undefined) entry.data = typeof data === "object" ? JSON.stringify(data).slice(0, 200) : String(data);
+        const entry = {
+          t: new Date().toISOString().slice(11, 23),
+          cat: category,
+          msg,
+        };
+        if (data !== undefined)
+          entry.data =
+            typeof data === "object"
+              ? JSON.stringify(data).slice(0, 200)
+              : String(data);
         _deerLog.push(entry);
         if (_deerLog.length > 1000) _deerLog.shift();
-        console.log(`[Deer:${category}] ${msg}`, data !== undefined ? data : "");
+        console.log(
+          `[Deer:${category}] ${msg}`,
+          data !== undefined ? data : "",
+        );
       }
       // グローバルエラーキャッチ
-      window.addEventListener("error", (e) => dlog("ERROR", e.message, { file: e.filename, line: e.lineno }));
-      window.addEventListener("unhandledrejection", (e) => dlog("ERROR", "Promise rejected: " + e.reason));
+      window.addEventListener("error", (e) =>
+        dlog("ERROR", e.message, { file: e.filename, line: e.lineno }),
+      );
+      window.addEventListener("unhandledrejection", (e) =>
+        dlog("ERROR", "Promise rejected: " + e.reason),
+      );
       console.info("[Deer] 操作ログ有効 — コンソールで _deerLog を参照");
 
       // ─── サーバーへのログ送信は /api/user-logs 復活時に再有効化 ──
@@ -3739,8 +4963,8 @@
         const currentUser =
           window._currentUser ||
           (typeof firebase !== "undefined" &&
-          firebase.auth &&
-          firebase.auth().currentUser);
+            firebase.auth &&
+            firebase.auth().currentUser);
 
         if (!currentUser || typeof currentUser.getIdToken !== "function") {
           throw new Error("AUTH_REQUIRED");
@@ -3801,7 +5025,10 @@
         function handleChange(field) {
           return (e) => {
             _cardFieldComplete[field] = e.complete;
-            state.cardComplete = _cardFieldComplete.number && _cardFieldComplete.expiry && _cardFieldComplete.cvc;
+            state.cardComplete =
+              _cardFieldComplete.number &&
+              _cardFieldComplete.expiry &&
+              _cardFieldComplete.cvc;
             if (errEl) errEl.textContent = e.error ? e.error.message : "";
           };
         }
@@ -3904,7 +5131,8 @@
       // ============================================================
       function buildLookbook() {
         const grid = document.getElementById("lookbookGrid");
-        grid.innerHTML = STYLES.map(s => `
+        grid.innerHTML = STYLES.map(
+          (s) => `
           <div class="lookbook-card" onclick="selectLookbook('${s.id}')" id="lb-${s.id}">
             <div class="check-badge">&#10003;</div>
             <div style="aspect-ratio:1/1;overflow:hidden">
@@ -3913,7 +5141,7 @@
             <div class="lookbook-info">
               <div class="item-name">${s.name}</div>
             </div>
-          </div>`
+          </div>`,
         ).join("");
       }
 
@@ -4711,31 +5939,33 @@
 
       // --- Font color ---
       const FONT_COLORS = [
-        { label: "ホワイト",   value: "#ffffff", border: "#d0c8bc" },
-        { label: "ブラック",   value: "#1a1a1a", border: "#1a1a1a" },
-        { label: "ゴールド",   value: "#c4a265", border: "#c4a265" },
+        { label: "ホワイト", value: "#ffffff", border: "#d0c8bc" },
+        { label: "ブラック", value: "#1a1a1a", border: "#1a1a1a" },
+        { label: "ゴールド", value: "#c4a265", border: "#c4a265" },
         { label: "テラコッタ", value: "#c4836a", border: "#c4836a" },
-        { label: "ベージュ",   value: "#ede4d8", border: "#c8b8a2" },
-        { label: "グレー",     value: "#888080", border: "#888080" },
+        { label: "ベージュ", value: "#ede4d8", border: "#c8b8a2" },
+        { label: "グレー", value: "#888080", border: "#888080" },
       ];
 
       function buildFontColorSwatches() {
         const container = document.getElementById("fontColorSwatches");
         if (!container) return;
-        container.innerHTML = FONT_COLORS.map(c => `
+        container.innerHTML = FONT_COLORS.map(
+          (c) => `
           <button onclick="selectFontColor('${c.value}')" title="${c.label}"
-            id="clr-swatch-${c.value.replace('#','')}"
+            id="clr-swatch-${c.value.replace("#", "")}"
             style="
               width:2rem;height:2rem;border-radius:50%;
               background:${c.value};
               border:2px solid ${c.border};
               cursor:pointer;
-              outline:${state.fontColor === c.value ? '3px solid var(--terracotta)' : 'none'};
+              outline:${state.fontColor === c.value ? "3px solid var(--terracotta)" : "none"};
               outline-offset:2px;
               transition:all 0.15s;
               box-shadow:0 1px 4px rgba(0,0,0,0.15);
             ">
-          </button>`).join("");
+          </button>`,
+        ).join("");
       }
 
       function selectFontColor(value) {
@@ -4750,7 +5980,9 @@
         if (btn) {
           btn.style.background = state.fontBold ? "var(--charcoal)" : "#fff";
           btn.style.color = state.fontBold ? "#fff" : "var(--text)";
-          btn.style.borderColor = state.fontBold ? "var(--charcoal)" : "var(--border)";
+          btn.style.borderColor = state.fontBold
+            ? "var(--charcoal)"
+            : "var(--border)";
         }
         updatePositionPreview();
       }
@@ -4761,7 +5993,9 @@
         if (btn) {
           btn.style.background = state.fontItalic ? "var(--charcoal)" : "#fff";
           btn.style.color = state.fontItalic ? "#fff" : "var(--text)";
-          btn.style.borderColor = state.fontItalic ? "var(--charcoal)" : "var(--border)";
+          btn.style.borderColor = state.fontItalic
+            ? "var(--charcoal)"
+            : "var(--border)";
         }
         updatePositionPreview();
       }
@@ -4858,8 +6092,9 @@
         let lastTouchX = null;
         let lastTouchY = null;
         // Step6のアートオーバーレイエリアを使用
-        const previewArea = document.getElementById("artOverlayArea") ||
-                            document.getElementById("positionPreview");
+        const previewArea =
+          document.getElementById("artOverlayArea") ||
+          document.getElementById("positionPreview");
         if (!previewArea) return;
 
         previewArea.addEventListener(
@@ -4907,124 +6142,162 @@
         );
       })();
 
-      document.getElementById("btnPhotoNext").addEventListener("click", async () => {
-        dlog("NAV", "btnPhotoNext clicked", { selectedStyleId: state.selectedStyleId, selectedStyleUrl: !!state.selectedStyleUrl, finalArtUrl: !!state.finalArtUrl, photoDataUrl: !!state.photoDataUrl });
-        // スタイルが既にURL引数や前回選択で確定している場合はスキップ
-        if (state.selectedStyleId) {
-          const styleDef = STYLES.find(s => s.id === state.selectedStyleId);
-          if (styleDef && !styleDef.needsBg) {
-            state.selectedBgId = "none";
-            // AI生成が未完了なら、この画面で生成完了を待ってから遷移
-            // selectedStyleUrl が data: で始まる場合は元写真（ドラフト復元のゴミ）なので再生成
-            const hasValidArt = state.selectedStyleUrl && !state.selectedStyleUrl.startsWith("data:");
-            if (!hasValidArt) {
-              state.selectedStyleUrl = null; // ドラフトの元写真URLをクリア
-              dlog("ART", "AI生成開始 — 完了まで待機", { styleId: state.selectedStyleId });
-              const btn = document.getElementById("btnPhotoNext");
-              btn.disabled = true;
-              btn.textContent = "アートを生成中...";
-              try {
-                await generateStyleCard(state.selectedStyleId);
-                const cs = styleCardStates[state.selectedStyleId];
-                if (cs && cs.status === "done" && cs.url) {
-                  state.finalArtUrl = cs.url;
-                  state.selectedStyleUrl = cs.url;
-                  dlog("ART", "AI生成成功", { styleId: state.selectedStyleId, url: cs.url.substring(0, 60) });
-                  showToast("✨ アート生成完了！", "success");
-                } else {
-                  dlog("ART", "AI生成失敗", { styleId: state.selectedStyleId, status: cs?.status, error: cs?.error });
-                  showToast("生成に失敗しました。再度お試しください。", "error");
-                  btn.disabled = false;
-                  btn.textContent = "次へ";
-                  return;
-                }
-              } catch(e) {
-                dlog("ART", "AI生成例外", { error: e.message });
-                console.error("Art generation failed:", e);
-                showToast("生成に失敗しました。再度お試しください。", "error");
-                btn.disabled = false;
-                btn.textContent = "次へ";
-                return;
-              }
-              btn.disabled = false;
-              btn.textContent = "次へ";
-            } else {
-              state.finalArtUrl = state.selectedStyleUrl;
-            }
-            goTo("text-order");
-            buildTextOrderStep();
-          } else {
-            // needsBg=true: 背景選択の前にスタイル生成を行う
-            const hasValidArt2 = state.selectedStyleUrl && !state.selectedStyleUrl.startsWith("data:");
-            if (!hasValidArt2) {
-              state.selectedStyleUrl = null;
-              dlog("ART", "needsBg=true: スタイル生成開始", { styleId: state.selectedStyleId });
-              const btn = document.getElementById("btnPhotoNext");
-              btn.disabled = true;
-              btn.textContent = "アートを生成中...";
-              try {
-                await generateStyleCard(state.selectedStyleId);
-                const cs = styleCardStates[state.selectedStyleId];
-                if (cs && cs.status === "done" && cs.url) {
-                  state.selectedStyleUrl = cs.url;
-                  state.finalArtUrl = cs.url;
-                  dlog("ART", "needsBg=true: スタイル生成成功", { styleId: state.selectedStyleId });
-                }
-              } catch(e) {
-                dlog("ART", "needsBg=true: スタイル生成失敗", { error: e.message });
-              }
-              btn.disabled = false;
-              btn.textContent = "次へ";
-            }
-            goTo("bg-select");
-            buildBgCards();
-          }
-        } else if (state.selectedStyle) {
-          const match = STYLES.find(s => s.id === state.selectedStyle);
-          if (match) {
-            state.selectedStyleId = match.id;
-            state.selectedStyleUrl = null;
-            if (!match.needsBg) {
+      document
+        .getElementById("btnPhotoNext")
+        .addEventListener("click", async () => {
+          dlog("NAV", "btnPhotoNext clicked", {
+            selectedStyleId: state.selectedStyleId,
+            selectedStyleUrl: !!state.selectedStyleUrl,
+            finalArtUrl: !!state.finalArtUrl,
+            photoDataUrl: !!state.photoDataUrl,
+          });
+          // スタイルが既にURL引数や前回選択で確定している場合はスキップ
+          if (state.selectedStyleId) {
+            const styleDef = STYLES.find((s) => s.id === state.selectedStyleId);
+            if (styleDef && !styleDef.needsBg) {
               state.selectedBgId = "none";
-              // 生成完了を待ってから遷移
-              const btn = document.getElementById("btnPhotoNext");
-              btn.disabled = true;
-              btn.textContent = "アートを生成中...";
-              try {
-                await generateStyleCard(match.id);
-                const cs = styleCardStates[match.id];
-                if (cs && cs.status === "done" && cs.url) {
-                  state.finalArtUrl = cs.url;
-                  state.selectedStyleUrl = cs.url;
-                } else {
-                  showToast("生成に失敗しました。再度お試しください。", "error");
+              // AI生成が未完了なら、この画面で生成完了を待ってから遷移
+              // selectedStyleUrl が data: で始まる場合は元写真（ドラフト復元のゴミ）なので再生成
+              const hasValidArt =
+                state.selectedStyleUrl &&
+                !state.selectedStyleUrl.startsWith("data:");
+              if (!hasValidArt) {
+                state.selectedStyleUrl = null; // ドラフトの元写真URLをクリア
+                dlog("ART", "AI生成開始 — 完了まで待機", {
+                  styleId: state.selectedStyleId,
+                });
+                const btn = document.getElementById("btnPhotoNext");
+                btn.disabled = true;
+                btn.textContent = "アートを生成中...";
+                try {
+                  await generateStyleCard(state.selectedStyleId);
+                  const cs = styleCardStates[state.selectedStyleId];
+                  if (cs && cs.status === "done" && cs.url) {
+                    state.finalArtUrl = cs.url;
+                    state.selectedStyleUrl = cs.url;
+                    dlog("ART", "AI生成成功", {
+                      styleId: state.selectedStyleId,
+                      url: cs.url.substring(0, 60),
+                    });
+                    showToast("✨ アート生成完了！", "success");
+                  } else {
+                    dlog("ART", "AI生成失敗", {
+                      styleId: state.selectedStyleId,
+                      status: cs?.status,
+                      error: cs?.error,
+                    });
+                    showToast(
+                      "生成に失敗しました。再度お試しください。",
+                      "error",
+                    );
+                    btn.disabled = false;
+                    btn.textContent = "次へ";
+                    return;
+                  }
+                } catch (e) {
+                  dlog("ART", "AI生成例外", { error: e.message });
+                  console.error("Art generation failed:", e);
+                  showToast(
+                    "生成に失敗しました。再度お試しください。",
+                    "error",
+                  );
                   btn.disabled = false;
                   btn.textContent = "次へ";
                   return;
                 }
-              } catch(e) {
-                showToast("生成に失敗しました。再度お試しください。", "error");
                 btn.disabled = false;
                 btn.textContent = "次へ";
-                return;
+              } else {
+                state.finalArtUrl = state.selectedStyleUrl;
               }
-              btn.disabled = false;
-              btn.textContent = "次へ";
               goTo("text-order");
               buildTextOrderStep();
             } else {
+              // needsBg=true: 背景選択の前にスタイル生成を行う
+              const hasValidArt2 =
+                state.selectedStyleUrl &&
+                !state.selectedStyleUrl.startsWith("data:");
+              if (!hasValidArt2) {
+                state.selectedStyleUrl = null;
+                dlog("ART", "needsBg=true: スタイル生成開始", {
+                  styleId: state.selectedStyleId,
+                });
+                const btn = document.getElementById("btnPhotoNext");
+                btn.disabled = true;
+                btn.textContent = "アートを生成中...";
+                try {
+                  await generateStyleCard(state.selectedStyleId);
+                  const cs = styleCardStates[state.selectedStyleId];
+                  if (cs && cs.status === "done" && cs.url) {
+                    state.selectedStyleUrl = cs.url;
+                    state.finalArtUrl = cs.url;
+                    dlog("ART", "needsBg=true: スタイル生成成功", {
+                      styleId: state.selectedStyleId,
+                    });
+                  }
+                } catch (e) {
+                  dlog("ART", "needsBg=true: スタイル生成失敗", {
+                    error: e.message,
+                  });
+                }
+                btn.disabled = false;
+                btn.textContent = "次へ";
+              }
               goTo("bg-select");
               buildBgCards();
+            }
+          } else if (state.selectedStyle) {
+            const match = STYLES.find((s) => s.id === state.selectedStyle);
+            if (match) {
+              state.selectedStyleId = match.id;
+              state.selectedStyleUrl = null;
+              if (!match.needsBg) {
+                state.selectedBgId = "none";
+                // 生成完了を待ってから遷移
+                const btn = document.getElementById("btnPhotoNext");
+                btn.disabled = true;
+                btn.textContent = "アートを生成中...";
+                try {
+                  await generateStyleCard(match.id);
+                  const cs = styleCardStates[match.id];
+                  if (cs && cs.status === "done" && cs.url) {
+                    state.finalArtUrl = cs.url;
+                    state.selectedStyleUrl = cs.url;
+                  } else {
+                    showToast(
+                      "生成に失敗しました。再度お試しください。",
+                      "error",
+                    );
+                    btn.disabled = false;
+                    btn.textContent = "次へ";
+                    return;
+                  }
+                } catch (e) {
+                  showToast(
+                    "生成に失敗しました。再度お試しください。",
+                    "error",
+                  );
+                  btn.disabled = false;
+                  btn.textContent = "次へ";
+                  return;
+                }
+                btn.disabled = false;
+                btn.textContent = "次へ";
+                goTo("text-order");
+                buildTextOrderStep();
+              } else {
+                goTo("bg-select");
+                buildBgCards();
+              }
+            } else {
+              goTo("style-select");
+              buildStyleCards();
             }
           } else {
             goTo("style-select");
             buildStyleCards();
           }
-        } else {
-          goTo("style-select");
-          buildStyleCards();
-        }
-      });
+        });
 
       // ============================================================
       //  ART GENERATION (Replicate img2img)
@@ -5079,8 +6352,14 @@
                 return;
               }
               try {
-                const r = await fetch(`${endpoint}?id=${id}`);
-                if (!r.ok) { polls++; return; }
+                const freshHeaders = await buildAuthHeaders();
+                const r = await fetch(`${endpoint}?id=${id}`, {
+                  headers: freshHeaders,
+                });
+                if (!r.ok) {
+                  polls++;
+                  return;
+                }
                 const d = await r.json();
                 networkErrors = 0;
                 if (d.status === "succeeded") {
@@ -5095,7 +6374,7 @@
                   reject(new Error(d.error || d.status));
                 } else {
                   polls++;
-                  const elapsed = Math.round(polls * POLL_INTERVAL / 1000);
+                  const elapsed = Math.round((polls * POLL_INTERVAL) / 1000);
                   loaderMsg.textContent = `${label} (${elapsed}秒経過)`;
                 }
               } catch (e) {
@@ -5113,22 +6392,34 @@
 
           // ── Step2: 背景除去 ──────────────────────────────────────
           loaderMsg.textContent = "背景を切り取り中...";
+          const rembgHeaders = await buildAuthHeaders({
+            "Content-Type": "application/json",
+          });
           const rembgRes = await fetch("/api/remove-bg", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: rembgHeaders,
             body: JSON.stringify({ photoDataUrl: resizedDataUrl }),
           });
           if (!rembgRes.ok) throw new Error("rembg_start_failed");
-          const { predictionId: rembgId, error: rembgErr } = await rembgRes.json();
+          const { predictionId: rembgId, error: rembgErr } =
+            await rembgRes.json();
           if (rembgErr || !rembgId) throw new Error(rembgErr || "no_rembg_id");
 
-          const noBgUrl = await pollUntilDone("/api/remove-bg", rembgId, "背景を切り取り中...", 20);
+          const noBgUrl = await pollUntilDone(
+            "/api/remove-bg",
+            rembgId,
+            "背景を切り取り中...",
+            20,
+          );
 
           // ── Step3: アート生成 ────────────────────────────────────
           loaderMsg.textContent = "アートを生成中...";
+          const artHeaders = await buildAuthHeaders({
+            "Content-Type": "application/json",
+          });
           const artRes = await fetch("/api/generate-art", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: artHeaders,
             body: JSON.stringify({
               photoDataUrl: noBgUrl,
               styleId: state.selectedStyle,
@@ -5137,15 +6428,23 @@
           });
           if (!artRes.ok) throw new Error("generation_start_failed");
           const { predictionId, error: apiErr } = await artRes.json();
-          if (apiErr || !predictionId) throw new Error(apiErr || "no_prediction_id");
+          if (apiErr || !predictionId)
+            throw new Error(apiErr || "no_prediction_id");
 
-          artImageUrl = await pollUntilDone("/api/generate-art", predictionId, "アートを生成中...", 60);
-
+          artImageUrl = await pollUntilDone(
+            "/api/generate-art",
+            predictionId,
+            "アートを生成中...",
+            60,
+          );
         } catch (err) {
           console.warn("Art generation failed:", err.message);
           artImageUrl = state.photoDataUrl;
           if (err.message === "timeout") {
-            showToast("生成に時間がかかりました。元の写真を表示します", "warning");
+            showToast(
+              "生成に時間がかかりました。元の写真を表示します",
+              "warning",
+            );
           } else {
             showToast("アート生成をスキップし、元の写真を使用します", "info");
           }
@@ -5168,9 +6467,13 @@
       function buildPreviewSummary() {
         const product = PRODUCTS[state.selectedItem];
         if (!product) return;
-        const placementPrice = state.selectedPlacement ? state.selectedPlacement.price : 0;
+        const placementPrice = state.selectedPlacement
+          ? state.selectedPlacement.price
+          : 0;
         const total = product.base + placementPrice + state.optionPrice;
-        const colorObj = product.colors.find((c) => c.id === state.selectedColor);
+        const colorObj = product.colors.find(
+          (c) => c.id === state.selectedColor,
+        );
 
         let html = `
           <div class="row"><span>商品</span><span>${product.name}</span></div>
@@ -5178,9 +6481,12 @@
         if (state.selectedPlacement) {
           html += `<div class="row"><span>配置</span><span>${state.selectedPlacement.name}${placementPrice > 0 ? " (+¥" + placementPrice.toLocaleString() + ")" : ""}</span></div>`;
         }
-        if (colorObj) html += `<div class="row"><span>カラー</span><span>${colorObj.name}</span></div>`;
-        if (state.selectedSize) html += `<div class="row"><span>サイズ</span><span>${state.selectedSize}</span></div>`;
-        if (state.petCount > 1) html += `<div class="row"><span>頭数</span><span>${state.petCount}頭 (+¥${state.optionPrice.toLocaleString()})</span></div>`;
+        if (colorObj)
+          html += `<div class="row"><span>カラー</span><span>${colorObj.name}</span></div>`;
+        if (state.selectedSize)
+          html += `<div class="row"><span>サイズ</span><span>${state.selectedSize}</span></div>`;
+        if (state.petCount > 1)
+          html += `<div class="row"><span>頭数</span><span>${state.petCount}頭 (+¥${state.optionPrice.toLocaleString()})</span></div>`;
         html += `<div class="row total"><span>合計（税込）</span><span>¥${total.toLocaleString()}</span></div>`;
 
         document.getElementById("previewSummary").innerHTML = html;
@@ -5218,7 +6524,11 @@
             fetch("https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + raw)
               .then((r) => r.json())
               .then((data) => {
-                if (data.status === 200 && data.results && data.results.length > 0) {
+                if (
+                  data.status === 200 &&
+                  data.results &&
+                  data.results.length > 0
+                ) {
                   const r = data.results[0];
                   // 都道府県セット
                   const prefSel = document.getElementById("prefecture");
@@ -5333,8 +6643,12 @@
               return;
             }
             if (!state.cardComplete) {
-              showToast("カード番号・有効期限・セキュリティコードをすべて入力してください", "error");
-              document.getElementById("card-errors").textContent = "カード情報を完全に入力してください";
+              showToast(
+                "カード番号・有効期限・セキュリティコードをすべて入力してください",
+                "error",
+              );
+              document.getElementById("card-errors").textContent =
+                "カード情報を完全に入力してください";
               return;
             }
           }
@@ -5371,7 +6685,8 @@
         const placementPrice = state.selectedPlacement
           ? state.selectedPlacement.price
           : 0;
-        const subtotal = (product.base || 0) + placementPrice + state.optionPrice;
+        const subtotal =
+          (product.base || 0) + placementPrice + state.optionPrice;
         const igDiscount = state.igVerified ? 500 : 0;
         const couponDiscount = state.couponVerified ? state.couponDiscount : 0;
         const totalDiscount = igDiscount + couponDiscount;
@@ -5388,7 +6703,11 @@
 
         let html = `<h3>商品情報</h3>`;
         html += `<div class="confirm-row"><span class="label">商品</span><span class="value">${escapeHtml(product.name)}</span></div>`;
-        const styleDisplayName = STYLE_NAMES[state.selectedStyleId || state.selectedStyle] || state.selectedStyleId || state.selectedStyle || "";
+        const styleDisplayName =
+          STYLE_NAMES[state.selectedStyleId || state.selectedStyle] ||
+          state.selectedStyleId ||
+          state.selectedStyle ||
+          "";
         html += `<div class="confirm-row"><span class="label">アートスタイル</span><span class="value">${escapeHtml(styleDisplayName)}</span></div>`;
         if (state.selectedPlacement) {
           html += `<div class="confirm-row"><span class="label">プリント配置</span><span class="value">${escapeHtml(state.selectedPlacement.name)}</span></div>`;
@@ -5409,9 +6728,15 @@
           }
         }
 
-        const fullName = escapeHtml(document.getElementById("fullName")?.value || "");
-        const prefecture = escapeHtml(document.getElementById("prefecture")?.value || "");
-        const address1 = escapeHtml(document.getElementById("address1")?.value || "");
+        const fullName = escapeHtml(
+          document.getElementById("fullName")?.value || "",
+        );
+        const prefecture = escapeHtml(
+          document.getElementById("prefecture")?.value || "",
+        );
+        const address1 = escapeHtml(
+          document.getElementById("address1")?.value || "",
+        );
 
         html += `<h3 style="margin-top:1.5rem">お届け先</h3>`;
         html += `<div class="confirm-row"><span class="label">お名前</span><span class="value">${fullName}</span></div>`;
@@ -5462,7 +6787,10 @@
           // 1. 金額計算
           const product = PRODUCTS[state.selectedItem];
           if (!product) {
-            showToast("商品情報が見つかりません。最初からやり直してください。", "error");
+            showToast(
+              "商品情報が見つかりません。最初からやり直してください。",
+              "error",
+            );
             btn.disabled = false;
             btn.textContent = "注文を確定する";
             return;
@@ -5493,17 +6821,23 @@
                   colorId: state.selectedColor,
                   size: state.selectedSize,
                   petCount: state.petCount,
-                  petNames: (state.pets || []).map((p) => p.name).filter(Boolean),
+                  petNames: (state.pets || [])
+                    .map((p) => p.name)
+                    .filter(Boolean),
                 },
               ],
               shipping: {
-                fullName: document.getElementById("fullName")?.value?.trim() || "",
+                fullName:
+                  document.getElementById("fullName")?.value?.trim() || "",
                 email: document.getElementById("email")?.value?.trim() || "",
                 phone: document.getElementById("phone")?.value?.trim() || "",
                 zip: document.getElementById("zip")?.value?.trim() || "",
-                prefecture: document.getElementById("prefecture")?.value?.trim() || "",
-                address1: document.getElementById("address1")?.value?.trim() || "",
-                address2: document.getElementById("address2")?.value?.trim() || "",
+                prefecture:
+                  document.getElementById("prefecture")?.value?.trim() || "",
+                address1:
+                  document.getElementById("address1")?.value?.trim() || "",
+                address2:
+                  document.getElementById("address2")?.value?.trim() || "",
               },
               couponCode: state.couponVerified ? state.couponCode : null,
               igDiscountToken: state.igVerified ? state.igDiscountToken : null,
@@ -5512,7 +6846,10 @@
 
           if (!piRes.ok) {
             const errData = await piRes.json().catch(() => ({}));
-            throw new Error(errData.error || "決済処理でエラーが発生しました。しばらく経ってから再度お試しください。");
+            throw new Error(
+              errData.error ||
+                "決済処理でエラーが発生しました。しばらく経ってから再度お試しください。",
+            );
           }
 
           const { clientSecret, orderId } = await piRes.json();
@@ -5553,7 +6890,10 @@
             showLoginModal(() => {});
             showToast("ログイン後にもう一度お試しください", "error");
           } else {
-            showToast(e.message || "エラーが発生しました。再度お試しください。", "error");
+            showToast(
+              e.message || "エラーが発生しました。再度お試しください。",
+              "error",
+            );
           }
           btn.disabled = false;
           btn.textContent = "注文を確定する";
@@ -5564,7 +6904,8 @@
         const userId = window._currentUser?.uid || null;
         const product = PRODUCTS[state.selectedItem] || {};
         const placementPrice = state.selectedPlacement?.price || 0;
-        const subtotal = (product.base || 0) + placementPrice + (state.optionPrice || 0);
+        const subtotal =
+          (product.base || 0) + placementPrice + (state.optionPrice || 0);
         const total = Math.max(
           0,
           subtotal -
@@ -5577,7 +6918,8 @@
           email: document.getElementById("email")?.value?.trim() || "",
           phone: document.getElementById("phone")?.value?.trim() || "",
           zip: document.getElementById("zip")?.value?.trim() || "",
-          prefecture: document.getElementById("prefecture")?.value?.trim() || "",
+          prefecture:
+            document.getElementById("prefecture")?.value?.trim() || "",
           address1: document.getElementById("address1")?.value?.trim() || "",
           address2: document.getElementById("address2")?.value?.trim() || "",
         };
@@ -5613,16 +6955,22 @@
           const data = await res.json().catch(() => ({}));
           if (!res.ok) {
             console.warn("[completeOrder] API error:", data.error);
-            throw new Error("注文情報の保存に失敗しました。サポートにご連絡ください。");
+            throw new Error(
+              "注文情報の保存に失敗しました。サポートにご連絡ください。",
+            );
           }
           serverOrderId = data.orderId || null;
         } catch (e) {
           console.warn("[completeOrder] 注文保存失敗:", e.message);
           const errEl = document.getElementById("card-errors");
           if (errEl) {
-            errEl.innerHTML = '注文情報の保存に失敗しました。<a href="mailto:support@deer.gift">サポートに連絡</a>';
+            errEl.innerHTML =
+              '注文情報の保存に失敗しました。<a href="mailto:support@deer.gift">サポートに連絡</a>';
           }
-          showToast("注文情報の保存に失敗しました。サポートにご連絡ください。", "error");
+          showToast(
+            "注文情報の保存に失敗しました。サポートにご連絡ください。",
+            "error",
+          );
           throw e;
         }
 
@@ -5639,18 +6987,32 @@
             document.getElementById("saveAddressYes").onclick = async () => {
               modal.style.display = "none";
               try {
-                const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+                const { getFirestore, doc, getDoc, setDoc } =
+                  await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
                 const db = window._deerFirebaseDb;
                 const userRef = doc(db, "users", currentUser.uid);
                 const snap = await getDoc(userRef);
-                const existing = snap.exists() ? (snap.data().savedAddresses || []) : [];
-                const isDup = existing.some(a => a.zip === shippingAddress.zip && a.address1 === shippingAddress.address1);
+                const existing = snap.exists()
+                  ? snap.data().savedAddresses || []
+                  : [];
+                const isDup = existing.some(
+                  (a) =>
+                    a.zip === shippingAddress.zip &&
+                    a.address1 === shippingAddress.address1,
+                );
                 if (!isDup) {
-                  const newAddresses = [shippingAddress, ...existing].slice(0, 5);
-                  await setDoc(userRef, { savedAddresses: newAddresses }, { merge: true });
+                  const newAddresses = [shippingAddress, ...existing].slice(
+                    0,
+                    5,
+                  );
+                  await setDoc(
+                    userRef,
+                    { savedAddresses: newAddresses },
+                    { merge: true },
+                  );
                 }
                 showToast("住所を保存しました", "success");
-              } catch(e) {
+              } catch (e) {
                 console.warn("住所保存失敗:", e.message);
               }
             };
@@ -5724,7 +7086,8 @@
           } else {
             statusEl.className = "ig-status error";
             state.igDiscountToken = null;
-            statusEl.textContent = result.message ||
+            statusEl.textContent =
+              result.message ||
               "フォロー状態を確認できませんでした。Deerのプロフィール画面で「フォロー中」が表示されているスクリーンショットを再度アップロードしてください。";
             btn.disabled = false;
             btn.textContent = "スクリーンショットを確認して割引を適用";
@@ -5745,7 +7108,8 @@
             showLoginModal(() => {});
           } else {
             statusEl.className = "ig-status error";
-            statusEl.textContent = "フォロー確認に失敗しました。時間をおいて再度お試しください。";
+            statusEl.textContent =
+              "フォロー確認に失敗しました。時間をおいて再度お試しください。";
           }
           btn.disabled = false;
           btn.textContent = "スクリーンショットを確認して割引を適用";
@@ -5914,10 +7278,13 @@
           .join("");
 
         // モバイル: アクティブステップをスクロール中央に表示
-        const activeEl = container.querySelector('.progress-step.active');
+        const activeEl = container.querySelector(".progress-step.active");
         if (activeEl) {
           const bar = container.parentElement;
-          bar.scrollLeft = activeEl.offsetLeft - bar.offsetWidth / 2 + activeEl.offsetWidth / 2;
+          bar.scrollLeft =
+            activeEl.offsetLeft -
+            bar.offsetWidth / 2 +
+            activeEl.offsetWidth / 2;
         }
       }
 
@@ -5930,60 +7297,69 @@
       function saveOrderDraftToLocal() {
         try {
           const now = new Date();
-          const mmdd = `${now.getMonth()+1}/${now.getDate()}`;
-          const hhmm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-          const styleName = state.selectedStyleId ? (STYLE_NAMES[state.selectedStyleId] || state.selectedStyleId) : null;
-          const itemName = state.selectedItem ? (PRODUCTS[state.selectedItem]?.name || state.selectedItem) : null;
-          const draftName = [styleName, itemName].filter(Boolean).join(' × ') || "途中保存";
+          const mmdd = `${now.getMonth() + 1}/${now.getDate()}`;
+          const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+          const styleName = state.selectedStyleId
+            ? STYLE_NAMES[state.selectedStyleId] || state.selectedStyleId
+            : null;
+          const itemName = state.selectedItem
+            ? PRODUCTS[state.selectedItem]?.name || state.selectedItem
+            : null;
+          const draftName =
+            [styleName, itemName].filter(Boolean).join(" × ") || "途中保存";
           const autoName = `${draftName} ${mmdd} ${hhmm}`;
 
           const draft = {
-            name:              autoName,
-            savedAt:           Date.now(),
-            selectedItem:      state.selectedItem,
-            selectedStyle:     state.selectedStyle,
+            name: autoName,
+            savedAt: Date.now(),
+            selectedItem: state.selectedItem,
+            selectedStyle: state.selectedStyle,
             selectedPlacement: state.selectedPlacement,
-            selectedColor:     state.selectedColor,
-            selectedSize:      state.selectedSize,
-            petCount:          state.petCount,
-            pets:              state.pets,
-            selectedStyleId:   state.selectedStyleId,
-            selectedStyleUrl:  state.selectedStyleUrl,
-            selectedBgId:      state.selectedBgId,
-            finalArtUrl:       state.finalArtUrl,
-            artText:           state.artText,
-            artFontFamily:     state.artFontFamily,
-            artBold:           state.artBold,
-            artItalic:         state.artItalic,
-            artTextColor:      state.artTextColor,
-            artOutline:        state.artOutline,
-            artOutlineColor:   state.artOutlineColor,
-            artTextX:          state.artTextX,
-            artTextY:          state.artTextY,
-            fullName:          state.fullName,
-            currentStep:       state.currentStep,
+            selectedColor: state.selectedColor,
+            selectedSize: state.selectedSize,
+            petCount: state.petCount,
+            pets: state.pets,
+            selectedStyleId: state.selectedStyleId,
+            selectedStyleUrl: state.selectedStyleUrl,
+            selectedBgId: state.selectedBgId,
+            finalArtUrl: state.finalArtUrl,
+            artText: state.artText,
+            artFontFamily: state.artFontFamily,
+            artBold: state.artBold,
+            artItalic: state.artItalic,
+            artTextColor: state.artTextColor,
+            artOutline: state.artOutline,
+            artOutlineColor: state.artOutlineColor,
+            artTextX: state.artTextX,
+            artTextY: state.artTextY,
+            fullName: state.fullName,
+            currentStep: state.currentStep,
           };
 
           if (state.photoDataUrl) {
-            try { sessionStorage.setItem("deer_photo_draft", state.photoDataUrl); } catch(e) {}
+            try {
+              sessionStorage.setItem("deer_photo_draft", state.photoDataUrl);
+            } catch (e) {}
           }
 
           // Load existing drafts, prepend new one, keep max 5
           let drafts = [];
-          try { drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]"); } catch(e) {}
+          try {
+            drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]");
+          } catch (e) {}
           if (!Array.isArray(drafts)) drafts = [];
           drafts.unshift(draft);
           if (drafts.length > 5) drafts = drafts.slice(0, 5);
           localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
 
           // Show modal
-          const modal = document.getElementById('saveDraftModal');
-          const nameEl = document.getElementById('saveDraftModalName');
+          const modal = document.getElementById("saveDraftModal");
+          const nameEl = document.getElementById("saveDraftModalName");
           if (modal) {
             if (nameEl) nameEl.textContent = autoName;
-            modal.style.display = 'flex';
+            modal.style.display = "flex";
           }
-        } catch(e) {
+        } catch (e) {
           showToast("保存に失敗しました", "error");
         }
       }
@@ -5997,14 +7373,16 @@
             try {
               const oldDraft = JSON.parse(oldRaw);
               let drafts = [];
-              try { drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]"); } catch(e) {}
+              try {
+                drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]");
+              } catch (e) {}
               if (!Array.isArray(drafts)) drafts = [];
               oldDraft.name = oldDraft.name || "途中保存（旧）";
               oldDraft.savedAt = oldDraft.savedAt || Date.now();
               drafts.push(oldDraft);
               localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
               localStorage.removeItem(LOCAL_DRAFT_KEY);
-            } catch(e) {}
+            } catch (e) {}
           }
 
           const drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]");
@@ -6012,42 +7390,63 @@
           const draft = drafts[index];
           if (!draft) return;
 
-          if (draft.selectedItem)      state.selectedItem      = draft.selectedItem;
-          if (draft.selectedStyle)     state.selectedStyle     = draft.selectedStyle;
-          if (draft.selectedPlacement) state.selectedPlacement = draft.selectedPlacement;
-          if (draft.selectedColor)     state.selectedColor     = draft.selectedColor;
-          if (draft.selectedSize)      state.selectedSize      = draft.selectedSize;
-          if (draft.petCount)          { state.petCount = draft.petCount; state.optionPrice = PET_COUNT_PRICES[draft.petCount] || 0; }
-          if (Array.isArray(draft.pets)) state.pets            = draft.pets;
-          if (draft.selectedStyleId)   state.selectedStyleId   = draft.selectedStyleId;
+          if (draft.selectedItem) state.selectedItem = draft.selectedItem;
+          if (draft.selectedStyle) state.selectedStyle = draft.selectedStyle;
+          if (draft.selectedPlacement)
+            state.selectedPlacement = draft.selectedPlacement;
+          if (draft.selectedColor) state.selectedColor = draft.selectedColor;
+          if (draft.selectedSize) state.selectedSize = draft.selectedSize;
+          if (draft.petCount) {
+            state.petCount = draft.petCount;
+            state.optionPrice = PET_COUNT_PRICES[draft.petCount] || 0;
+          }
+          if (Array.isArray(draft.pets)) state.pets = draft.pets;
+          if (draft.selectedStyleId)
+            state.selectedStyleId = draft.selectedStyleId;
           // data:URLはドラフト復元しない（元写真であり生成済みアートではない）
-          if (draft.selectedStyleUrl && !draft.selectedStyleUrl.startsWith("data:"))  state.selectedStyleUrl  = draft.selectedStyleUrl;
-          if (draft.selectedBgId)      state.selectedBgId      = draft.selectedBgId;
-          if (draft.finalArtUrl)       state.finalArtUrl       = draft.finalArtUrl;
-          if (draft.artText)           state.artText           = draft.artText;
-          if (draft.artFontFamily)     state.artFontFamily     = draft.artFontFamily;
-          if (typeof draft.artBold === "boolean")   state.artBold   = draft.artBold;
-          if (typeof draft.artItalic === "boolean") state.artItalic = draft.artItalic;
-          if (draft.artTextColor)      state.artTextColor      = draft.artTextColor;
-          if (typeof draft.artOutline === "boolean") state.artOutline = draft.artOutline;
-          if (draft.artOutlineColor)   state.artOutlineColor   = draft.artOutlineColor;
-          if (typeof draft.artTextX === "number") state.artTextX = draft.artTextX;
-          if (typeof draft.artTextY === "number") state.artTextY = draft.artTextY;
-          if (draft.fullName)          state.fullName          = draft.fullName;
+          if (
+            draft.selectedStyleUrl &&
+            !draft.selectedStyleUrl.startsWith("data:")
+          )
+            state.selectedStyleUrl = draft.selectedStyleUrl;
+          if (draft.selectedBgId) state.selectedBgId = draft.selectedBgId;
+          if (draft.finalArtUrl) state.finalArtUrl = draft.finalArtUrl;
+          if (draft.artText) state.artText = draft.artText;
+          if (draft.artFontFamily) state.artFontFamily = draft.artFontFamily;
+          if (typeof draft.artBold === "boolean") state.artBold = draft.artBold;
+          if (typeof draft.artItalic === "boolean")
+            state.artItalic = draft.artItalic;
+          if (draft.artTextColor) state.artTextColor = draft.artTextColor;
+          if (typeof draft.artOutline === "boolean")
+            state.artOutline = draft.artOutline;
+          if (draft.artOutlineColor)
+            state.artOutlineColor = draft.artOutlineColor;
+          if (typeof draft.artTextX === "number")
+            state.artTextX = draft.artTextX;
+          if (typeof draft.artTextY === "number")
+            state.artTextY = draft.artTextY;
+          if (draft.fullName) state.fullName = draft.fullName;
           if (draft.currentStep) state._savedStep = draft.currentStep;
           const photoData = sessionStorage.getItem("deer_photo_draft");
           if (photoData) state.photoDataUrl = photoData;
-        } catch(e) { /* ignore */ }
+        } catch (e) {
+          /* ignore */
+        }
       }
 
       function checkDraftBanner() {
         try {
           // Check both new and old format
           let drafts = [];
-          try { drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]"); } catch(e) {}
+          try {
+            drafts = JSON.parse(localStorage.getItem(DRAFTS_KEY) || "[]");
+          } catch (e) {}
           const oldRaw = localStorage.getItem(LOCAL_DRAFT_KEY);
           if (oldRaw && drafts.length === 0) {
-            try { const d = JSON.parse(oldRaw); if (d.selectedItem) drafts = [d]; } catch(e) {}
+            try {
+              const d = JSON.parse(oldRaw);
+              if (d.selectedItem) drafts = [d];
+            } catch (e) {}
           }
           if (!Array.isArray(drafts) || drafts.length === 0) return;
           const draft = drafts[0]; // most recent
@@ -6061,7 +7460,7 @@
             const name = draft.name || "途中保存";
             desc.textContent = `「${name}」の続きから再開できます`;
           }
-        } catch(e) {}
+        } catch (e) {}
       }
 
       function resumeDraft() {
@@ -6095,7 +7494,10 @@
         } else if (state.selectedItem) {
           goTo("item-select");
         } else {
-          showToast("途中保存を読み込みました。商品を選んでください", "success");
+          showToast(
+            "途中保存を読み込みました。商品を選んでください",
+            "success",
+          );
         }
       }
 
@@ -6112,54 +7514,176 @@
         // needsBg:true  → bgSet のカードを表示して背景選択へ
 
         // 油絵・クラシック
-        { id: 'oil-impressionism', name: '油絵（印象派）',    sampleImg: 'img/styles/oil-impressionism.png', needsBg: false },
-        { id: 'oil-baroque',       name: '油絵（バロック）',  sampleImg: 'img/styles/oil-baroque.png',       needsBg: false },
-        { id: 'oil-renaissance',   name: '油絵（ルネサンス）',sampleImg: 'img/styles/oil-renaissance.png',   needsBg: false },
-        { id: 'oil-expressionism', name: '油絵（表現主義）',  sampleImg: 'img/styles/oil-expressionism.png', needsBg: false },
+        {
+          id: "oil-impressionism",
+          name: "油絵（印象派）",
+          sampleImg: "img/styles/oil-impressionism.png",
+          needsBg: false,
+        },
+        {
+          id: "oil-baroque",
+          name: "油絵（バロック）",
+          sampleImg: "img/styles/oil-baroque.png",
+          needsBg: false,
+        },
+        {
+          id: "oil-renaissance",
+          name: "油絵（ルネサンス）",
+          sampleImg: "img/styles/oil-renaissance.png",
+          needsBg: false,
+        },
+        {
+          id: "oil-expressionism",
+          name: "油絵（表現主義）",
+          sampleImg: "img/styles/oil-expressionism.png",
+          needsBg: false,
+        },
 
         // 水彩画
-        { id: 'wc-loose',          name: '水彩画（にじみ）',  sampleImg: 'img/styles/wc-loose.png',          needsBg: true,  bgSet: 'watercolor' },
-        { id: 'wc-botanical',      name: 'ボタニカル水彩',    sampleImg: 'img/styles/wc-botanical.png',      needsBg: true,  bgSet: 'watercolor' },
-        { id: 'wc-wet',            name: 'ウェット水彩',      sampleImg: 'img/styles/wc-wet.png',            needsBg: true,  bgSet: 'watercolor' },
+        {
+          id: "wc-loose",
+          name: "水彩画（にじみ）",
+          sampleImg: "img/styles/wc-loose.png",
+          needsBg: true,
+          bgSet: "watercolor",
+        },
+        {
+          id: "wc-botanical",
+          name: "ボタニカル水彩",
+          sampleImg: "img/styles/wc-botanical.png",
+          needsBg: true,
+          bgSet: "watercolor",
+        },
+        {
+          id: "wc-wet",
+          name: "ウェット水彩",
+          sampleImg: "img/styles/wc-wet.png",
+          needsBg: true,
+          bgSet: "watercolor",
+        },
 
         // 東洋画
-        { id: 'ink-sumie',         name: '墨絵（水墨）',      sampleImg: 'img/styles/ink-sumie.png',         needsBg: false },
-        { id: 'ink-nanga',         name: '南画',              sampleImg: 'img/styles/ink-nanga.png',         needsBg: false },
+        {
+          id: "ink-sumie",
+          name: "墨絵（水墨）",
+          sampleImg: "img/styles/ink-sumie.png",
+          needsBg: false,
+        },
+        {
+          id: "ink-nanga",
+          name: "南画",
+          sampleImg: "img/styles/ink-nanga.png",
+          needsBg: false,
+        },
 
         // ポップアート
-        { id: 'pop-warhol',        name: 'ポップアート',      sampleImg: 'img/styles/pop-warhol.png',        needsBg: false },
-        { id: 'pop-comic',         name: 'アメコミ風',        sampleImg: 'img/styles/pop-comic.png',         needsBg: false },
-        { id: 'pop-graffiti',      name: 'グラフィティ',      sampleImg: 'img/styles/pop-graffiti.png',      needsBg: false },
+        {
+          id: "pop-warhol",
+          name: "ポップアート",
+          sampleImg: "img/styles/pop-warhol.png",
+          needsBg: false,
+        },
+        {
+          id: "pop-comic",
+          name: "アメコミ風",
+          sampleImg: "img/styles/pop-comic.png",
+          needsBg: false,
+        },
+        {
+          id: "pop-graffiti",
+          name: "グラフィティ",
+          sampleImg: "img/styles/pop-graffiti.png",
+          needsBg: false,
+        },
 
         // モノクロ
-        { id: 'mono-hicon',        name: 'ハイコントラスト',  sampleImg: 'img/styles/mono-hicon.png',        needsBg: true,  bgSet: 'mono' },
-        { id: 'mono-charcoal',     name: 'モノクロ鉛筆',      sampleImg: 'img/styles/mono-charcoal.png',     needsBg: true,  bgSet: 'mono' },
-        { id: 'mono-noir',         name: 'フィルム・ノワール',sampleImg: 'img/styles/mono-noir.png',         needsBg: false },
+        {
+          id: "mono-hicon",
+          name: "ハイコントラスト",
+          sampleImg: "img/styles/mono-hicon.png",
+          needsBg: true,
+          bgSet: "mono",
+        },
+        {
+          id: "mono-charcoal",
+          name: "モノクロ鉛筆",
+          sampleImg: "img/styles/mono-charcoal.png",
+          needsBg: true,
+          bgSet: "mono",
+        },
+        {
+          id: "mono-noir",
+          name: "フィルム・ノワール",
+          sampleImg: "img/styles/mono-noir.png",
+          needsBg: false,
+        },
 
         // デジタル・フューチャー
-        { id: 'future-cyber',      name: 'サイバーパンク',    sampleImg: 'img/styles/future-cyber.png',      needsBg: false },
-        { id: 'future-neon',       name: 'ネオンアート',      sampleImg: 'img/styles/future-neon.png',       needsBg: false },
-        { id: 'future-glitch',     name: 'グリッチアート',    sampleImg: 'img/styles/future-glitch.png',     needsBg: false },
+        {
+          id: "future-cyber",
+          name: "サイバーパンク",
+          sampleImg: "img/styles/future-cyber.png",
+          needsBg: false,
+        },
+        {
+          id: "future-neon",
+          name: "ネオンアート",
+          sampleImg: "img/styles/future-neon.png",
+          needsBg: false,
+        },
+        {
+          id: "future-glitch",
+          name: "グリッチアート",
+          sampleImg: "img/styles/future-glitch.png",
+          needsBg: false,
+        },
 
         // ライン・ドローイング
-        { id: 'line-oneline',      name: '一筆描き',          sampleImg: 'img/styles/line-oneline.png',      needsBg: true,  bgSet: 'line' },
-        { id: 'line-minimal',      name: 'ライン画',          sampleImg: 'img/styles/line-minimal.png',      needsBg: true,  bgSet: 'line' },
+        {
+          id: "line-oneline",
+          name: "一筆描き",
+          sampleImg: "img/styles/line-oneline.png",
+          needsBg: true,
+          bgSet: "line",
+        },
+        {
+          id: "line-minimal",
+          name: "ライン画",
+          sampleImg: "img/styles/line-minimal.png",
+          needsBg: true,
+          bgSet: "line",
+        },
 
         // コラージュ
-        { id: 'collage-mixed',     name: 'コラージュ',        sampleImg: 'img/styles/collage-mixed.png',     needsBg: false },
-        { id: 'collage-papercut',  name: 'ペーパーカット',    sampleImg: 'img/styles/collage-papercut.png',  needsBg: false },
+        {
+          id: "collage-mixed",
+          name: "コラージュ",
+          sampleImg: "img/styles/collage-mixed.png",
+          needsBg: false,
+        },
+        {
+          id: "collage-papercut",
+          name: "ペーパーカット",
+          sampleImg: "img/styles/collage-papercut.png",
+          needsBg: false,
+        },
 
         // シルエット
-        { id: 'silhouette',        name: 'シルエット',        sampleImg: 'img/styles/mono-hicon.png',        needsBg: false },
+        {
+          id: "silhouette",
+          name: "シルエット",
+          sampleImg: "img/styles/mono-hicon.png",
+          needsBg: false,
+        },
       ];
 
       // Track per-card state: 'sample' | 'generating' | 'done'
-      let styleCardStates = {};  // id -> { status, url }
+      let styleCardStates = {}; // id -> { status, url }
 
       function buildStyleCards() {
         const grid = document.getElementById("styleCardGrid");
         if (!grid) return;
-        STYLES.forEach(s => {
+        STYLES.forEach((s) => {
           if (!styleCardStates[s.id]) {
             styleCardStates[s.id] = { status: "sample", url: null };
           }
@@ -6170,7 +7694,7 @@
       function renderStyleCards() {
         const grid = document.getElementById("styleCardGrid");
         if (!grid) return;
-        grid.innerHTML = STYLES.map(s => {
+        grid.innerHTML = STYLES.map((s) => {
           const cs = styleCardStates[s.id] || { status: "sample", url: null };
           return buildStyleCardHTML(s, cs);
         }).join("");
@@ -6184,9 +7708,10 @@
         let cardClass = "style-card";
 
         // サンプル画像タップで即選択できるようにonclickをカードに付与
-        const selectFn = status === "done"
-          ? `decideStyle('${s.id}')`
-          : `selectStyleDirect('${s.id}')`;
+        const selectFn =
+          status === "done"
+            ? `decideStyle('${s.id}')`
+            : `selectStyleDirect('${s.id}')`;
 
         if (status === "sample") {
           thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover">`;
@@ -6234,36 +7759,62 @@
         try {
           // 元画像をリサイズしてそのままFlux Kontextに渡す（remove-bgは不要）
           const artInputUrl = await resizeForAPI(state.photoDataUrl);
-          console.log("artInputUrl size:", Math.round(artInputUrl.length / 1024), "KB");
+          console.log(
+            "artInputUrl size:",
+            Math.round(artInputUrl.length / 1024),
+            "KB",
+          );
 
           // generate-art（レート制限時は最大2回リトライ）
           let predictionId = null;
           for (let attempt = 0; attempt < 3; attempt++) {
             if (attempt > 0) {
               console.log(`generate-art リトライ ${attempt}/2, 12秒待機...`);
-              await new Promise(r => setTimeout(r, 12000));
+              await new Promise((r) => setTimeout(r, 12000));
             }
+            const styleArtHeaders = await buildAuthHeaders({
+              "Content-Type": "application/json",
+            });
             const artRes = await fetch("/api/generate-art", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ photoDataUrl: artInputUrl, styleId, petCount: state.petCount }),
+              headers: styleArtHeaders,
+              body: JSON.stringify({
+                photoDataUrl: artInputUrl,
+                styleId,
+                petCount: state.petCount,
+              }),
             });
             if (artRes.ok) {
               const { predictionId: pid, error: apiErr } = await artRes.json();
-              if (!apiErr && pid) { predictionId = pid; break; }
+              if (!apiErr && pid) {
+                predictionId = pid;
+                break;
+              }
               throw new Error(apiErr || "no_prediction_id");
             }
             const errText = await artRes.text();
-            console.error(`generate-art error [attempt ${attempt}]:`, artRes.status, errText);
-            if (attempt === 2) throw new Error("generation_failed after retries");
+            console.error(
+              `generate-art error [attempt ${attempt}]:`,
+              artRes.status,
+              errText,
+            );
+            if (attempt === 2)
+              throw new Error("generation_failed after retries");
           }
-          const artUrl = await pollUntilDoneGeneric("/api/generate-art", predictionId, 60);
+          const artUrl = await pollUntilDoneGeneric(
+            "/api/generate-art",
+            predictionId,
+            60,
+          );
 
           styleCardStates[styleId] = { status: "done", url: artUrl };
-        } catch(err) {
+        } catch (err) {
           console.error("Style generation failed:", err.message);
           styleCardStates[styleId] = { status: "error", url: null };
-          showToast("生成に失敗しました。「再試行」ボタンで再度お試しください。", "error");
+          showToast(
+            "生成に失敗しました。「再試行」ボタンで再度お試しください。",
+            "error",
+          );
         }
         renderStyleCards();
       }
@@ -6275,7 +7826,7 @@
         state.selectedStyle = styleId;
         state.selectedStyleUrl = cs.url;
 
-        const styleDef = STYLES.find(s => s.id === styleId);
+        const styleDef = STYLES.find((s) => s.id === styleId);
         if (styleDef && !styleDef.needsBg) {
           // 背景不要スタイル → 名前入れへ直行
           state.selectedBgId = "none";
@@ -6313,16 +7864,19 @@
           } else {
             // 生成失敗 → 元写真で続行（エラー通知付き）
             state.finalArtUrl = state.photoDataUrl || null;
-            dlog("ART", "selectStyleDirect — 生成失敗、元写真で続行", { styleId, status: cs?.status });
+            dlog("ART", "selectStyleDirect — 生成失敗、元写真で続行", {
+              styleId,
+              status: cs?.status,
+            });
             showToast("AI生成に失敗しました。元の写真で続行します。", "error");
           }
-        } catch(e) {
+        } catch (e) {
           state.finalArtUrl = state.photoDataUrl || null;
           dlog("ART", "selectStyleDirect — 例外", { error: e.message });
           showToast("AI生成に失敗しました。元の写真で続行します。", "error");
         }
 
-        const styleDef = STYLES.find(s => s.id === styleId);
+        const styleDef = STYLES.find((s) => s.id === styleId);
         if (styleDef && !styleDef.needsBg) {
           state.selectedBgId = "none";
           goTo("text-order");
@@ -6352,7 +7906,7 @@
             if (overlay) overlay.style.display = "none";
             showToast("生成に失敗しました。再度お試しください。", "error");
           }
-        } catch(e) {
+        } catch (e) {
           console.error("Auto generation failed:", e);
           if (overlay) overlay.style.display = "none";
           showToast("生成に失敗しました。再度お試しください。", "error");
@@ -6366,47 +7920,126 @@
       // スタイル別背景セット
       const BG_SETS = {
         watercolor: [
-          { id: 'wc-flower',   name: '🌸 花畑',       sampleImg: 'img/backgrounds/bg-wc-flower.jpg',   styleId: 'bg-wc-flower' },
-          { id: 'wc-sky',      name: '☁️ 水彩空',      sampleImg: 'img/backgrounds/bg-wc-sky.jpg',      styleId: 'bg-wc-sky' },
-          { id: 'wc-meadow',   name: '🌿 草原',        sampleImg: 'img/backgrounds/bg-wc-meadow.jpg',   styleId: 'bg-wc-meadow' },
-          { id: 'wc-water',    name: '🌊 水辺',        sampleImg: 'img/backgrounds/bg-wc-water.jpg',    styleId: 'bg-wc-water' },
-          { id: 'wc-paper',    name: '📜 和紙',        sampleImg: 'img/backgrounds/bg-wc-paper.jpg',    styleId: 'bg-wc-paper' },
-          { id: 'custom',      name: '🖊️ 自由入力',   sampleImg: null,                                  styleId: null },
+          {
+            id: "wc-flower",
+            name: "🌸 花畑",
+            sampleImg: "img/backgrounds/bg-wc-flower.jpg",
+            styleId: "bg-wc-flower",
+          },
+          {
+            id: "wc-sky",
+            name: "☁️ 水彩空",
+            sampleImg: "img/backgrounds/bg-wc-sky.jpg",
+            styleId: "bg-wc-sky",
+          },
+          {
+            id: "wc-meadow",
+            name: "🌿 草原",
+            sampleImg: "img/backgrounds/bg-wc-meadow.jpg",
+            styleId: "bg-wc-meadow",
+          },
+          {
+            id: "wc-water",
+            name: "🌊 水辺",
+            sampleImg: "img/backgrounds/bg-wc-water.jpg",
+            styleId: "bg-wc-water",
+          },
+          {
+            id: "wc-paper",
+            name: "📜 和紙",
+            sampleImg: "img/backgrounds/bg-wc-paper.jpg",
+            styleId: "bg-wc-paper",
+          },
+          { id: "custom", name: "🖊️ 自由入力", sampleImg: null, styleId: null },
         ],
         mono: [
-          { id: 'mn-library',  name: '📚 書斎',        sampleImg: 'img/backgrounds/bg-mn-library.jpg',  styleId: 'bg-mn-library' },
-          { id: 'mn-arch',     name: '🏛️ 建築',       sampleImg: 'img/backgrounds/bg-mn-arch.jpg',     styleId: 'bg-mn-arch' },
-          { id: 'mn-mist',     name: '🌫️ 霧の森',     sampleImg: 'img/backgrounds/bg-mn-mist.jpg',     styleId: 'bg-mn-mist' },
-          { id: 'mn-paper',    name: '📰 古紙',        sampleImg: 'img/backgrounds/bg-mn-paper.jpg',    styleId: 'bg-mn-paper' },
-          { id: 'mn-city',     name: '🌃 モノクロ都市', sampleImg: 'img/backgrounds/bg-mn-city.jpg',    styleId: 'bg-mn-city' },
-          { id: 'custom',      name: '🖊️ 自由入力',   sampleImg: null,                                  styleId: null },
+          {
+            id: "mn-library",
+            name: "📚 書斎",
+            sampleImg: "img/backgrounds/bg-mn-library.jpg",
+            styleId: "bg-mn-library",
+          },
+          {
+            id: "mn-arch",
+            name: "🏛️ 建築",
+            sampleImg: "img/backgrounds/bg-mn-arch.jpg",
+            styleId: "bg-mn-arch",
+          },
+          {
+            id: "mn-mist",
+            name: "🌫️ 霧の森",
+            sampleImg: "img/backgrounds/bg-mn-mist.jpg",
+            styleId: "bg-mn-mist",
+          },
+          {
+            id: "mn-paper",
+            name: "📰 古紙",
+            sampleImg: "img/backgrounds/bg-mn-paper.jpg",
+            styleId: "bg-mn-paper",
+          },
+          {
+            id: "mn-city",
+            name: "🌃 モノクロ都市",
+            sampleImg: "img/backgrounds/bg-mn-city.jpg",
+            styleId: "bg-mn-city",
+          },
+          { id: "custom", name: "🖊️ 自由入力", sampleImg: null, styleId: null },
         ],
         line: [
-          { id: 'ln-flat',     name: '🟡 フラット',    sampleImg: 'img/backgrounds/bg-ln-flat.jpg',     styleId: 'bg-ln-flat' },
-          { id: 'ln-stars',    name: '⭐ 星空',        sampleImg: 'img/backgrounds/bg-ln-stars.jpg',    styleId: 'bg-ln-stars' },
-          { id: 'ln-botanical',name: '🌺 ボタニカル',  sampleImg: 'img/backgrounds/bg-ln-botanical.jpg',styleId: 'bg-ln-botanical' },
-          { id: 'ln-geo',      name: '🔶 幾何学',      sampleImg: 'img/backgrounds/bg-ln-geo.jpg',      styleId: 'bg-ln-geo' },
-          { id: 'ln-grad',     name: '🌈 グラデ',      sampleImg: 'img/backgrounds/bg-ln-grad.jpg',     styleId: 'bg-ln-grad' },
-          { id: 'custom',      name: '🖊️ 自由入力',   sampleImg: null,                                  styleId: null },
+          {
+            id: "ln-flat",
+            name: "🟡 フラット",
+            sampleImg: "img/backgrounds/bg-ln-flat.jpg",
+            styleId: "bg-ln-flat",
+          },
+          {
+            id: "ln-stars",
+            name: "⭐ 星空",
+            sampleImg: "img/backgrounds/bg-ln-stars.jpg",
+            styleId: "bg-ln-stars",
+          },
+          {
+            id: "ln-botanical",
+            name: "🌺 ボタニカル",
+            sampleImg: "img/backgrounds/bg-ln-botanical.jpg",
+            styleId: "bg-ln-botanical",
+          },
+          {
+            id: "ln-geo",
+            name: "🔶 幾何学",
+            sampleImg: "img/backgrounds/bg-ln-geo.jpg",
+            styleId: "bg-ln-geo",
+          },
+          {
+            id: "ln-grad",
+            name: "🌈 グラデ",
+            sampleImg: "img/backgrounds/bg-ln-grad.jpg",
+            styleId: "bg-ln-grad",
+          },
+          { id: "custom", name: "🖊️ 自由入力", sampleImg: null, styleId: null },
         ],
       };
 
       // 現在のスタイルに対応する背景リストを返す
       function getCurrentBgList() {
-        const styleDef = STYLES.find(s => s.id === state.selectedStyleId);
+        const styleDef = STYLES.find((s) => s.id === state.selectedStyleId);
         const setKey = styleDef?.bgSet || "watercolor";
         return BG_SETS[setKey] || BG_SETS.watercolor;
       }
 
-      let bgCardStates = {};  // id -> { status, url, customPrompt }
+      let bgCardStates = {}; // id -> { status, url, customPrompt }
 
       function buildBgCards() {
         const grid = document.getElementById("bgCardGrid");
         if (!grid) return;
         // スタイル切り替え時にリセット
         bgCardStates = {};
-        getCurrentBgList().forEach(b => {
-          bgCardStates[b.id] = { status: "sample", url: null, customPrompt: "" };
+        getCurrentBgList().forEach((b) => {
+          bgCardStates[b.id] = {
+            status: "sample",
+            url: null,
+            customPrompt: "",
+          };
         });
         renderBgCards();
       }
@@ -6414,10 +8047,12 @@
       function renderBgCards() {
         const grid = document.getElementById("bgCardGrid");
         if (!grid) return;
-        grid.innerHTML = getCurrentBgList().map(b => {
-          const cs = bgCardStates[b.id] || { status: "sample", url: null };
-          return buildBgCardHTML(b, cs);
-        }).join("");
+        grid.innerHTML = getCurrentBgList()
+          .map((b) => {
+            const cs = bgCardStates[b.id] || { status: "sample", url: null };
+            return buildBgCardHTML(b, cs);
+          })
+          .join("");
       }
 
       function buildBgCardHTML(b, cs) {
@@ -6448,7 +8083,9 @@
             btnHtml = `<button class="style-card-btn btn-generate" onclick="generateBgCard('${b.id}')">✨ 生成する</button>`;
           }
         } else if (status === "generating") {
-          const genThumb = b.sampleImg ? `<img src="${b.sampleImg}" alt="" style="width:100%;height:100%;object-fit:cover">` : "";
+          const genThumb = b.sampleImg
+            ? `<img src="${b.sampleImg}" alt="" style="width:100%;height:100%;object-fit:cover">`
+            : "";
           thumbContent = `<div style="width:100%;height:100%;position:relative">${genThumb}<div class="loading-overlay"><div class="spinner-sm"></div><span>生成中…約30秒</span></div></div>`;
           btnHtml = `<button class="style-card-btn btn-loading" disabled>⏳ 生成中...</button>`;
           cardClass += " generating";
@@ -6476,7 +8113,7 @@
       }
 
       async function generateBgCard(bgId) {
-        const bgDef = getCurrentBgList().find(b => b.id === bgId);
+        const bgDef = getCurrentBgList().find((b) => b.id === bgId);
         if (!bgDef) return;
 
         let sourceUrl = state.selectedStyleUrl || state.photoDataUrl;
@@ -6491,15 +8128,24 @@
         try {
           // data:URLの場合はリサイズ（Vercel 4.5MBボディ制限対策）
           if (sourceUrl.startsWith("data:")) {
-            dlog("ART", "BG生成: sourceUrlをリサイズ", { bgId, originalSize: Math.round(sourceUrl.length/1024) + "KB" });
+            dlog("ART", "BG生成: sourceUrlをリサイズ", {
+              bgId,
+              originalSize: Math.round(sourceUrl.length / 1024) + "KB",
+            });
             sourceUrl = await resizeForAPI(sourceUrl);
-            dlog("ART", "BG生成: リサイズ完了", { bgId, resizedSize: Math.round(sourceUrl.length/1024) + "KB" });
+            dlog("ART", "BG生成: リサイズ完了", {
+              bgId,
+              resizedSize: Math.round(sourceUrl.length / 1024) + "KB",
+            });
           }
 
           let customPrompt = null;
           if (bgId === "custom") {
             const inp = document.getElementById("customBgInput");
-            customPrompt = (inp ? inp.value : "") || bgCardStates.custom?.customPrompt || "beautiful nature background";
+            customPrompt =
+              (inp ? inp.value : "") ||
+              bgCardStates.custom?.customPrompt ||
+              "beautiful nature background";
           }
 
           // bgDef.styleId を使う（例: "bg-wc-flower"）。カスタムはcustomPromptで上書き
@@ -6509,9 +8155,12 @@
           };
           if (customPrompt) body.customPrompt = customPrompt;
 
+          const bgArtHeaders = await buildAuthHeaders({
+            "Content-Type": "application/json",
+          });
           const artRes = await fetch("/api/generate-art", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: bgArtHeaders,
             body: JSON.stringify(body),
           });
           if (!artRes.ok) {
@@ -6520,14 +8169,30 @@
             throw new Error("generation_failed");
           }
           const { predictionId, error: apiErr } = await artRes.json();
-          if (apiErr || !predictionId) throw new Error(apiErr || "no_prediction_id");
-          const artUrl = await pollUntilDoneGeneric("/api/generate-art", predictionId, 60);
+          if (apiErr || !predictionId)
+            throw new Error(apiErr || "no_prediction_id");
+          const artUrl = await pollUntilDoneGeneric(
+            "/api/generate-art",
+            predictionId,
+            60,
+          );
 
-          bgCardStates[bgId] = { ...bgCardStates[bgId], status: "done", url: artUrl };
-        } catch(err) {
+          bgCardStates[bgId] = {
+            ...bgCardStates[bgId],
+            status: "done",
+            url: artUrl,
+          };
+        } catch (err) {
           console.error("BG generation failed:", err.message);
-          bgCardStates[bgId] = { ...bgCardStates[bgId], status: "error", url: null };
-          showToast("生成に失敗しました。「再試行」ボタンで再度お試しください。", "error");
+          bgCardStates[bgId] = {
+            ...bgCardStates[bgId],
+            status: "error",
+            url: null,
+          };
+          showToast(
+            "生成に失敗しました。「再試行」ボタンで再度お試しください。",
+            "error",
+          );
         }
         renderBgCards();
       }
@@ -6539,7 +8204,8 @@
         if (bgId === "none") {
           state.finalArtUrl = state.selectedStyleUrl || state.photoDataUrl;
         } else {
-          state.finalArtUrl = cs.url || state.selectedStyleUrl || state.photoDataUrl;
+          state.finalArtUrl =
+            cs.url || state.selectedStyleUrl || state.photoDataUrl;
         }
         goTo("text-order");
         buildTextOrderStep();
@@ -6567,10 +8233,16 @@
               return;
             }
             try {
-              const r = await fetch(`${endpoint}?id=${id}`);
-              if (!r.ok) { polls++; return; }  // HTTPエラーはカウントして継続
+              const freshHeaders = await buildAuthHeaders();
+              const r = await fetch(`${endpoint}?id=${id}`, {
+                headers: freshHeaders,
+              });
+              if (!r.ok) {
+                polls++;
+                return;
+              } // HTTPエラーはカウントして継続
               const d = await r.json();
-              networkErrors = 0;  // 成功したらリセット
+              networkErrors = 0; // 成功したらリセット
               if (d.status === "succeeded") {
                 clearInterval(timer);
                 if (d.outputUrl) {
@@ -6582,12 +8254,12 @@
                 clearInterval(timer);
                 reject(new Error(d.error || d.status));
               } else {
-                polls++;  // processing/starting は正常カウント
+                polls++; // processing/starting は正常カウント
               }
-            } catch(e) {
+            } catch (e) {
               // ネットワークエラー: 3回連続でも続行、それ以上はカウントに含める
               networkErrors++;
-              if (networkErrors <= 3) return;  // ネットワーク瞬断は無視
+              if (networkErrors <= 3) return; // ネットワーク瞬断は無視
               polls++;
             }
           }, POLL_INTERVAL);
@@ -6598,22 +8270,42 @@
       //  STEP 5: TEXT & ORDER (Canvas preview)
       // ============================================================
       const ART_FONTS = [
-        { id: "serif",     name: "セリフ体",   family: "Georgia, serif",       sample: "MIRO みろ" },
-        { id: "sans",      name: "ゴシック体", family: "sans-serif",            sample: "MIRO みろ" },
-        { id: "cursive",   name: "筆記体",     family: "cursive",               sample: "MIRO みろ" },
-        { id: "monospace", name: "等幅",        family: "monospace",             sample: "MIRO みろ" },
+        {
+          id: "serif",
+          name: "セリフ体",
+          family: "Georgia, serif",
+          sample: "MIRO みろ",
+        },
+        {
+          id: "sans",
+          name: "ゴシック体",
+          family: "sans-serif",
+          sample: "MIRO みろ",
+        },
+        {
+          id: "cursive",
+          name: "筆記体",
+          family: "cursive",
+          sample: "MIRO みろ",
+        },
+        {
+          id: "monospace",
+          name: "等幅",
+          family: "monospace",
+          sample: "MIRO みろ",
+        },
       ];
 
       const TEXT_POSITIONS = [
-        { id: "top-left",     label: "↖", x: 0.1,  y: 0.1  },
-        { id: "top-center",   label: "↑", x: 0.5,  y: 0.1  },
-        { id: "top-right",    label: "↗", x: 0.9,  y: 0.1  },
-        { id: "mid-left",     label: "←", x: 0.1,  y: 0.5  },
-        { id: "mid-center",   label: "✦", x: 0.5,  y: 0.5  },
-        { id: "mid-right",    label: "→", x: 0.9,  y: 0.5  },
-        { id: "bottom-left",  label: "↙", x: 0.1,  y: 0.9  },
-        { id: "bottom-center",label: "↓", x: 0.5,  y: 0.9  },
-        { id: "bottom-right", label: "↘", x: 0.9,  y: 0.9  },
+        { id: "top-left", label: "↖", x: 0.1, y: 0.1 },
+        { id: "top-center", label: "↑", x: 0.5, y: 0.1 },
+        { id: "top-right", label: "↗", x: 0.9, y: 0.1 },
+        { id: "mid-left", label: "←", x: 0.1, y: 0.5 },
+        { id: "mid-center", label: "✦", x: 0.5, y: 0.5 },
+        { id: "mid-right", label: "→", x: 0.9, y: 0.5 },
+        { id: "bottom-left", label: "↙", x: 0.1, y: 0.9 },
+        { id: "bottom-center", label: "↓", x: 0.5, y: 0.9 },
+        { id: "bottom-right", label: "↘", x: 0.9, y: 0.9 },
       ];
 
       function buildTextOrderStep() {
@@ -6630,9 +8322,9 @@
       function buildArtFontGrid() {
         const grid = document.getElementById("artFontGrid");
         if (!grid) return;
-        grid.innerHTML = ART_FONTS.map(f => {
+        grid.innerHTML = ART_FONTS.map((f) => {
           const active = state.artFontFamily === f.family;
-          return `<button onclick="selectArtFont('${f.family.replace(/'/g,"\\'")}','${f.id}')"
+          return `<button onclick="selectArtFont('${f.family.replace(/'/g, "\\'")}','${f.id}')"
             style="padding:0.7rem 0.5rem;border:1.5px solid ${active ? "var(--c-brand)" : "var(--c-border)"};border-radius:8px;background:${active ? "var(--c-brand-lt)" : "#fff"};cursor:pointer;font-family:var(--sans);font-size:0.72rem;font-weight:500;color:var(--c-text);transition:all 0.2s;min-height:56px;display:flex;flex-direction:column;align-items:center;gap:0.2rem">
             <span style="font-family:${f.family};font-size:0.9rem">${f.sample}</span>
             <span style="font-size:0.65rem;color:var(--c-text-3)">${f.name}</span>
@@ -6649,8 +8341,10 @@
       function selectArtColor(color) {
         state.artTextColor = color;
         // スウォッチのselectedクラス更新（縁取りスウォッチは除外）
-        document.querySelectorAll('.art-color-swatch:not(.outline-swatch)').forEach(sw => sw.classList.remove('selected'));
-        const picker = document.getElementById('artColorCustom');
+        document
+          .querySelectorAll(".art-color-swatch:not(.outline-swatch)")
+          .forEach((sw) => sw.classList.remove("selected"));
+        const picker = document.getElementById("artColorCustom");
         if (picker) picker.value = color;
         updateArtCanvas();
       }
@@ -6659,8 +8353,12 @@
       function toggleOutline() {
         const cb = document.getElementById("outlineToggle");
         state.artOutline = cb.checked;
-        document.getElementById("outlineLabel").textContent = cb.checked ? "ON" : "OFF";
-        document.getElementById("outlineOptions").style.display = cb.checked ? "block" : "none";
+        document.getElementById("outlineLabel").textContent = cb.checked
+          ? "ON"
+          : "OFF";
+        document.getElementById("outlineOptions").style.display = cb.checked
+          ? "block"
+          : "none";
         // トグルスイッチのスタイル
         cb.style.background = cb.checked ? "var(--c-brand, #c4a265)" : "#ddd";
         updateArtCanvas();
@@ -6668,14 +8366,20 @@
 
       function selectOutlineColor(color) {
         state.artOutlineColor = color;
-        document.querySelectorAll('.outline-swatch').forEach(sw => sw.classList.remove('selected'));
-        const picker = document.getElementById('outlineColorCustom');
+        document
+          .querySelectorAll(".outline-swatch")
+          .forEach((sw) => sw.classList.remove("selected"));
+        const picker = document.getElementById("outlineColorCustom");
         if (picker) picker.value = color;
         updateArtCanvas();
       }
 
-      function buildTextPositionGrid() { /* 廃止 - 矢印パッドに置き換え済み */ }
-      function selectTextPosition(posId) { /* 廃止 */ }
+      function buildTextPositionGrid() {
+        /* 廃止 - 矢印パッドに置き換え済み */
+      }
+      function selectTextPosition(posId) {
+        /* 廃止 */
+      }
 
       // ── アートテキスト位置の矢印移動 ──────────────────────────
       let _artMoveInterval = null;
@@ -6685,17 +8389,24 @@
         _artMoveInterval = setInterval(() => doArtMove(dir), 120);
       }
       function stopArtMove() {
-        if (_artMoveInterval) { clearInterval(_artMoveInterval); _artMoveInterval = null; }
+        if (_artMoveInterval) {
+          clearInterval(_artMoveInterval);
+          _artMoveInterval = null;
+        }
       }
       // グローバルにmouseup/touchendでもstopする（ボタン外でリリースした場合の対策）
       document.addEventListener("mouseup", stopArtMove);
       document.addEventListener("touchend", stopArtMove);
       function doArtMove(dir) {
         const step = 0.01; // 1%ずつ移動
-        if (dir === "up")    state.artTextY = Math.max(0.02, state.artTextY - step);
-        if (dir === "down")  state.artTextY = Math.min(0.98, state.artTextY + step);
-        if (dir === "left")  state.artTextX = Math.max(0.02, state.artTextX - step);
-        if (dir === "right") state.artTextX = Math.min(0.98, state.artTextX + step);
+        if (dir === "up")
+          state.artTextY = Math.max(0.02, state.artTextY - step);
+        if (dir === "down")
+          state.artTextY = Math.min(0.98, state.artTextY + step);
+        if (dir === "left")
+          state.artTextX = Math.max(0.02, state.artTextX - step);
+        if (dir === "right")
+          state.artTextX = Math.min(0.98, state.artTextX + step);
         updateArtCanvas();
       }
       function resetArtTextPos() {
@@ -6721,13 +8432,17 @@
         const italicBtn = document.getElementById("artItalicBtn");
         if (boldBtn) {
           boldBtn.style.background = state.artBold ? "#1a1a1a" : "#fff";
-          boldBtn.style.color      = state.artBold ? "#fff" : "var(--c-text)";
-          boldBtn.style.borderColor = state.artBold ? "#1a1a1a" : "var(--c-border)";
+          boldBtn.style.color = state.artBold ? "#fff" : "var(--c-text)";
+          boldBtn.style.borderColor = state.artBold
+            ? "#1a1a1a"
+            : "var(--c-border)";
         }
         if (italicBtn) {
           italicBtn.style.background = state.artItalic ? "#1a1a1a" : "#fff";
-          italicBtn.style.color      = state.artItalic ? "#fff" : "var(--c-text)";
-          italicBtn.style.borderColor = state.artItalic ? "#1a1a1a" : "var(--c-border)";
+          italicBtn.style.color = state.artItalic ? "#fff" : "var(--c-text)";
+          italicBtn.style.borderColor = state.artItalic
+            ? "#1a1a1a"
+            : "var(--c-border)";
         }
       }
 
@@ -6746,7 +8461,7 @@
       function updatePrintSizeLabel() {
         const label = document.getElementById("printSizeLabel");
         if (label) {
-          const cm = Math.round(state.artPrintSize / 100 * 15 * 10) / 10;
+          const cm = Math.round((state.artPrintSize / 100) * 15 * 10) / 10;
           label.textContent = `${state.artPrintSize}%（約${cm}cm）`;
         }
         // スライダーも同期
@@ -6763,7 +8478,8 @@
         const inp = document.getElementById("artTextInput");
         if (inp) state.artText = inp.value;
 
-        const W = 600, H = 600;
+        const W = 600,
+          H = 600;
         canvas.width = W;
         canvas.height = H;
         const ctx = canvas.getContext("2d");
@@ -6778,7 +8494,7 @@
           ctx.fillStyle = "#999";
           ctx.font = "20px sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("アートを選択してください", W/2, H/2);
+          ctx.fillText("アートを選択してください", W / 2, H / 2);
           return;
         }
 
@@ -6791,10 +8507,18 @@
           const ty = state.artTextY * H;
 
           // Font size based on print size
-          const fontSize = Math.round(12 + (state.artPrintSize - 30) / 100 * 42); // 30%=12px, 100%=42px, 130%=54px
-          const fontStyle = (state.artItalic ? "italic " : "") + (state.artBold ? "bold " : "");
+          const fontSize = Math.round(
+            12 + ((state.artPrintSize - 30) / 100) * 42,
+          ); // 30%=12px, 100%=42px, 130%=54px
+          const fontStyle =
+            (state.artItalic ? "italic " : "") + (state.artBold ? "bold " : "");
           ctx.font = `${fontStyle}${fontSize}px ${state.artFontFamily}`;
-          ctx.textAlign = state.artTextX < 0.3 ? "left" : state.artTextX > 0.7 ? "right" : "center";
+          ctx.textAlign =
+            state.artTextX < 0.3
+              ? "left"
+              : state.artTextX > 0.7
+                ? "right"
+                : "center";
           ctx.textBaseline = "middle";
 
           // 縁取り（アウトライン）
@@ -6807,7 +8531,9 @@
           }
 
           // テキスト本体
-          ctx.shadowColor = state.artOutline ? "transparent" : "rgba(0,0,0,0.5)";
+          ctx.shadowColor = state.artOutline
+            ? "transparent"
+            : "rgba(0,0,0,0.5)";
           ctx.shadowBlur = state.artOutline ? 0 : 4;
           ctx.fillStyle = state.artTextColor || "#ffffff";
           ctx.fillText(text, tx, ty);
@@ -6820,7 +8546,7 @@
           const scale = Math.min(W / img.naturalWidth, H / img.naturalHeight);
           const dw = img.naturalWidth * scale;
           const dh = img.naturalHeight * scale;
-          ctx.drawImage(img, (W - dw)/2, (H - dh)/2, dw, dh);
+          ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
           drawText();
         } else {
           const img = new Image();
@@ -6833,7 +8559,7 @@
             const scale = Math.min(W / img.naturalWidth, H / img.naturalHeight);
             const dw = img.naturalWidth * scale;
             const dh = img.naturalHeight * scale;
-            ctx.drawImage(img, (W - dw)/2, (H - dh)/2, dw, dh);
+            ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
             drawText();
           };
           img.onerror = () => {
@@ -6848,11 +8574,12 @@
       function downloadWithWatermark() {
         const canvas = document.getElementById("artPreviewCanvas");
         if (!canvas) return;
-        const W = canvas.width, H = canvas.height;
+        const W = canvas.width,
+          H = canvas.height;
         const ctx = canvas.getContext("2d");
 
         const logo = new Image();
-        logo.onload = function() {
+        logo.onload = function () {
           // 左上にロゴを半透明で描画（幅はキャンバスの22%）
           const logoW = Math.round(W * 0.22);
           const logoH = Math.round(logoW * (63.388 / 113.614)); // アスペクト比維持
@@ -6871,7 +8598,7 @@
           // 透かしなしに戻す
           setTimeout(() => updateArtCanvas(), 100);
         };
-        logo.onerror = function() {
+        logo.onerror = function () {
           // ロゴ読み込み失敗時はそのままダウンロード
           const a = document.createElement("a");
           a.download = "deer-art-preview.jpg";
@@ -6897,23 +8624,154 @@
 
     <!-- 途中保存完了モーダル -->
     <!-- 住所保存確認ダイアログ -->
-    <div id="saveAddressModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:20px;padding:2rem 1.5rem;max-width:320px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
-        <div style="font-size:2rem;margin-bottom:0.5rem">📍</div>
-        <h3 style="font-size:1rem;font-weight:700;color:var(--c-text);margin-bottom:0.5rem">住所を保存しますか？</h3>
-        <p style="font-size:0.8rem;color:var(--c-text-2);margin-bottom:1.5rem">次回の注文時に自動で入力されます</p>
-        <button id="saveAddressYes" style="width:100%;padding:0.85rem;background:var(--c-brand);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:0.9rem;font-weight:700;cursor:pointer;margin-bottom:0.6rem">はい、保存する</button>
-        <button onclick="document.getElementById('saveAddressModal').style.display='none'" style="width:100%;padding:0.7rem;background:none;border:1.5px solid var(--c-border);border-radius:10px;font-family:var(--sans);font-size:0.82rem;cursor:pointer;color:var(--c-text-2)">保存しない</button>
+    <div
+      id="saveAddressModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          background: #fff;
+          border-radius: 20px;
+          padding: 2rem 1.5rem;
+          max-width: 320px;
+          width: 90%;
+          text-align: center;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <div style="font-size: 2rem; margin-bottom: 0.5rem">📍</div>
+        <h3
+          style="
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--c-text);
+            margin-bottom: 0.5rem;
+          "
+        >
+          住所を保存しますか？
+        </h3>
+        <p
+          style="
+            font-size: 0.8rem;
+            color: var(--c-text-2);
+            margin-bottom: 1.5rem;
+          "
+        >
+          次回の注文時に自動で入力されます
+        </p>
+        <button
+          id="saveAddressYes"
+          style="
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--c-brand);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--sans);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 0.6rem;
+          "
+        >
+          はい、保存する
+        </button>
+        <button
+          onclick="
+            document.getElementById('saveAddressModal').style.display = 'none'
+          "
+          style="
+            width: 100%;
+            padding: 0.7rem;
+            background: none;
+            border: 1.5px solid var(--c-border);
+            border-radius: 10px;
+            font-family: var(--sans);
+            font-size: 0.82rem;
+            cursor: pointer;
+            color: var(--c-text-2);
+          "
+        >
+          保存しない
+        </button>
       </div>
     </div>
 
-    <div id="saveDraftModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:20px;padding:2rem 1.5rem;max-width:320px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
-        <div style="font-size:2.5rem;margin-bottom:0.5rem">✅</div>
-        <h3 style="font-size:1.1rem;font-weight:700;color:var(--c-text);margin-bottom:0.3rem">保存しました</h3>
-        <p id="saveDraftModalName" style="font-size:0.82rem;color:var(--c-text-2);margin-bottom:1.5rem"></p>
-        <button onclick="document.getElementById('saveDraftModal').style.display='none'" style="width:100%;padding:0.85rem;background:var(--c-brand);color:#fff;border:none;border-radius:10px;font-family:var(--sans);font-size:0.92rem;font-weight:600;cursor:pointer">続ける</button>
-        <p style="font-size:0.7rem;color:var(--c-text-3);margin-top:0.8rem">最大5件まで保存できます。「途中から始める」で一覧を確認できます。</p>
+    <div
+      id="saveDraftModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          background: #fff;
+          border-radius: 20px;
+          padding: 2rem 1.5rem;
+          max-width: 320px;
+          width: 90%;
+          text-align: center;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem">✅</div>
+        <h3
+          style="
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--c-text);
+            margin-bottom: 0.3rem;
+          "
+        >
+          保存しました
+        </h3>
+        <p
+          id="saveDraftModalName"
+          style="
+            font-size: 0.82rem;
+            color: var(--c-text-2);
+            margin-bottom: 1.5rem;
+          "
+        ></p>
+        <button
+          onclick="
+            document.getElementById('saveDraftModal').style.display = 'none'
+          "
+          style="
+            width: 100%;
+            padding: 0.85rem;
+            background: var(--c-brand);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--sans);
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+          "
+        >
+          続ける
+        </button>
+        <p
+          style="font-size: 0.7rem; color: var(--c-text-3); margin-top: 0.8rem"
+        >
+          最大5件まで保存できます。「途中から始める」で一覧を確認できます。
+        </p>
       </div>
     </div>
   </body>

@@ -22,7 +22,9 @@ const STATUS_ORDER = {
 };
 
 function canAdvanceStatus(currentStatus, nextStatus) {
-  return (STATUS_ORDER[nextStatus] ?? -1) >= (STATUS_ORDER[currentStatus] ?? -1);
+  return (
+    (STATUS_ORDER[nextStatus] ?? -1) >= (STATUS_ORDER[currentStatus] ?? -1)
+  );
 }
 
 function readRawBody(req) {
@@ -41,9 +43,11 @@ export default async function handler(req, res) {
     process.env.ALLOWED_ORIGIN,
   ].filter(Boolean);
   const origin = (req.headers.origin || "").trim();
-  const corsOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app")
-    ? origin
-    : ALLOWED_ORIGINS[0];
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
   res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader(
@@ -115,7 +119,10 @@ export default async function handler(req, res) {
         if (order.paymentIntentId !== paymentIntent.id) {
           throw new Error("PAYMENT_INTENT_MISMATCH");
         }
-        if (Number(order.amount ?? order.total ?? -1) !== Number(paymentIntent.amount)) {
+        if (
+          Number(order.amount ?? order.total ?? -1) !==
+          Number(paymentIntent.amount)
+        ) {
           throw new Error("AMOUNT_MISMATCH");
         }
 
@@ -125,9 +132,8 @@ export default async function handler(req, res) {
             paidAt: new Date(),
             updatedAt: new Date(),
           });
-        } else if (!canAdvanceStatus(order.status, "paid")) {
-          throw new Error("INVALID_STATUS_TRANSITION");
         }
+        // 既に paid 以降のステータスなら何もしない（べき等: 重複webhookを安全に無視）
       }
 
       tx.set(eventRef, {

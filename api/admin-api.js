@@ -12,22 +12,8 @@
  */
 
 import { createHash, createHmac } from "crypto";
-import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
-
-// ---------------------------------------------------------------------------
-// Firebase Admin 初期化
-// ---------------------------------------------------------------------------
-function getAdminApp() {
-  if (getApps().length > 0) return getApps()[0];
-  return initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    }),
-  });
-}
+import { getAdminApp } from "./_lib/auth.js";
 
 // ---------------------------------------------------------------------------
 // TOTP (RFC 6238) 実装 — 外部ライブラリ不要
@@ -149,24 +135,24 @@ function sanitizeStr(v) {
 // Printful 商品マッピング
 // ---------------------------------------------------------------------------
 const PRINTFUL_PRODUCT_IDS = {
-  tshirt: 71,       // Bella+Canvas 3001
-  hoodie: 380,      // Cotton Heritage M2580
-  mug: 19,          // White Glossy Mug
-  case: 601,        // Tough Case for iPhone®
-  poster: 1,        // Enhanced Matte Paper Poster
-  postcard: 433,    // Standard Postcard
-  "emb-cap": 206,   // Classic Dad Hat Yupoong 6245CM
-  "emb-hoodie": 380,// Cotton Heritage M2580（刺繍）
-  sticker: 358,     // Kiss-Cut Stickers
+  tshirt: 71, // Bella+Canvas 3001
+  hoodie: 380, // Cotton Heritage M2580
+  mug: 19, // White Glossy Mug
+  case: 601, // Tough Case for iPhone®
+  poster: 1, // Enhanced Matte Paper Poster
+  postcard: 433, // Standard Postcard
+  "emb-cap": 206, // Classic Dad Hat Yupoong 6245CM
+  "emb-hoodie": 380, // Cotton Heritage M2580（刺繍）
+  sticker: 358, // Kiss-Cut Stickers
 };
 
 const COLOR_MAP = {
   // tshirt (Bella+Canvas 3001)
   white: "White",
   black: "Black",
-  gray: "Carbon Grey",   // hoodie用。tshirtは"Sport Grey"だがvariantルックアップで自動マッチ
-  navy: "Navy Blazer",   // hoodie用。tshirtは"Navy"だがvariantルックアップで自動マッチ
-  pink: "Pink",          // tshirt="Pink", hoodie="Light Pink"
+  gray: "Carbon Grey", // hoodie用。tshirtは"Sport Grey"だがvariantルックアップで自動マッチ
+  navy: "Navy Blazer", // hoodie用。tshirtは"Navy"だがvariantルックアップで自動マッチ
+  pink: "Pink", // tshirt="Pink", hoodie="Light Pink"
   beige: "Natural",
   // emb-cap (Yupoong 6245CM)
   khaki: "Khaki",
@@ -224,14 +210,18 @@ async function fetchVariantId(productId, colorName, size, apiKey) {
   if (exact) return exact.id;
   // 2. 色の部分一致+サイズ完全一致（例: "navy" → "Navy Blazer"）
   const partial = variants.find(
-    (v) => v.color?.toLowerCase().includes(lColor) && v.size?.toUpperCase() === lSize,
+    (v) =>
+      v.color?.toLowerCase().includes(lColor) &&
+      v.size?.toUpperCase() === lSize,
   );
   if (partial) return partial.id;
   // 3. 色完全一致のみ
   const colorOnly = variants.find((v) => v.color?.toLowerCase() === lColor);
   if (colorOnly) return colorOnly.id;
   // 4. 色部分一致のみ
-  const colorPartial = variants.find((v) => v.color?.toLowerCase().includes(lColor));
+  const colorPartial = variants.find((v) =>
+    v.color?.toLowerCase().includes(lColor),
+  );
   if (colorPartial) return colorPartial.id;
   // 5. フォールバック
   if (variants[0]?.id) return variants[0].id;
@@ -419,9 +409,11 @@ export default async function handler(req, res) {
     process.env.ALLOWED_ORIGIN,
   ].filter(Boolean);
   const origin = (req.headers.origin || "").trim();
-  const corsOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app")
-    ? origin
-    : ALLOWED_ORIGINS[0];
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
   res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");

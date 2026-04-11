@@ -21,7 +21,7 @@ const RATE_WINDOW_MS = 60 * 1000;
 
 // Flux.1 Kontext Pro — 2025年最高品質のimg2imgモデル
 const MODEL_OWNER = "black-forest-labs";
-const MODEL_NAME  = "flux-kontext-pro";
+const MODEL_NAME = "flux-kontext-pro";
 
 // スタイル別プロンプト（Flux Kontextは「指示形式」が効果的）
 const STYLE_PROMPTS = {
@@ -127,18 +127,15 @@ const STYLE_PROMPTS = {
 const STAMP_PROMPTS = {
   happy:
     "Transform this pet photo into a cute cartoon sticker illustration. The pet is smiling happily with sparkly eyes. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
-  sad:
-    "Transform this pet photo into a cute cartoon sticker illustration. The pet has a sad droopy expression with teary eyes. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  sad: "Transform this pet photo into a cute cartoon sticker illustration. The pet has a sad droopy expression with teary eyes. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
   angry:
     "Transform this pet photo into a cute cartoon sticker illustration. The pet has a comically angry puffed-up expression. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
   surprised:
     "Transform this pet photo into a cute cartoon sticker illustration. The pet has wide surprised eyes and an open mouth. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
   sleepy:
     "Transform this pet photo into a cute cartoon sticker illustration. The pet is sleepy with half-closed eyes and a peaceful expression. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
-  love:
-    "Transform this pet photo into a cute cartoon sticker illustration. The pet has heart eyes showing love, with small hearts floating around. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
-  wink:
-    "Transform this pet photo into a cute cartoon sticker illustration. The pet is winking playfully with one eye closed. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  love: "Transform this pet photo into a cute cartoon sticker illustration. The pet has heart eyes showing love, with small hearts floating around. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
+  wink: "Transform this pet photo into a cute cartoon sticker illustration. The pet is winking playfully with one eye closed. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
   eating:
     "Transform this pet photo into a cute cartoon sticker illustration. The pet is happily eating with a food bowl. White background, clean outlines, kawaii Japanese sticker style. Keep the pet's breed and features recognizable.",
   greeting:
@@ -158,10 +155,21 @@ const DEFAULT_PROMPT =
   "Transform this pet photo into a beautiful artistic illustration. High quality, detailed, keep the pet's face and features clearly recognizable.";
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://custom.deer.gift");
+  const ALLOWED_ORIGINS = [
+    "https://custom.deer.gift",
+    "https://deer-brand.vercel.app",
+    process.env.ALLOWED_ORIGIN,
+  ].filter(Boolean);
+  const origin = (req.headers.origin || "").trim();
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
+  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method === "OPTIONS") return res.status(204).end();
 
   const token = process.env.REPLICATE_API_TOKEN;
   if (!token) {
@@ -178,11 +186,23 @@ export default async function handler(req, res) {
 
   const db = getFirestore(getAdminApp());
   try {
-    await consumeRateLimit(db, `generate_art_uid_${authUser.uid}`, RATE_LIMIT, RATE_WINDOW_MS);
-    await consumeRateLimit(db, `generate_art_ip_${getClientIp(req)}`, RATE_LIMIT, RATE_WINDOW_MS);
+    await consumeRateLimit(
+      db,
+      `generate_art_uid_${authUser.uid}`,
+      RATE_LIMIT,
+      RATE_WINDOW_MS,
+    );
+    await consumeRateLimit(
+      db,
+      `generate_art_ip_${getClientIp(req)}`,
+      RATE_LIMIT,
+      RATE_WINDOW_MS,
+    );
   } catch (error) {
     console.error("[generate-art] rate limit error:", error);
-    return res.status(429).json({ error: "リクエストが多すぎます。時間をおいてお試しください" });
+    return res
+      .status(429)
+      .json({ error: "リクエストが多すぎます。時間をおいてお試しください" });
   }
 
   // ── GET: ポーリング ──────────────────────────────────────────
@@ -203,7 +223,9 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     let body = req.body;
     if (typeof body === "string") {
-      try { body = JSON.parse(body); } catch {
+      try {
+        body = JSON.parse(body);
+      } catch {
         return res.status(400).json({ error: "invalid JSON" });
       }
     }
@@ -239,28 +261,48 @@ export default async function handler(req, res) {
     // ── テキスト→画像モード（背景サンプル生成用）──────────────
     if (mode === "txt2img") {
       const txt2imgPrompts = {
-        "wc-flower":    "Soft dreamy watercolor painting of a flower field. Pastel pink, lavender, and yellow wildflowers. Watercolor brushstrokes, gentle bokeh. No people, no animals.",
-        "wc-sky":       "Soft watercolor painting of a blue sky with fluffy white clouds. Visible brushstrokes, light and airy. No people, no animals.",
-        "wc-meadow":    "Soft watercolor painting of a green meadow with rolling hills. Fresh spring grass, peaceful countryside. No people, no animals.",
-        "wc-water":     "Soft watercolor painting of a calm river or lakeside. Gentle water reflections, willow trees, serene. No people, no animals.",
-        "wc-paper":     "Beautiful Japanese washi paper texture. Warm cream and beige, subtle fiber texture, delicate pressed flower motifs. Flat lay, minimalist.",
-        "mn-library":   "Vintage library interior. Dark wooden bookshelves with old books, warm desk lamp. Black and white charcoal sketch style. No people.",
-        "mn-arch":      "Classical stone architecture with grand columns and arched doorways. Black and white pencil sketch, detailed. No people.",
-        "mn-mist":      "Misty forest with tall trees. Morning fog, ethereal light. Monochrome pencil sketch. No people, no animals.",
-        "mn-paper":     "Aged vintage parchment paper. Sepia toned, worn edges, old manuscript. Flat texture.",
-        "mn-city":      "Nighttime city skyline with glowing windows and bridges. Black and white charcoal sketch, high contrast. No people.",
-        "ln-flat":      "Flat solid warm cream background. Perfectly smooth, no texture. Minimalist design.",
-        "ln-stars":     "Dark navy blue night sky filled with white stars and constellations. Clean graphic illustration, flat design. No people.",
-        "ln-botanical": "Botanical illustration of tropical leaves and flowers. Clean line drawings, green and white, flat style. No people.",
-        "ln-geo":       "Geometric pattern with triangles and hexagons. Pastel colors: mint, blush pink, cream. Modern flat graphic design.",
-        "ln-grad":      "Smooth pastel gradient from soft pink to lavender to pale blue. No texture, perfectly smooth. Clean and dreamy.",
+        "wc-flower":
+          "Soft dreamy watercolor painting of a flower field. Pastel pink, lavender, and yellow wildflowers. Watercolor brushstrokes, gentle bokeh. No people, no animals.",
+        "wc-sky":
+          "Soft watercolor painting of a blue sky with fluffy white clouds. Visible brushstrokes, light and airy. No people, no animals.",
+        "wc-meadow":
+          "Soft watercolor painting of a green meadow with rolling hills. Fresh spring grass, peaceful countryside. No people, no animals.",
+        "wc-water":
+          "Soft watercolor painting of a calm river or lakeside. Gentle water reflections, willow trees, serene. No people, no animals.",
+        "wc-paper":
+          "Beautiful Japanese washi paper texture. Warm cream and beige, subtle fiber texture, delicate pressed flower motifs. Flat lay, minimalist.",
+        "mn-library":
+          "Vintage library interior. Dark wooden bookshelves with old books, warm desk lamp. Black and white charcoal sketch style. No people.",
+        "mn-arch":
+          "Classical stone architecture with grand columns and arched doorways. Black and white pencil sketch, detailed. No people.",
+        "mn-mist":
+          "Misty forest with tall trees. Morning fog, ethereal light. Monochrome pencil sketch. No people, no animals.",
+        "mn-paper":
+          "Aged vintage parchment paper. Sepia toned, worn edges, old manuscript. Flat texture.",
+        "mn-city":
+          "Nighttime city skyline with glowing windows and bridges. Black and white charcoal sketch, high contrast. No people.",
+        "ln-flat":
+          "Flat solid warm cream background. Perfectly smooth, no texture. Minimalist design.",
+        "ln-stars":
+          "Dark navy blue night sky filled with white stars and constellations. Clean graphic illustration, flat design. No people.",
+        "ln-botanical":
+          "Botanical illustration of tropical leaves and flowers. Clean line drawings, green and white, flat style. No people.",
+        "ln-geo":
+          "Geometric pattern with triangles and hexagons. Pastel colors: mint, blush pink, cream. Modern flat graphic design.",
+        "ln-grad":
+          "Smooth pastel gradient from soft pink to lavender to pale blue. No texture, perfectly smooth. Clean and dreamy.",
       };
       const t2iPrompt = txt2imgPrompts[styleId] || styleId;
       try {
         const { id } = await createPrediction({
           token,
           model: "black-forest-labs/flux-1.1-pro",
-          input: { prompt: t2iPrompt, aspect_ratio: "1:1", output_format: "jpg", safety_tolerance: 6 },
+          input: {
+            prompt: t2iPrompt,
+            aspect_ratio: "1:1",
+            output_format: "jpg",
+            safety_tolerance: 6,
+          },
         });
         return res.json({ predictionId: id });
       } catch (error) {
@@ -276,16 +318,18 @@ export default async function handler(req, res) {
 
     // 多頭対応: petCountに応じてプロンプトを調整
     const petCountNum = parseInt(petCount) || 1;
-    const petCountNote = petCountNum >= 2
-      ? ` There are ${petCountNum} pets in this photo — keep ALL of them clearly visible and recognizable in the artwork.`
-      : "";
+    const petCountNote =
+      petCountNum >= 2
+        ? ` There are ${petCountNum} pets in this photo — keep ALL of them clearly visible and recognizable in the artwork.`
+        : "";
 
     const basePrompt = customPrompt
       ? `Place the pet(s) in a background of: ${customPrompt}. Keep all pets as the main subjects, clearly recognizable.`
-      : (STYLE_PROMPTS[styleId] || DEFAULT_PROMPT);
+      : STYLE_PROMPTS[styleId] || DEFAULT_PROMPT;
 
     // 向き・構図維持の共通指示を追加
-    const orientationNote = " IMPORTANT: Maintain the exact same orientation, rotation and composition as the input photo. Do not rotate, flip or mirror the image. Keep the pet in the same position and angle.";
+    const orientationNote =
+      " IMPORTANT: Maintain the exact same orientation, rotation and composition as the input photo. Do not rotate, flip or mirror the image. Keep the pet in the same position and angle.";
 
     const prompt = basePrompt + petCountNote + orientationNote;
 

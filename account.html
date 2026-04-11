@@ -832,7 +832,24 @@
                     <div class="order-product">${escHtml(productName)}</div>
                     <div class="order-detail">${escHtml(o.style || "")}${o.style && o.color ? " / " : ""}${escHtml(o.color || "")}</div>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.4rem">
-                      <div style="font-size:0.7rem;color:var(--text-light)">${(() => { try { const d = o.createdAt?.toDate ? o.createdAt.toDate() : o.createdAt ? new Date(o.createdAt) : null; return d ? d.toLocaleDateString("ja-JP", {year:"numeric",month:"2-digit",day:"2-digit"}) : ""; } catch(e){ return ""; } })()}</div>
+                      <div style="font-size:0.7rem;color:var(--text-light)">${(() => {
+                        try {
+                          const d = o.createdAt?.toDate
+                            ? o.createdAt.toDate()
+                            : o.createdAt
+                              ? new Date(o.createdAt)
+                              : null;
+                          return d
+                            ? d.toLocaleDateString("ja-JP", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                              })
+                            : "";
+                        } catch (e) {
+                          return "";
+                        }
+                      })()}</div>
                       <div class="order-price" style="margin-top:0">¥${Number(o.total || 0).toLocaleString()}</div>
                     </div>
                   </div>`;
@@ -865,17 +882,20 @@
         }
 
         // ログアウトボタン（auth-modal.jsの確認ダイアログを使用）
-        document
-          .getElementById("logoutBtn")
-          .addEventListener("click", () => {
-            if (typeof DeerAuth !== "undefined" && typeof DeerAuth.logout === "function") {
-              DeerAuth.logout();
-            } else {
-              if (confirm("ログアウトしますか？")) {
-                signOut(auth).then(() => { window.location.href = "index"; });
-              }
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          if (
+            typeof DeerAuth !== "undefined" &&
+            typeof DeerAuth.logout === "function"
+          ) {
+            DeerAuth.logout();
+          } else {
+            if (confirm("ログアウトしますか？")) {
+              signOut(auth).then(() => {
+                window.location.href = "index";
+              });
             }
-          });
+          }
+        });
       }
 
       // ============================================================
@@ -906,9 +926,13 @@
         // SetupIntentをサーバーから取得
         let clientSecret;
         try {
+          const token = await user.getIdToken();
           const res = await fetch("/api/stripe-setup-intent", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({ userId: user.uid }),
           });
           if (!res.ok) throw new Error("SetupIntent作成失敗");
@@ -1006,7 +1030,9 @@
           const target = addresses[idx];
           if (!target) return;
           const newAddresses = addresses.filter((_, i) => i !== idx);
-          await updateDoc(doc(db, "users", uid), { savedAddresses: newAddresses });
+          await updateDoc(doc(db, "users", uid), {
+            savedAddresses: newAddresses,
+          });
           showToast("住所を削除しました", "success");
           refreshAddressList(uid);
         } catch (e) {
@@ -1026,7 +1052,9 @@
           // 選択した住所を先頭に移動
           const selected = addresses.splice(idx, 1)[0];
           const newAddresses = [selected, ...addresses];
-          await updateDoc(doc(db, "users", uid), { savedAddresses: newAddresses });
+          await updateDoc(doc(db, "users", uid), {
+            savedAddresses: newAddresses,
+          });
           showToast("デフォルト住所を変更しました", "success");
           refreshAddressList(uid);
         } catch (e) {
@@ -1040,14 +1068,18 @@
       async function refreshAddressList(uid) {
         try {
           const snap = await getDoc(doc(db, "users", uid));
-          const addresses = snap?.exists() ? (snap.data().savedAddresses || []) : [];
+          const addresses = snap?.exists()
+            ? snap.data().savedAddresses || []
+            : [];
           const container = document.getElementById("addressList");
           if (!container) return;
           if (addresses.length === 0) {
             container.innerHTML = `<p class="empty-state">保存された住所がありません。<br>注文時に住所を入力すると自動保存されます。</p>`;
             return;
           }
-          container.innerHTML = addresses.map((a, i) => `
+          container.innerHTML = addresses
+            .map(
+              (a, i) => `
             <div class="address-item ${i === 0 ? "default" : ""}">
               <div style="flex:1">
                 ${i === 0 ? `<span class="address-default-badge">デフォルト</span>` : `<button onclick="setDefaultAddress('${uid}', ${i})" style="font-size:0.65rem;color:var(--text-mid);background:none;border:1px solid var(--border);border-radius:1rem;padding:0.15rem 0.5rem;cursor:pointer;margin-bottom:0.3rem">デフォルトに設定</button>`}
@@ -1063,7 +1095,9 @@
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
                 </button>
               </div>
-            </div>`).join("");
+            </div>`,
+            )
+            .join("");
         } catch (e) {
           console.warn("住所リスト更新失敗:", e);
         }
@@ -1078,7 +1112,8 @@
 
         const modal = document.createElement("div");
         modal.id = "addAddressModal";
-        modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem";
+        modal.style.cssText =
+          "position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem";
         modal.innerHTML = `
           <div style="background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
             <h3 style="font-family:var(--serif);font-size:1.2rem;font-weight:400;margin-bottom:1.2rem;color:var(--charcoal)">新しい住所を追加</h3>
@@ -1089,7 +1124,7 @@
               <div class="form-group"><label>都道府県</label>
                 <select id="addrPref" style="width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:0.85rem;background:var(--cream)">
                   <option value="">選択</option>
-                  ${["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"].map(p=>`<option>${p}</option>`).join("")}
+                  ${["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県", "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県", "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"].map((p) => `<option>${p}</option>`).join("")}
                 </select>
               </div>
             </div>
@@ -1101,44 +1136,67 @@
           </div>`;
         document.body.appendChild(modal);
 
-        document.getElementById("addrSaveBtn").addEventListener("click", async () => {
-          const fullName = document.getElementById("addrFullName").value.trim();
-          const phone = document.getElementById("addrPhone").value.trim();
-          const zip = document.getElementById("addrZip").value.trim();
-          const prefecture = document.getElementById("addrPref").value;
-          const address1 = document.getElementById("addrAddress1").value.trim();
-          const address2 = document.getElementById("addrAddress2").value.trim();
-          const errEl = document.getElementById("addrError");
+        document
+          .getElementById("addrSaveBtn")
+          .addEventListener("click", async () => {
+            const fullName = document
+              .getElementById("addrFullName")
+              .value.trim();
+            const phone = document.getElementById("addrPhone").value.trim();
+            const zip = document.getElementById("addrZip").value.trim();
+            const prefecture = document.getElementById("addrPref").value;
+            const address1 = document
+              .getElementById("addrAddress1")
+              .value.trim();
+            const address2 = document
+              .getElementById("addrAddress2")
+              .value.trim();
+            const errEl = document.getElementById("addrError");
 
-          if (!fullName || !phone || !zip || !prefecture || !address1) {
-            errEl.textContent = "必須項目をすべて入力してください";
-            return;
-          }
-          const zipRegex = /^\d{7}$|^\d{3}-\d{4}$/;
-          if (!zipRegex.test(zip)) {
-            errEl.textContent = "郵便番号はXXX-XXXXまたは7桁で入力してください";
-            return;
-          }
-          errEl.textContent = "";
-          const btn = document.getElementById("addrSaveBtn");
-          btn.disabled = true;
-          btn.textContent = "保存中...";
-          try {
-            const snap = await getDoc(doc(db, "users", uid));
-            const current = snap?.exists() ? (snap.data().savedAddresses || []) : [];
-            const isDuplicate = current.some(a => a.zip === zip && a.address1 === address1);
-            if (isDuplicate) { errEl.textContent = "同じ住所がすでに登録されています"; btn.disabled = false; btn.textContent = "保存する"; return; }
-            const newAddresses = [...current, { fullName, phone, zip, prefecture, address1, address2 }].slice(0, 5);
-            await updateDoc(doc(db, "users", uid), { savedAddresses: newAddresses });
-            modal.remove();
-            showToast("住所を追加しました", "success");
-            refreshAddressList(uid);
-          } catch (e) {
-            errEl.textContent = "保存に失敗しました。再度お試しください。";
-            btn.disabled = false;
-            btn.textContent = "保存する";
-          }
-        });
+            if (!fullName || !phone || !zip || !prefecture || !address1) {
+              errEl.textContent = "必須項目をすべて入力してください";
+              return;
+            }
+            const zipRegex = /^\d{7}$|^\d{3}-\d{4}$/;
+            if (!zipRegex.test(zip)) {
+              errEl.textContent =
+                "郵便番号はXXX-XXXXまたは7桁で入力してください";
+              return;
+            }
+            errEl.textContent = "";
+            const btn = document.getElementById("addrSaveBtn");
+            btn.disabled = true;
+            btn.textContent = "保存中...";
+            try {
+              const snap = await getDoc(doc(db, "users", uid));
+              const current = snap?.exists()
+                ? snap.data().savedAddresses || []
+                : [];
+              const isDuplicate = current.some(
+                (a) => a.zip === zip && a.address1 === address1,
+              );
+              if (isDuplicate) {
+                errEl.textContent = "同じ住所がすでに登録されています";
+                btn.disabled = false;
+                btn.textContent = "保存する";
+                return;
+              }
+              const newAddresses = [
+                ...current,
+                { fullName, phone, zip, prefecture, address1, address2 },
+              ].slice(0, 5);
+              await updateDoc(doc(db, "users", uid), {
+                savedAddresses: newAddresses,
+              });
+              modal.remove();
+              showToast("住所を追加しました", "success");
+              refreshAddressList(uid);
+            } catch (e) {
+              errEl.textContent = "保存に失敗しました。再度お試しください。";
+              btn.disabled = false;
+              btn.textContent = "保存する";
+            }
+          });
       };
 
       // ============================================================
