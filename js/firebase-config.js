@@ -15,10 +15,6 @@ export const FIREBASE_CONFIG = {
 
 const STRIPE_PUBLISHABLE_KEY_TEST =
   "pk_test_51THFruDOfpcoUSefYQs6EI1sNIhc9LpHdvtSMEpePWZXWyvkclLQpNHJSk6WG2GWV15cwAAYa3x72poifueWNbF000GG0Cshwk";
-const STRIPE_PUBLISHABLE_KEY_LIVE =
-  window.__DEER_STRIPE_PUBLISHABLE_KEY_LIVE__ ||
-  window.__DEER_STRIPE_KEY_LIVE__ ||
-  "";
 const STRIPE_LIVE_HOSTNAMES = new Set([
   "custom.deer.gift",
   "www.custom.deer.gift",
@@ -26,14 +22,36 @@ const STRIPE_LIVE_HOSTNAMES = new Set([
 
 const isLiveHostname = STRIPE_LIVE_HOSTNAMES.has(window.location.hostname);
 
-if (isLiveHostname && !STRIPE_PUBLISHABLE_KEY_LIVE) {
-  console.warn(
-    "Missing live Stripe publishable key for this hostname — Stripe payments will not work",
-  );
+// 本番ドメインでは /api/config から公開鍵を取得（Vercel環境変数経由）
+// テスト環境ではハードコードされたテストキーを使用
+let _resolvedStripeKey = isLiveHostname ? "" : STRIPE_PUBLISHABLE_KEY_TEST;
+
+if (isLiveHostname) {
+  fetch("/api/config")
+    .then((r) => r.json())
+    .then((data) => {
+      if (data.stripePublishableKey) {
+        _resolvedStripeKey = data.stripePublishableKey;
+        window._deerStripeKey = _resolvedStripeKey;
+      } else {
+        // Vercel環境変数未設定 → テストキーにフォールバック（決済テスト可能な状態を維持）
+        console.warn(
+          "Stripe live key not configured — falling back to test key",
+        );
+        _resolvedStripeKey = STRIPE_PUBLISHABLE_KEY_TEST;
+        window._deerStripeKey = _resolvedStripeKey;
+      }
+    })
+    .catch((e) => {
+      console.error("Failed to fetch config:", e);
+      // ネットワークエラー時もテストキーにフォールバック
+      _resolvedStripeKey = STRIPE_PUBLISHABLE_KEY_TEST;
+      window._deerStripeKey = _resolvedStripeKey;
+    });
 }
 
 export const STRIPE_PUBLISHABLE_KEY = isLiveHostname
-  ? STRIPE_PUBLISHABLE_KEY_LIVE
+  ? "" // 本番は非同期で /api/config から解決 → window._deerStripeKey で配信
   : STRIPE_PUBLISHABLE_KEY_TEST;
 export const LINE_CHANNEL_ID = "2009690645";
 export const INSTAGRAM_ACCOUNT = "deer_dogfood";

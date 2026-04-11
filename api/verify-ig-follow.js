@@ -17,9 +17,11 @@ export default async function handler(req, res) {
     process.env.ALLOWED_ORIGIN,
   ].filter(Boolean);
   const origin = (req.headers.origin || "").trim();
-  const corsOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app")
-    ? origin
-    : ALLOWED_ORIGINS[0];
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
   res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -43,7 +45,9 @@ export default async function handler(req, res) {
   const base64Data = image.split(",")[1] ?? "";
   const mediaType = image.match(/data:(image\/[\w+]+);/)?.[1] || "image/jpeg";
   if (!base64Data) {
-    return res.status(400).json({ verified: false, message: "画像データの形式が不正です" });
+    return res
+      .status(400)
+      .json({ verified: false, message: "画像データの形式が不正です" });
   }
 
   try {
@@ -51,7 +55,17 @@ export default async function handler(req, res) {
     try {
       authUser = await verifyAuth(req);
     } catch {
-      authUser = null;
+      return res
+        .status(401)
+        .json({ verified: false, message: "認証が必要です" });
+    }
+
+    const openrouterKey = process.env.OPENROUTER_API_KEY;
+    if (!openrouterKey) {
+      console.error("[verify-ig-follow] missing OPENROUTER_API_KEY");
+      return res
+        .status(503)
+        .json({ verified: false, message: "サービスを利用できません" });
     }
 
     // OpenRouter Vision APIで解析 (OpenAI互換フォーマット)
@@ -60,7 +74,7 @@ export default async function handler(req, res) {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${openrouterKey}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://deer-brand.vercel.app",
           "X-Title": "Deer Brand",
@@ -131,7 +145,10 @@ export default async function handler(req, res) {
       verified,
       confidence,
       message,
-      discountToken: verified && authUser ? createIgDiscountToken({ uid: authUser.uid }) : null,
+      discountToken:
+        verified && authUser
+          ? createIgDiscountToken({ uid: authUser.uid })
+          : null,
     });
   } catch (err) {
     console.error("IG verification error:", err);

@@ -26,7 +26,7 @@
     />
     <meta
       property="og:image"
-      content="https://custom.deer.gift/images/og-image.jpg"
+      content="https://custom.deer.gift/img/hero-dog.jpg"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Deer — 愛犬をアートに。" />
@@ -36,7 +36,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://custom.deer.gift/images/og-image.jpg"
+      content="https://custom.deer.gift/img/hero-dog.jpg"
     />
     <link rel="canonical" href="https://custom.deer.gift/" />
     <style>
@@ -137,13 +137,24 @@
         color: #fff;
         border-radius: 100px;
         transition: all 0.25s;
-        box-shadow: 0 3px 12px rgba(196, 131, 106, 0.45), 0 1px 3px rgba(196, 131, 106, 0.3);
+        box-shadow:
+          0 3px 12px rgba(196, 131, 106, 0.45),
+          0 1px 3px rgba(196, 131, 106, 0.3);
         position: relative;
         animation: navCtaPulse 2.5s ease-in-out infinite;
       }
       @keyframes navCtaPulse {
-        0%, 100% { box-shadow: 0 3px 12px rgba(196, 131, 106, 0.45), 0 1px 3px rgba(196, 131, 106, 0.3); }
-        50% { box-shadow: 0 4px 20px rgba(196, 131, 106, 0.7), 0 1px 6px rgba(196, 131, 106, 0.4); }
+        0%,
+        100% {
+          box-shadow:
+            0 3px 12px rgba(196, 131, 106, 0.45),
+            0 1px 3px rgba(196, 131, 106, 0.3);
+        }
+        50% {
+          box-shadow:
+            0 4px 20px rgba(196, 131, 106, 0.7),
+            0 1px 6px rgba(196, 131, 106, 0.4);
+        }
       }
       .nav-cta:hover {
         background: linear-gradient(135deg, #d4705a 0%, #c45a40 100%);
@@ -912,7 +923,7 @@
           background: white;
           border-radius: 16px;
           padding: 0.8rem;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
         .how-step .how-num {
           display: none;
@@ -935,7 +946,7 @@
           align-self: end;
           font-size: 0.85rem;
           margin-bottom: 0;
-          background: linear-gradient(transparent 0%, rgba(0,0,0,0.55) 100%);
+          background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.55) 100%);
           color: white;
           padding: 0.5rem 0.5rem 0.35rem;
           border-radius: 0 0 12px 12px;
@@ -1004,14 +1015,21 @@
         <a href="#products">グッズ一覧</a>
       </div>
       <!-- ログイン・CTAボタン（常時表示） -->
-      <div style="display:flex;align-items:center;gap:0.5rem">
+      <div style="display: flex; align-items: center; gap: 0.5rem">
         <!-- ログインボタン（未ログイン時） -->
         <button
           class="nav-login-btn"
           id="navLoginBtn"
           onclick="DeerAuth.openModal()"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
             <circle cx="12" cy="8" r="4" />
             <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
           </svg>
@@ -1754,7 +1772,7 @@
     <!-- FINAL CTA -->
     <section class="final-cta">
       <div class="section-label fade-up">Get Started</div>
-      <h2 class="section-title fade-up">愛犬を、<br>アートにしよう</h2>
+      <h2 class="section-title fade-up">愛犬を、<br />アートにしよう</h2>
       <p class="section-desc fade-up">
         写真1枚から、世界にひとつだけのグッズが生まれます。<br />
         大切な家族の姿を、ずっと残るかたちに。

@@ -30,7 +30,8 @@ function normalizeCheckoutItem(rawItem) {
     throw new Error("INVALID_ITEM");
   }
 
-  const placementValue = rawItem?.placementId ?? rawItem?.placement ?? rawItem?.placementName;
+  const placementValue =
+    rawItem?.placementId ?? rawItem?.placement ?? rawItem?.placementName;
   const placement = product.placements.find(
     (entry) => entry.id === placementValue || entry.name === placementValue,
   );
@@ -41,15 +42,18 @@ function normalizeCheckoutItem(rawItem) {
   const colorValue = rawItem?.colorId ?? rawItem?.color ?? null;
   const color = colorValue
     ? product.colors.find(
-      (entry) => entry.id === colorValue || entry.name === colorValue,
-    )
+        (entry) => entry.id === colorValue || entry.name === colorValue,
+      )
     : null;
   if (colorValue && !color) {
     throw new Error("INVALID_COLOR");
   }
 
   const sizeValue = rawItem?.size ?? null;
-  if (product.sizes.length && (!sizeValue || !product.sizes.includes(sizeValue))) {
+  if (
+    product.sizes.length &&
+    (!sizeValue || !product.sizes.includes(sizeValue))
+  ) {
     throw new Error("INVALID_SIZE");
   }
 
@@ -65,7 +69,9 @@ function normalizeCheckoutItem(rawItem) {
     size: sizeValue ?? null,
     petCount,
     petNames: Array.isArray(rawItem?.petNames)
-      ? rawItem.petNames.filter((name) => typeof name === "string" && name.trim())
+      ? rawItem.petNames.filter(
+          (name) => typeof name === "string" && name.trim(),
+        )
       : [],
   };
 }
@@ -136,9 +142,11 @@ export default async function handler(req, res) {
     process.env.ALLOWED_ORIGIN,
   ].filter(Boolean);
   const origin = (req.headers.origin || "").trim();
-  const corsOrigin = ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app")
-    ? origin
-    : ALLOWED_ORIGINS[0];
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
   res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -189,11 +197,12 @@ export default async function handler(req, res) {
       igDiscount: 0,
     });
 
-    const { couponCode: resolvedCouponCode, couponDiscount } = await resolveCouponDiscount({
-      db,
-      code: couponCode,
-      subtotal,
-    });
+    const { couponCode: resolvedCouponCode, couponDiscount } =
+      await resolveCouponDiscount({
+        db,
+        code: couponCode,
+        subtotal,
+      });
     const igDiscount = resolveIgDiscount({
       token: igDiscountToken,
       uid: authUser.uid,
@@ -230,12 +239,15 @@ export default async function handler(req, res) {
     };
 
     if (amount === 0) {
-      await db.collection("orders").doc(orderId).set({
-        ...orderData,
-        paymentIntentId: null,
-        status: "paid",
-        paidAt: new Date(),
-      });
+      await db
+        .collection("orders")
+        .doc(orderId)
+        .set({
+          ...orderData,
+          paymentIntentId: null,
+          status: "paid",
+          paidAt: new Date(),
+        });
 
       return res.status(200).json({
         clientSecret: null,
@@ -249,7 +261,9 @@ export default async function handler(req, res) {
     });
 
     const userSnap = await db.collection("users").doc(authUser.uid).get();
-    const customerId = userSnap.exists ? userSnap.data()?.stripeCustomerId ?? null : null;
+    const customerId = userSnap.exists
+      ? (userSnap.data()?.stripeCustomerId ?? null)
+      : null;
 
     const paymentIntent = await stripe.paymentIntents.create(
       {
@@ -267,11 +281,14 @@ export default async function handler(req, res) {
       },
     );
 
-    await db.collection("orders").doc(orderId).set({
-      ...orderData,
-      paymentIntentId: paymentIntent.id,
-      status: "pending_payment",
-    });
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .set({
+        ...orderData,
+        paymentIntentId: paymentIntent.id,
+        status: "pending_payment",
+      });
 
     return res.status(200).json({
       clientSecret: paymentIntent.client_secret,
