@@ -14,13 +14,10 @@ export const FIREBASE_CONFIG = {
 };
 
 const STRIPE_PUBLISHABLE_KEY_TEST =
-  "pk_test_51THFruDOfpcoUSefYQs6EI1sNIhc9LpHdvtSMEpePWZXWyvkclLQpNHJSk6WG2GWV15cwAAYa3x72poifueWNbF000GG0Cshwk";
+  "pk_test_51QmtxaKulICaEf1dJ7GHWfFl8NduNKpFMKwM91TDT7M37wSZrCbL9UTR3MgCleFmrUyaEDeLseU41XOmM9Ls8olr002wf1LxEZ";
 
-// ★ Stripe本番公開鍵（承認後にStripeダッシュボードからコピーして貼り付け）
-// Vercel Hobbyプランは12関数上限のためAPI経由での配信不可。直接ハードコードする。
-// 公開鍵はクライアントサイドで使う前提のキーなのでセキュリティ上問題なし。
 const STRIPE_PUBLISHABLE_KEY_LIVE =
-  window.__DEER_STRIPE_PUBLISHABLE_KEY_LIVE__ || "";
+  "pk_live_51QmtxaKulICaEf1dDPY2HJ6eLfBrBD3ymILeYkW7fSxeEY6D9iBtYZ8ankC9bgQlh2dCXQGhaoR5sSm6hnKV3Jrm00rhHaUx18";
 
 const STRIPE_LIVE_HOSTNAMES = new Set([
   "custom.deer.gift",
