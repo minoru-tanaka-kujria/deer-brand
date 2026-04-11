@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>虹の橋メモリアル — 愛犬の思い出を、もう一度動く姿に。 | Deer</title>
+    <meta
+      name="description"
+      content="亡くなった愛犬の写真からAIがメモリアル動画を生成。利益ゼロ、全額を動物保護団体に寄付します。"
+    />
+    <meta
+      property="og:title"
+      content="虹の橋メモリアル — 愛犬の思い出を、もう一度動く姿に。"
+    />
+    <meta
+      property="og:description"
+      content="50〜100枚の写真からAIが愛犬のメモリアル動画を生成。運営コストを除いた全額を寄付。"
+    />
+    <meta
+      property="og:image"
+      content="https://custom.deer.gift/img/hero-dog.jpg"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="../img/fv-logo.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&family=Nunito:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Deer Brand Colors */
+        --navy: #2e3544;
+        --gold: #c9932e;
+        --gold-dark: #a87a24;
+        --ivory: #faf7f2;
+        --white: #ffffff;
+        --green: #6b8e4e;
+        --brown: #7a4a28;
+        --red: #c0392b;
+
+        /* Memorial Colors */
+        --memorial-blue: #8ba4b8;
+        --memorial-lavender: #b8a9c9;
+        --warm-gray: #a89f91;
+
+        /* Neutral */
+        --text-primary: #2e3544;
+        --text-secondary: #6b7280;
+        --border: #e5e0d8;
+
+        /* Typography */
+        --font-main:
+          "Zen Maru Gothic", "Nunito", "Hiragino Maru Gothic ProN", sans-serif;
+        --font-serif: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+        --font-nunito: "Nunito", sans-serif;
+      }
+
+      html {
+        font-size: 16px;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--font-main);
+        color: var(--text-primary);
+        background: var(--ivory);
+        line-height: 1.9;
+        letter-spacing: 0.04em;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ─── NAV ─── */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(250, 247, 242, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        transition: box-shadow 0.3s;
+      }
+      .nav.scrolled {
+        box-shadow: 0 2px 20px rgba(46, 53, 68, 0.08);
+      }
+      .nav-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+      .nav-logo img {
+        height: 32px;
+      }
+      .nav-logo span {
+        font-size: 0.8rem;
+        color: var(--memorial-blue);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        border-left: 2px solid var(--border);
+        padding-left: 12px;
+      }
+      .nav-cta {
+        background: var(--gold);
+        color: var(--white);
+        border: none;
+        border-radius: 40px;
+        padding: 10px 28px;
+        font-family: var(--font-main);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: 0.06em;
+        transition:
+          background 0.2s,
+          transform 0.2s;
+      }
+      .nav-cta:hover {
+        background: var(--gold-dark);
+        transform: scale(1.02);
+      }
+
+      /* ─── HERO ─── */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 120px 24px 80px;
+        background: linear-gradient(
+          180deg,
+          var(--ivory) 0%,
+          #eef2f7 60%,
+          #dfe8f0 100%
+        );
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 200px;
+        background: linear-gradient(180deg, transparent, var(--ivory));
+        pointer-events: none;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 720px;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(139, 164, 184, 0.15);
+        color: var(--memorial-blue);
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 6px 18px;
+        border-radius: 40px;
+        margin-bottom: 28px;
+        letter-spacing: 0.06em;
+      }
+      .hero h1 {
+        font-size: clamp(1.8rem, 5vw, 2.6rem);
+        font-weight: 700;
+        line-height: 1.45;
+        letter-spacing: 0.06em;
+        margin-bottom: 20px;
+        color: var(--navy);
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--gold);
+      }
+      .hero-sub {
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        line-height: 1.9;
+        margin-bottom: 40px;
+      }
+      .hero-cta-group {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        background: var(--gold);
+        color: var(--white);
+        border: none;
+        border-radius: 40px;
+        padding: 16px 44px;
+        font-family: var(--font-main);
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.08em;
+        transition: all 0.25s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-primary:hover {
+        background: var(--gold-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(201, 147, 46, 0.3);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--navy);
+        border: 2px solid var(--border);
+        border-radius: 40px;
+        padding: 14px 36px;
+        font-family: var(--font-main);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: 0.06em;
+        transition: all 0.25s;
+        text-decoration: none;
+      }
+      .btn-secondary:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      /* ─── SECTION COMMON ─── */
+      section {
+        padding: 100px 24px;
+      }
+      .section-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .section-label {
+        display: inline-block;
+        font-family: var(--font-nunito);
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--memorial-blue);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .section-title {
+        font-size: clamp(1.5rem, 3.5vw, 1.85rem);
+        font-weight: 700;
+        line-height: 1.5;
+        letter-spacing: 0.06em;
+        margin-bottom: 16px;
+        color: var(--navy);
+      }
+      .section-desc {
+        color: var(--text-secondary);
+        font-size: 1.0625rem;
+        line-height: 1.9;
+        max-width: 640px;
+      }
+      .section-desc.center {
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      /* ─── CONCEPT ─── */
+      .concept {
+        background: var(--white);
+        text-align: center;
+      }
+      .concept-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        margin-top: 56px;
+      }
+      .concept-card {
+        background: var(--ivory);
+        border-radius: 20px;
+        padding: 40px 28px;
+        text-align: center;
+        transition: transform 0.3s;
+      }
+      .concept-card:hover {
+        transform: translateY(-4px);
+      }
+      .concept-icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          rgba(201, 147, 46, 0.1),
+          rgba(139, 164, 184, 0.1)
+        );
+        border-radius: 50%;
+        font-size: 2rem;
+      }
+      .concept-card h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--navy);
+      }
+      .concept-card p {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.8;
+      }
+
+      /* ─── MESSAGE ─── */
+      .message {
+        background: var(--ivory);
+        text-align: center;
+      }
+      .message-quote {
+        max-width: 680px;
+        margin: 48px auto 0;
+        padding: 48px;
+        background: var(--white);
+        border-radius: 20px;
+        border-left: 4px solid var(--gold);
+      }
+      .message-quote p {
+        font-family: var(--font-serif);
+        font-size: 1.15rem;
+        line-height: 2.1;
+        color: var(--navy);
+      }
+      .message-quote cite {
+        display: block;
+        margin-top: 20px;
+        font-style: normal;
+        font-family: var(--font-main);
+        font-size: 0.9rem;
+        color: var(--warm-gray);
+      }
+
+      /* ─── HOWTO ─── */
+      .howto {
+        background: var(--white);
+      }
+      .howto-steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 56px;
+        position: relative;
+      }
+      .howto-steps::before {
+        content: "";
+        position: absolute;
+        top: 52px;
+        left: 16%;
+        right: 16%;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--gold),
+          var(--memorial-blue),
+          var(--memorial-lavender)
+        );
+        opacity: 0.3;
+      }
+      .step {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+      .step-num {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gold);
+        color: var(--white);
+        font-family: var(--font-nunito);
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 50%;
+      }
+      .step-icon {
+        font-size: 2.4rem;
+        margin-bottom: 16px;
+        display: block;
+      }
+      .step h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--navy);
+      }
+      .step p {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.8;
+      }
+
+      /* ─── DONATION ─── */
+      .donation {
+        background: linear-gradient(135deg, #f3eff6 0%, #eef2f7 100%);
+      }
+      .donation-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+        margin-top: 56px;
+      }
+      .donation-visual {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+      }
+      .donation-bar {
+        width: 100%;
+        height: 48px;
+        background: var(--border);
+        border-radius: 24px;
+        overflow: hidden;
+        margin: 24px 0;
+        display: flex;
+      }
+      .donation-bar-api {
+        width: 25%;
+        background: var(--memorial-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .donation-bar-fee {
+        width: 8%;
+        background: var(--warm-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .donation-bar-donate {
+        flex: 1;
+        background: linear-gradient(90deg, var(--gold), #d4a94a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .donation-legend {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 16px;
+        font-size: 0.85rem;
+      }
+      .donation-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .donation-legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .donation-info h3 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: var(--navy);
+      }
+      .donation-info p {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.9;
+        margin-bottom: 16px;
+      }
+      .donation-highlight {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 20px 24px;
+        border-left: 4px solid var(--green);
+        margin-top: 24px;
+      }
+      .donation-highlight p {
+        font-size: 0.95rem;
+        color: var(--navy);
+        font-weight: 500;
+        margin: 0;
+      }
+
+      /* ─── PRICING ─── */
+      .pricing {
+        background: var(--white);
+        text-align: center;
+      }
+      .pricing-card {
+        max-width: 480px;
+        margin: 48px auto 0;
+        background: var(--ivory);
+        border-radius: 24px;
+        padding: 48px 40px;
+        border: 2px solid var(--border);
+        position: relative;
+      }
+      .pricing-badge {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--green);
+        color: var(--white);
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 6px 20px;
+        border-radius: 40px;
+        letter-spacing: 0.08em;
+      }
+      .pricing-price {
+        font-family: var(--font-nunito);
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 16px 0 4px;
+      }
+      .pricing-price span {
+        font-size: 1.2rem;
+        font-weight: 400;
+      }
+      .pricing-note {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 28px;
+      }
+      .pricing-list {
+        list-style: none;
+        text-align: left;
+        margin-bottom: 32px;
+      }
+      .pricing-list li {
+        padding: 10px 0;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .pricing-list li:last-child {
+        border-bottom: none;
+      }
+      .pricing-list li::before {
+        content: "✓";
+        color: var(--green);
+        font-weight: 700;
+      }
+      .pricing-breakdown {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 24px;
+        text-align: left;
+      }
+      .pricing-breakdown h4 {
+        font-size: 0.85rem;
+        color: var(--warm-gray);
+        margin-bottom: 12px;
+        letter-spacing: 0.08em;
+      }
+      .pricing-breakdown-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+      .pricing-breakdown-row.total {
+        border-top: 2px solid var(--gold);
+        margin-top: 8px;
+        padding-top: 12px;
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      /* ─── FAQ ─── */
+      .faq {
+        background: var(--ivory);
+      }
+      .faq-list {
+        max-width: 720px;
+        margin: 48px auto 0;
+      }
+      .faq-item {
+        background: var(--white);
+        border-radius: 16px;
+        margin-bottom: 12px;
+        overflow: hidden;
+      }
+      .faq-q {
+        width: 100%;
+        padding: 20px 24px;
+        font-family: var(--font-main);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--navy);
+        background: none;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        letter-spacing: 0.04em;
+      }
+      .faq-q::after {
+        content: "+";
+        font-size: 1.4rem;
+        color: var(--gold);
+        font-weight: 300;
+        transition: transform 0.3s;
+      }
+      .faq-item.open .faq-q::after {
+        content: "−";
+      }
+      .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease;
+      }
+      .faq-a-inner {
+        padding: 0 24px 20px;
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.9;
+      }
+      .faq-item.open .faq-a {
+        max-height: 300px;
+      }
+
+      /* ─── CTA BOTTOM ─── */
+      .cta-bottom {
+        background: linear-gradient(135deg, var(--navy) 0%, #3a4558 100%);
+        text-align: center;
+        padding: 80px 24px;
+      }
+      .cta-bottom .section-title {
+        color: var(--white);
+      }
+      .cta-bottom p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.05rem;
+        margin-bottom: 36px;
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.9;
+      }
+
+      /* ─── FOOTER ─── */
+      footer {
+        background: var(--navy);
+        color: rgba(255, 255, 255, 0.6);
+        padding: 48px 24px 32px;
+      }
+      .footer-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .footer-brand img {
+        height: 28px;
+        filter: brightness(10);
+      }
+      .footer-brand span {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.4);
+      }
+      .footer-links {
+        display: flex;
+        gap: 24px;
+      }
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--gold);
+      }
+      .footer-copy {
+        width: 100%;
+        text-align: center;
+        font-size: 0.75rem;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* ─── SCROLL ANIMATION ─── */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease-out,
+          transform 0.6s ease-out;
+      }
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ─── RESPONSIVE ─── */
+      @media (max-width: 768px) {
+        .concept-grid,
+        .howto-steps {
+          grid-template-columns: 1fr;
+        }
+        .howto-steps::before {
+          display: none;
+        }
+        .donation-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          min-height: auto;
+          padding: 100px 20px 60px;
+        }
+        .hero h1 {
+          font-size: 1.65rem;
+        }
+        section {
+          padding: 64px 20px;
+        }
+        .nav-cta {
+          padding: 8px 20px;
+          font-size: 0.8rem;
+        }
+        .pricing-card {
+          padding: 36px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+      <div class="nav-inner">
+        <a href="https://www.deer.gift/" class="nav-logo">
+          <img src="../img/fv-logo.svg" alt="Deer" />
+          <span>虹の橋メモリアル</span>
+        </a>
+        <button
+          class="nav-cta"
+          onclick="
+            document
+              .getElementById('pricing')
+              .scrollIntoView({ behavior: 'smooth' })
+          "
+        >
+          申し込む
+        </button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content fade-in">
+        <div class="hero-badge">🌈 Deer 虹の橋メモリアル</div>
+        <h1>
+          愛犬の思い出を、<br />
+          <em>もう一度動く姿</em>に。
+        </h1>
+        <p class="hero-sub">
+          たくさんの写真の中で眠っている大切な記憶。<br />
+          AIが写真から愛犬の姿を学び、<br />
+          あの子がもう一度走り出すメモリアル動画を作ります。
+        </p>
+        <div class="hero-cta-group">
+          <a href="#howto" class="btn-primary"> 動画を作る → </a>
+          <a href="#concept" class="btn-secondary"> くわしく見る </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONCEPT -->
+    <section class="concept" id="concept">
+      <div class="section-inner fade-in">
+        <span class="section-label">Concept</span>
+        <h2 class="section-title">あの子との思い出を、永遠に</h2>
+        <p class="section-desc center">
+          スマホの中に眠る何百枚もの写真。<br />
+          動画はほとんど残っていなくても、写真は宝物のように残っている。<br />
+          その写真から、AIがあの子だけの動画を作ります。
+        </p>
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-icon">📸</div>
+            <h3>写真から動画へ</h3>
+            <p>
+              50〜100枚の写真をアップロード。AIが愛犬の顔・体型・毛並みを学習し、自然に動くメモリアル動画を生成します。
+            </p>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">🎵</div>
+            <h3>音楽とメッセージ</h3>
+            <p>
+              お好みのBGMとメッセージテキストを添えて、世界に一つだけの思い出動画に仕上げます。
+            </p>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">🤝</div>
+            <h3>全額寄付</h3>
+            <p>
+              運営コスト（AI生成費・決済手数料）を除いた全額を動物保護団体に寄付。利益は一切いただきません。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MESSAGE -->
+    <section class="message">
+      <div class="section-inner fade-in">
+        <span class="section-label">Message</span>
+        <h2 class="section-title">虹の橋のたもとで</h2>
+        <div class="message-quote">
+          <p>
+            天国の手前に「虹の橋」と呼ばれる場所があるといいます。<br />
+            そこでは、先に旅立った動物たちが元気な姿で走り回り、<br />
+            いつか飼い主が来るのを待っている——。<br /><br />
+            写真の中のあの子も、きっとどこかで走っています。<br />
+            その姿を、もう一度見ることができたなら。
+          </p>
+          <cite>— 「虹の橋」の伝承より</cite>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW TO -->
+    <section class="howto" id="howto">
+      <div class="section-inner fade-in">
+        <span class="section-label">How it works</span>
+        <h2 class="section-title" style="text-align: center">
+          3ステップで完成
+        </h2>
+        <p class="section-desc center">
+          難しい操作は一切ありません。写真をアップロードするだけ。
+        </p>
+        <div class="howto-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <span class="step-icon">📁</span>
+            <h3>写真をアップロード</h3>
+            <p>
+              愛犬の写真を50〜100枚選んでアップロード。様々なアングル・表情があるほど、よりリアルな動画に。
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <span class="step-icon">🤖</span>
+            <h3>AIが動画を生成</h3>
+            <p>
+              AIが写真から愛犬の特徴を学習。走る、振り向く、しっぽを振る——自然な動きの動画を作ります。
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <span class="step-icon">🎬</span>
+            <h3>ダウンロード</h3>
+            <p>
+              完成した動画をダウンロード。BGMやテキストを添えたメモリアル版もお届けします。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DONATION -->
+    <section class="donation" id="donation">
+      <div class="section-inner fade-in">
+        <span class="section-label">Donation</span>
+        <h2 class="section-title">お支払いの仕組み</h2>
+        <div class="donation-grid">
+          <div class="donation-visual">
+            <h3
+              style="font-size: 1.1rem; color: var(--navy); margin-bottom: 8px"
+            >
+              料金の内訳
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary)">
+              いただいた料金の使い道を100%開示します
+            </p>
+            <div class="donation-bar">
+              <div class="donation-bar-api">AI費用</div>
+              <div class="donation-bar-fee">手数料</div>
+              <div class="donation-bar-donate">寄付 💛</div>
+            </div>
+            <div class="donation-legend">
+              <div class="donation-legend-item">
+                <div
+                  class="donation-legend-dot"
+                  style="background: var(--memorial-blue)"
+                ></div>
+                <span>AI生成コスト</span>
+              </div>
+              <div class="donation-legend-item">
+                <div
+                  class="donation-legend-dot"
+                  style="background: var(--warm-gray)"
+                ></div>
+                <span>決済手数料</span>
+              </div>
+              <div class="donation-legend-item">
+                <div
+                  class="donation-legend-dot"
+                  style="background: var(--gold)"
+                ></div>
+                <span>全額寄付</span>
+              </div>
+            </div>
+          </div>
+          <div class="donation-info">
+            <h3>利益ゼロ宣言</h3>
+            <p>
+              Deerは鹿肉ドッグフードを通じて犬の健康を支えるブランドです。
+              虹の橋メモリアルは、旅立った犬たちへの感謝と、
+              今を生きる動物たちへの支援を形にするプロジェクトです。
+            </p>
+            <p>
+              システム運営に最低限必要なコストだけをいただき、
+              残りは全額、寄付します。
+            </p>
+            <div
+              class="donation-highlight"
+              style="border-left-color: var(--gold)"
+            >
+              <h4
+                style="
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  color: var(--navy);
+                  margin-bottom: 8px;
+                "
+              >
+                🐾 寄付先
+              </h4>
+              <p style="font-weight: 400; font-size: 0.9rem; line-height: 1.8">
+                <strong style="color: var(--navy)"
+                  >一般社団法人 愛玩動物健康管理協会（CAHA）</strong
+                ><br />
+                静岡県沼津市・藤沢市で動物保護シェルターを運営し、犬猫の保護・譲渡活動を行う団体です。
+                業界の意識向上、飼い主の知識向上、動物保護活動の3つを柱に、
+                コンパニオンアニマルの幸福と生活の質の向上に取り組んでいます。
+              </p>
+              <a
+                href="https://caha.or.jp/"
+                target="_blank"
+                rel="noopener"
+                style="
+                  display: inline-block;
+                  margin-top: 8px;
+                  font-size: 0.85rem;
+                  color: var(--gold);
+                  font-weight: 600;
+                  text-decoration: none;
+                "
+              >
+                公式サイト → caha.or.jp
+              </a>
+            </div>
+            <p
+              style="
+                font-size: 0.85rem;
+                color: var(--warm-gray);
+                margin-top: 12px;
+              "
+            >
+              寄付実績は毎月サイト上で公開します。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing" id="pricing">
+      <div class="section-inner fade-in">
+        <span class="section-label">Pricing</span>
+        <h2 class="section-title">料金</h2>
+        <p class="section-desc center">
+          シンプルな料金体系。利益はいただきません。
+        </p>
+        <div class="pricing-card">
+          <div class="pricing-badge">全額寄付モデル</div>
+          <div class="pricing-price">¥1,980<span>（税込）</span></div>
+          <p class="pricing-note">メモリアル動画 1本</p>
+          <ul class="pricing-list">
+            <li>写真50〜100枚からAI動画生成</li>
+            <li>BGM＋テキスト付きメモリアル版</li>
+            <li>高画質ダウンロード（MP4）</li>
+            <li>生成し直し 1回無料</li>
+            <li>寄付証明レポート送付</li>
+          </ul>
+          <a
+            href="#"
+            class="btn-primary"
+            style="width: 100%; justify-content: center"
+          >
+            メモリアル動画を作る →
+          </a>
+          <div class="pricing-breakdown">
+            <h4>料金の内訳（税込）</h4>
+            <div class="pricing-breakdown-row">
+              <span>AI動画生成コスト</span>
+              <span>約 ¥500</span>
+            </div>
+            <div class="pricing-breakdown-row">
+              <span>決済手数料（Stripe 3.6%）</span>
+              <span>約 ¥72</span>
+            </div>
+            <div class="pricing-breakdown-row">
+              <span>システム運営費</span>
+              <span>¥0</span>
+            </div>
+            <div class="pricing-breakdown-row total">
+              <span>CAHA（愛玩動物健康管理協会）への寄付</span>
+              <span>約 ¥1,408</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <div class="section-inner fade-in">
+        <span class="section-label">FAQ</span>
+        <h2 class="section-title" style="text-align: center">よくある質問</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-q">写真は何枚必要ですか？</button>
+            <div class="faq-a">
+              <div class="faq-a-inner">
+                最低50枚、推奨100枚です。正面・横・後ろなど様々なアングルの写真があるほど、AIがより正確に愛犬の特徴を捉え、自然な動画を生成できます。
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">どんな犬種でも対応できますか？</button>
+            <div class="faq-a">
+              <div class="faq-a-inner">
+                はい、犬種を問わず対応しています。大型犬から小型犬まで、またミックス犬でも問題ありません。猫など他のペットについても今後対応予定です。
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">動画の長さはどのくらいですか？</button>
+            <div class="faq-a">
+              <div class="faq-a-inner">
+                メモリアル動画は30秒〜1分程度です。BGMとメッセージテキストを添えた構成になります。
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">寄付先はどこですか？</button>
+            <div class="faq-a">
+              <div class="faq-a-inner">
+                一般社団法人
+                愛玩動物健康管理協会（CAHA）に寄付します。静岡県沼津市・藤沢市で動物保護シェルターを運営し、犬猫の保護・譲渡活動を行っている団体です。毎月の寄付実績はサイト上で公開いたします。
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">写真のプライバシーは守られますか？</button>
+            <div class="faq-a">
+              <div class="faq-a-inner">
+                アップロードされた写真は動画生成のみに使用し、生成完了後30日以内に自動削除されます。第三者への提供は一切行いません。
+              </div>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">なぜ利益を取らないのですか？</button>
+            <div class="faq-a">
+              <div class="faq-a-inner">
+                Deerは犬の健康と幸せを支えるブランドです。旅立った愛犬を偲ぶ飼い主さんのお気持ちから利益をいただくことは、私たちのブランド理念に合いません。いただいた料金からコストを引いた全額を動物保護に役立てることが、Deerらしい在り方だと考えています。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BOTTOM -->
+    <section class="cta-bottom">
+      <div class="section-inner fade-in">
+        <h2 class="section-title">あの子の笑顔を、もう一度。</h2>
+        <p>写真の中で眠っている思い出が、動き出す瞬間を。</p>
+        <a href="#pricing" class="btn-primary"> メモリアル動画を作る → </a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img src="../img/fv-logo.svg" alt="Deer" />
+          <span>虹の橋メモリアル</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://www.deer.gift/">Deer 公式サイト</a>
+          <a href="../terms">利用規約</a>
+          <a href="../privacy">プライバシーポリシー</a>
+          <a href="../tokushoho">特定商取引法に基づく表示</a>
+        </div>
+        <div class="footer-copy">
+          &copy; 2025 Deer — 国内生産鹿肉フレッシュドッグフード
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Nav scroll effect
+      const nav = document.getElementById("nav");
+      window.addEventListener("scroll", () => {
+        nav.classList.toggle("scrolled", window.scrollY > 40);
+      });
+
+      // FAQ accordion
+      document.querySelectorAll(".faq-q").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const item = btn.parentElement;
+          const wasOpen = item.classList.contains("open");
+          document
+            .querySelectorAll(".faq-item.open")
+            .forEach((i) => i.classList.remove("open"));
+          if (!wasOpen) item.classList.add("open");
+        });
+      });
+
+      // Scroll fade-in
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+      document
+        .querySelectorAll(".fade-in")
+        .forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>
