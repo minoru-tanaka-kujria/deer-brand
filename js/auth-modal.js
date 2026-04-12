@@ -136,7 +136,7 @@
 
           <!-- 注意書き -->
           <p style="font-size:0.65rem; color:#9b9490; text-align:center; margin-top:1rem; line-height:1.6">
-            登録することで<a href="#" style="color:#c4a265; text-decoration:underline">利用規約</a>と<a href="#" style="color:#c4a265; text-decoration:underline">プライバシーポリシー</a>に同意したことになります
+            登録することで<a href="/terms" target="_blank" style="color:#c4a265; text-decoration:underline">利用規約</a>と<a href="/privacy" target="_blank" style="color:#c4a265; text-decoration:underline">プライバシーポリシー</a>に同意したことになります
           </p>
         </div>
       </div>
@@ -209,36 +209,42 @@
     });
 
     // 「はい」ボタン（実際のログアウト処理）
-    document.getElementById("logoutConfirmYes").addEventListener("click", async () => {
-      document.getElementById("logoutConfirmOverlay").style.display = "none";
-      if (window._deerFirebaseAuth && _firebaseAuthModule) {
-        const { signOut } = _firebaseAuthModule;
-        try {
-          await signOut(window._deerFirebaseAuth);
-        } catch (e) {
-          console.error("[DeerAuth] logout error:", e);
+    document
+      .getElementById("logoutConfirmYes")
+      .addEventListener("click", async () => {
+        document.getElementById("logoutConfirmOverlay").style.display = "none";
+        if (window._deerFirebaseAuth && _firebaseAuthModule) {
+          const { signOut } = _firebaseAuthModule;
+          try {
+            await signOut(window._deerFirebaseAuth);
+          } catch (e) {
+            console.error("[DeerAuth] logout error:", e);
+          }
+        } else if (window._deerFirebaseAuth) {
+          try {
+            const mod =
+              await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+            const { signOut } = mod;
+            await signOut(window._deerFirebaseAuth);
+          } catch (e) {
+            console.error("[DeerAuth] logout error:", e);
+          }
         }
-      } else if (window._deerFirebaseAuth) {
-        try {
-          const mod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-          const { signOut } = mod;
-          await signOut(window._deerFirebaseAuth);
-        } catch (e) {
-          console.error("[DeerAuth] logout error:", e);
+        updateNavForUser(null);
+        if (typeof window.onDeerLogout === "function") {
+          window.onDeerLogout();
         }
-      }
-      updateNavForUser(null);
-      if (typeof window.onDeerLogout === "function") {
-        window.onDeerLogout();
-      }
-    });
+      });
 
     // オーバーレイ外クリックで閉じる
-    document.getElementById("logoutConfirmOverlay").addEventListener("click", (e) => {
-      if (e.target === document.getElementById("logoutConfirmOverlay")) {
-        document.getElementById("logoutConfirmOverlay").style.display = "none";
-      }
-    });
+    document
+      .getElementById("logoutConfirmOverlay")
+      .addEventListener("click", (e) => {
+        if (e.target === document.getElementById("logoutConfirmOverlay")) {
+          document.getElementById("logoutConfirmOverlay").style.display =
+            "none";
+        }
+      });
   });
 
   // ============================================================
@@ -299,13 +305,16 @@
         const { signInWithPopup, GoogleAuthProvider } = _firebaseAuthModule;
         const provider = new GoogleAuthProvider();
         signInWithPopup(window._deerFirebaseAuth, provider)
-          .then(result => {
+          .then((result) => {
             this.closeModal();
             this._onLoginSuccess(result.user);
           })
-          .catch(e => {
+          .catch((e) => {
             // popupブロック時はredirectにフォールバック
-            if (e.code === "auth/popup-blocked" || e.code === "auth/popup-closed-by-user") {
+            if (
+              e.code === "auth/popup-blocked" ||
+              e.code === "auth/popup-closed-by-user"
+            ) {
               const { signInWithRedirect } = _firebaseAuthModule;
               signInWithRedirect(window._deerFirebaseAuth, provider);
             } else {
@@ -314,11 +323,16 @@
           });
       } else {
         // モジュール未ロード時はredirect（フォールバック）
-        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(mod => {
-          _firebaseAuthModule = mod;
-          const { signInWithRedirect, GoogleAuthProvider } = mod;
-          signInWithRedirect(window._deerFirebaseAuth, new GoogleAuthProvider());
-        });
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(
+          (mod) => {
+            _firebaseAuthModule = mod;
+            const { signInWithRedirect, GoogleAuthProvider } = mod;
+            signInWithRedirect(
+              window._deerFirebaseAuth,
+              new GoogleAuthProvider(),
+            );
+          },
+        );
       }
     },
 
@@ -326,7 +340,9 @@
     loginApple() {
       this.clearError();
       if (!window._deerFirebaseAuth) {
-        this.showError("認証の初期化中です。少し待ってから再度お試しください。");
+        this.showError(
+          "認証の初期化中です。少し待ってから再度お試しください。",
+        );
         return;
       }
       // ボタンにローディング表示
@@ -339,29 +355,37 @@
         const provider = new OAuthProvider("apple.com");
         provider.addScope("email");
         provider.addScope("name");
-        signInWithRedirect(window._deerFirebaseAuth, provider)
-          .catch(e => {
-            if (btn) btn.innerHTML = origText;
-            const msgs = {
-              "auth/operation-not-allowed": "Apple Sign Inが有効化されていません。Googleでのログインをお試しください。",
-              "auth/invalid-oauth-client-id": "Apple認証の設定に問題があります。Googleでのログインをお試しください。",
-              "auth/cancelled-popup-request": null, // 無視
-            };
-            const msg = msgs[e.code];
-            if (msg) this.showError(msg);
-            else this.showError("Appleログインに失敗しました。Googleでのログインをお試しください。");
-          });
+        signInWithRedirect(window._deerFirebaseAuth, provider).catch((e) => {
+          if (btn) btn.innerHTML = origText;
+          const msgs = {
+            "auth/operation-not-allowed":
+              "Apple Sign Inが有効化されていません。Googleでのログインをお試しください。",
+            "auth/invalid-oauth-client-id":
+              "Apple認証の設定に問題があります。Googleでのログインをお試しください。",
+            "auth/cancelled-popup-request": null, // 無視
+          };
+          const msg = msgs[e.code];
+          if (msg) this.showError(msg);
+          else
+            this.showError(
+              "Appleログインに失敗しました。Googleでのログインをお試しください。",
+            );
+        });
       };
       if (_firebaseAuthModule) {
         doAppleRedirect(_firebaseAuthModule);
       } else {
-        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(mod => {
-          _firebaseAuthModule = mod;
-          doAppleRedirect(mod);
-        }).catch(() => {
-          if (btn) btn.innerHTML = origText;
-          this.showError("読み込みに失敗しました。ページを再読み込みしてお試しください。");
-        });
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js")
+          .then((mod) => {
+            _firebaseAuthModule = mod;
+            doAppleRedirect(mod);
+          })
+          .catch(() => {
+            if (btn) btn.innerHTML = origText;
+            this.showError(
+              "読み込みに失敗しました。ページを再読み込みしてお試しください。",
+            );
+          });
       }
     },
 
@@ -369,7 +393,9 @@
     loginLine() {
       const lineClientId = window._deerLineClientId;
       if (!lineClientId) {
-        this.showError("LINEログインは現在準備中です。Google または メールアドレスでログインしてください。");
+        this.showError(
+          "LINEログインは現在準備中です。Google または メールアドレスでログインしてください。",
+        );
         return;
       }
       // ボタンにローディング表示
@@ -388,7 +414,9 @@
         "Max-Age=600",
         "SameSite=Lax",
         window.location.protocol === "https:" ? "Secure" : "",
-      ].filter(Boolean).join("; ");
+      ]
+        .filter(Boolean)
+        .join("; ");
 
       // popupで開く（callback側がwindow.opener.postMessageを使うため）
       const popup = window.open(
@@ -400,19 +428,27 @@
       if (!popup) {
         // popupブロック時はエラーメッセージ表示
         if (btn) btn.innerHTML = origBtnHTML;
-        this.showError("ポップアップがブロックされました。ブラウザの設定でポップアップを許可してください。");
+        this.showError(
+          "ポップアップがブロックされました。ブラウザの設定でポップアップを許可してください。",
+        );
         return;
       }
 
       // メッセージリスナーをセット（一度だけ）
       const onMessage = (e) => {
         if (e.origin !== window.location.origin) return;
-        if (!e.data || e.data.type !== "LINE_AUTH" && e.data.type !== "LINE_AUTH_ERROR") return;
+        if (
+          !e.data ||
+          (e.data.type !== "LINE_AUTH" && e.data.type !== "LINE_AUTH_ERROR")
+        )
+          return;
         window.removeEventListener("message", onMessage);
         if (btn) btn.innerHTML = origBtnHTML;
 
         if (e.data.type === "LINE_AUTH_ERROR") {
-          this.showError("LINEログインに失敗しました: " + (e.data.message || "不明なエラー"));
+          this.showError(
+            "LINEログインに失敗しました: " + (e.data.message || "不明なエラー"),
+          );
           return;
         }
 
@@ -420,21 +456,23 @@
         const doSignIn = (mod) => {
           const { signInWithCustomToken } = mod;
           signInWithCustomToken(window._deerFirebaseAuth, e.data.token)
-            .then(result => {
+            .then((result) => {
               this.closeModal();
               this._onLoginSuccess(result.user);
             })
-            .catch(err => {
+            .catch((err) => {
               this.showError("LINEログインに失敗しました: " + err.message);
             });
         };
         if (_firebaseAuthModule) {
           doSignIn(_firebaseAuthModule);
         } else {
-          import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(mod => {
-            _firebaseAuthModule = mod;
-            doSignIn(mod);
-          });
+          import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(
+            (mod) => {
+              _firebaseAuthModule = mod;
+              doSignIn(mod);
+            },
+          );
         }
       };
       window.addEventListener("message", onMessage);
@@ -465,15 +503,16 @@
       const doLogin = (mod) => {
         const { signInWithEmailAndPassword } = mod;
         signInWithEmailAndPassword(window._deerFirebaseAuth, email, password)
-          .then(result => {
+          .then((result) => {
             this.closeModal();
             this._onLoginSuccess(result.user);
           })
-          .catch(e => {
+          .catch((e) => {
             const msgs = {
               "auth/user-not-found": "このメールアドレスは登録されていません",
               "auth/wrong-password": "パスワードが正しくありません",
-              "auth/invalid-credential": "メールアドレスまたはパスワードが正しくありません",
+              "auth/invalid-credential":
+                "メールアドレスまたはパスワードが正しくありません",
               "auth/invalid-email": "メールアドレスの形式が正しくありません",
               "auth/too-many-requests": "しばらく後に再試行してください",
             };
@@ -483,10 +522,12 @@
       if (_firebaseAuthModule) {
         doLogin(_firebaseAuthModule);
       } else {
-        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(mod => {
-          _firebaseAuthModule = mod;
-          doLogin(mod);
-        });
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(
+          (mod) => {
+            _firebaseAuthModule = mod;
+            doLogin(mod);
+          },
+        );
       }
     },
 
@@ -508,7 +549,8 @@
 
       const email = document.getElementById("authEmail")?.value.trim();
       const password = document.getElementById("authPassword")?.value;
-      const displayName = document.getElementById("authDisplayName")?.value.trim() || "";
+      const displayName =
+        document.getElementById("authDisplayName")?.value.trim() || "";
       if (!email || !password) {
         this.showError("メールアドレスとパスワードを入力してください");
         return;
@@ -523,8 +565,12 @@
       }
       const doSignup = (mod) => {
         const { createUserWithEmailAndPassword, updateProfile } = mod;
-        createUserWithEmailAndPassword(window._deerFirebaseAuth, email, password)
-          .then(async result => {
+        createUserWithEmailAndPassword(
+          window._deerFirebaseAuth,
+          email,
+          password,
+        )
+          .then(async (result) => {
             // displayNameを設定
             if (displayName) {
               await updateProfile(result.user, { displayName }).catch(() => {});
@@ -533,9 +579,10 @@
             this._onLoginSuccess(result.user);
             this._giveWelcomeCoupon(result.user.uid);
           })
-          .catch(e => {
+          .catch((e) => {
             const msgs = {
-              "auth/email-already-in-use": "このメールアドレスはすでに登録済みです",
+              "auth/email-already-in-use":
+                "このメールアドレスはすでに登録済みです",
               "auth/invalid-email": "メールアドレスの形式が正しくありません",
               "auth/weak-password": "パスワードが弱すぎます（6文字以上）",
             };
@@ -545,10 +592,12 @@
       if (_firebaseAuthModule) {
         doSignup(_firebaseAuthModule);
       } else {
-        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(mod => {
-          _firebaseAuthModule = mod;
-          doSignup(mod);
-        });
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(
+          (mod) => {
+            _firebaseAuthModule = mod;
+            doSignup(mod);
+          },
+        );
       }
     },
 
@@ -638,13 +687,14 @@
     // module scriptのasync initが完了するまで最大5秒待つ
     let elapsed = 0;
     while (!window._deerFirebaseAuth && elapsed < 5000) {
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 100));
       elapsed += 100;
     }
     if (!window._deerFirebaseAuth) return;
     try {
       // ★ 先読み：クリック前にimport完了させておく
-      _firebaseAuthModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+      _firebaseAuthModule =
+        await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
       const { onAuthStateChanged, getRedirectResult } = _firebaseAuthModule;
 
       // リダイレクト結果を無条件で処理（iOS SafariはsessionStorageを消すためフラグ不要）

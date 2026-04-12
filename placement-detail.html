@@ -445,9 +445,7 @@
     <div class="bottom-cta">
       <h2>Create Your Art</h2>
       <p>あなたの愛犬をこの配置でアートにしませんか？</p>
-      <a href="upload.html" class="cta-btn" id="ctaBtn"
-        >この配置でオーダーする</a
-      >
+      <a href="upload" class="cta-btn" id="ctaBtn">この配置でオーダーする</a>
     </div>
 
     <script>
@@ -515,7 +513,7 @@
           placements: {
             wrap: {
               name: "ラップアラウンド",
-              price: 2980,
+              price: 3480,
               desc: "持ち手の反対側を中心に帯状印刷（約23×9cm）",
             },
           },
@@ -523,8 +521,8 @@
         case: {
           name: "スマホケース",
           colors: [
-            { id: "clear", name: "クリア", hex: "#E8E8E8" },
-            { id: "black", name: "ブラック", hex: "#1a1a1a" },
+            { id: "glossy", name: "グロス", hex: "#E8E8E8" },
+            { id: "matte", name: "マット", hex: "#1a1a1a" },
           ],
           placements: {
             back: {
@@ -577,7 +575,7 @@
           placements: {
             full: {
               name: "ステッカー全面",
-              price: 1480,
+              price: 1980,
               desc: "ステッカー全面にアートをプリント",
             },
           },
@@ -755,7 +753,8 @@
       // Set CTA link and label
       const ctaBtn = document.getElementById("ctaBtn");
       ctaBtn.href = "upload?item=" + productId + "&placement=" + placementId;
-      ctaBtn.textContent = product.name + "【" + placement.name + "】でオーダーする";
+      ctaBtn.textContent =
+        product.name + "【" + placement.name + "】でオーダーする";
 
       // Build colors
       function buildColors() {
@@ -800,9 +799,12 @@
 
         // placementId → 実ファイル名部分のマッピング
         const PLACEMENT_FILE_MAP = {
-          "back-print": "back", "left-chest": "leftchest",
-          "center": "center", "wrap": "wrap",
-          "leftchest": "leftchest", "back": "back",
+          "back-print": "back",
+          "left-chest": "leftchest",
+          center: "center",
+          wrap: "wrap",
+          leftchest: "leftchest",
+          back: "back",
         };
         // styleId → 実ファイル名部分のマッピング（8種類の実画像にフォールバック）
         const STYLE_MOCKUP_MAP = {
@@ -828,14 +830,22 @@
           "line-minimal": "line-oneline",
           "collage-mixed": "wc-botanical",
           "collage-papercut": "wc-botanical",
-          "silhouette": "mono-charcoal",
+          silhouette: "mono-charcoal",
         };
 
         grid.innerHTML = styles
           .map((s, i) => {
-            const placementFile = PLACEMENT_FILE_MAP[placementId] || placementId.replace(/-/g, "");
+            const placementFile =
+              PLACEMENT_FILE_MAP[placementId] || placementId.replace(/-/g, "");
             const styleFile = STYLE_MOCKUP_MAP[s.id] || s.id;
-            const mockupPath = "img/placement/detail/" + productId + "-" + placementFile + "-" + styleFile + ".png";
+            const mockupPath =
+              "img/placement/detail/" +
+              productId +
+              "-" +
+              placementFile +
+              "-" +
+              styleFile +
+              ".png";
             const artPath =
               STYLE_ART_IMG[s.id] || "img/styles/" + s.id + ".png";
             return (

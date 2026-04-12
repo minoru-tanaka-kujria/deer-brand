@@ -210,6 +210,7 @@ export default async function handler(req, res) {
           product: item.item,
           productName: item.productName,
           placement: item.placementName,
+          placementId: item.placementId,
           color: item.colorId,
           size: item.size,
           petCount: item.petCount,

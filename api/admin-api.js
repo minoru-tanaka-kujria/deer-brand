@@ -339,7 +339,9 @@ async function actionCreatePrintfulOrder(db, body) {
   const isEmb = order.product === "emb-cap" || order.product === "emb-hoodie";
   const fileType = isEmb
     ? "embroidery"
-    : PLACEMENT_FILE_TYPE[order.placement || ""] || "front";
+    : PLACEMENT_FILE_TYPE[order.placementId || ""] ||
+      PLACEMENT_FILE_TYPE[order.placement || ""] ||
+      "front";
 
   const fileEntry = { url: artImageUrl, type: fileType };
   if (!isEmb) {
