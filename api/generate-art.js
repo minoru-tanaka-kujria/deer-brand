@@ -378,7 +378,9 @@ export default async function handler(req, res) {
 
     const prompt = basePrompt + petCountNote + orientationNote;
 
-    // Flux Kontext Pro
+    // Flux Kontext Pro — PNG出力（DTG印刷で白背景部分が透過扱いになる）
+    // 注: 各スタイルプロンプトが背景を指定済み。白背景スタイル→DTGで自然に印刷。
+    //     背景付きスタイル（油絵等）→アートパネルとして四角形で印刷される想定。
     try {
       const { id } = await createPrediction({
         token,
@@ -387,7 +389,7 @@ export default async function handler(req, res) {
           input_image: photoDataUrl,
           prompt,
           aspect_ratio: "match_input_image",
-          output_format: "jpg",
+          output_format: "png",
           safety_tolerance: 6,
         },
       });
