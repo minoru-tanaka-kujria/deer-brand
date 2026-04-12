@@ -923,6 +923,77 @@
         border-color: var(--gold);
       }
 
+      /* ==================== FRAME / WAPPEN SELECTION ==================== */
+      .frame-select-section {
+        margin: 1.2rem 0;
+      }
+      .frame-select-section .section-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--charcoal);
+        margin-bottom: 0.35rem;
+      }
+      .frame-select-hint {
+        font-size: 0.75rem;
+        color: var(--text-light, #aaa);
+        margin-bottom: 0.75rem;
+      }
+      .frame-options-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.45rem;
+      }
+      .frame-option-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.28rem;
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        padding: 0.4rem 0.2rem;
+        transition:
+          border-color 0.18s,
+          background 0.18s;
+        background: #faf8f5;
+      }
+      .frame-option-card:hover {
+        border-color: var(--accent, #c8a96e);
+        background: #fff9f3;
+      }
+      .frame-option-card.selected {
+        border-color: var(--terracotta, #c05c2e);
+        background: #fff5f0;
+      }
+      .frame-option-thumb-canvas {
+        width: 56px;
+        height: 56px;
+        border-radius: 6px;
+        display: block;
+        background: #f0ebe3;
+      }
+      .frame-option-label {
+        font-size: 0.65rem;
+        color: var(--text-muted, #888);
+        text-align: center;
+        line-height: 1.3;
+        white-space: pre-line;
+      }
+      .frame-option-card.selected .frame-option-label {
+        color: var(--terracotta, #c05c2e);
+        font-weight: 600;
+      }
+      @media (max-width: 380px) {
+        .frame-options-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.3rem;
+        }
+        .frame-option-thumb-canvas {
+          width: 48px;
+          height: 48px;
+        }
+      }
+
       /* ==================== FONT SELECTION ==================== */
       .font-section {
         margin-bottom: 1.5rem;
@@ -3460,6 +3531,17 @@
             </div>
           </div>
 
+          <!-- フレーム / ワッペン選択 -->
+          <div class="frame-select-section" id="frameSelectSection">
+            <p class="section-label">フレーム・ワッペンを選択</p>
+            <p class="frame-select-hint">
+              背景付きアートには額縁フレーム、円形に切り抜くワッペンもお選びいただけます
+            </p>
+            <div class="frame-options-grid" id="frameOptionsGrid">
+              <!-- built by JS -->
+            </div>
+          </div>
+
           <!-- 名前を入れる トグル -->
           <div class="name-toggle-section">
             <div class="toggle-row">
@@ -4871,7 +4953,241 @@
         artOutlineColor: "#ffffff",
         artTextPosition: "bottom-center", // legacy（後方互換）
         fullName: "",
+        selectedFrame: "none",
+        rawArtUrl: null,
       };
+
+      // ============================================================
+      //  FRAME / WAPPEN — 定義・合成ロジック
+      // ============================================================
+      const FRAME_OPTIONS = [
+        { id: "none", label: "フレームなし", type: "none", src: null },
+        {
+          id: "frame-gold",
+          label: "金縁\nフレーム",
+          type: "frame",
+          src: "img/frames/frame-gold.png",
+        },
+        {
+          id: "frame-wood",
+          label: "木目\nフレーム",
+          type: "frame",
+          src: "img/frames/frame-wood.png",
+        },
+        {
+          id: "frame-antique",
+          label: "アンティーク",
+          type: "frame",
+          src: "img/frames/frame-antique.png",
+        },
+        {
+          id: "wappen-laurel-navy",
+          label: "ローレル\nネイビー",
+          type: "wappen",
+          src: "img/frames/wappen-laurel-navy.png",
+        },
+        {
+          id: "wappen-laurel-gold",
+          label: "ローレル\nゴールド",
+          type: "wappen",
+          src: "img/frames/wappen-laurel-gold.png",
+        },
+        {
+          id: "wappen-zigzag-green",
+          label: "ミリタリー\nグリーン",
+          type: "wappen",
+          src: "img/frames/wappen-zigzag-green.png",
+        },
+        {
+          id: "wappen-rope-red",
+          label: "ロープ\nレッド",
+          type: "wappen",
+          src: "img/frames/wappen-rope-red.png",
+        },
+      ];
+
+      const _frameImgCache = {};
+
+      function loadFrameImg(src) {
+        return new Promise((resolve, reject) => {
+          if (!src) {
+            reject(new Error("no src"));
+            return;
+          }
+          if (_frameImgCache[src]) {
+            resolve(_frameImgCache[src]);
+            return;
+          }
+          const img = new Image();
+          // 外部URL（Replicate等）はCORSヘッダーが必要、ローカル/data URLは不要
+          if (src.startsWith("http") && !src.startsWith(location.origin)) {
+            img.crossOrigin = "anonymous";
+          }
+          img.onload = () => {
+            _frameImgCache[src] = img;
+            resolve(img);
+          };
+          img.onerror = () => reject(new Error("img load failed: " + src));
+          img.src = src;
+        });
+      }
+
+      async function compositeFrameOnArt(artUrl, frameOpt) {
+        if (!artUrl || !frameOpt || frameOpt.type === "none") return artUrl;
+        const SIZE = 600;
+        const canvas = document.createElement("canvas");
+        canvas.width = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext("2d");
+
+        const artImg = await loadFrameImg(artUrl);
+
+        if (frameOpt.type === "wappen") {
+          // 円形クロップしてアートを描画
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+          ctx.clip();
+          const scale = Math.max(
+            SIZE / artImg.naturalWidth,
+            SIZE / artImg.naturalHeight,
+          );
+          const dw = artImg.naturalWidth * scale;
+          const dh = artImg.naturalHeight * scale;
+          ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
+          ctx.restore();
+        } else {
+          // フレーム: アートをcontain描画
+          ctx.fillStyle = "#f5f0e8";
+          ctx.fillRect(0, 0, SIZE, SIZE);
+          const scale = Math.min(
+            SIZE / artImg.naturalWidth,
+            SIZE / artImg.naturalHeight,
+          );
+          const dw = artImg.naturalWidth * scale;
+          const dh = artImg.naturalHeight * scale;
+          ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
+        }
+
+        // フレーム/ワッペンPNGをオーバーレイ
+        const frameImg = await loadFrameImg(frameOpt.src);
+        ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+
+        return canvas.toDataURL("image/png");
+      }
+
+      async function applySelectedFrame() {
+        const frameOpt =
+          FRAME_OPTIONS.find((f) => f.id === state.selectedFrame) ||
+          FRAME_OPTIONS[0];
+        const rawUrl = state.rawArtUrl || state.generatedArtUrl;
+        if (!rawUrl) return;
+
+        const mockupImg = document.getElementById("mockupImg");
+        try {
+          const compositeUrl = await compositeFrameOnArt(rawUrl, frameOpt);
+          if (mockupImg) mockupImg.src = compositeUrl;
+          state.finalArtUrl = compositeUrl;
+        } catch (e) {
+          console.warn("[frame] composite failed:", e);
+          if (mockupImg) mockupImg.src = rawUrl;
+          state.finalArtUrl = rawUrl;
+        }
+      }
+
+      function selectFrame(frameId) {
+        state.selectedFrame = frameId;
+        document.querySelectorAll(".frame-option-card").forEach((card) => {
+          card.classList.toggle("selected", card.dataset.frameId === frameId);
+        });
+        applySelectedFrame();
+      }
+
+      async function renderFrameThumb(frameOpt, artUrl) {
+        const thumbCanvas = document.getElementById(
+          "frameThumb_" + frameOpt.id,
+        );
+        if (!thumbCanvas) return;
+        const SIZE = 56;
+        const ctx = thumbCanvas.getContext("2d");
+
+        try {
+          const artImg = await loadFrameImg(artUrl);
+          if (frameOpt.type === "none") {
+            const scale = Math.min(
+              SIZE / artImg.naturalWidth,
+              SIZE / artImg.naturalHeight,
+            );
+            const dw = artImg.naturalWidth * scale;
+            const dh = artImg.naturalHeight * scale;
+            ctx.fillStyle = "#f5f0e8";
+            ctx.fillRect(0, 0, SIZE, SIZE);
+            ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
+          } else if (frameOpt.type === "wappen") {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+            ctx.clip();
+            const scale = Math.max(
+              SIZE / artImg.naturalWidth,
+              SIZE / artImg.naturalHeight,
+            );
+            const dw = artImg.naturalWidth * scale;
+            const dh = artImg.naturalHeight * scale;
+            ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
+            ctx.restore();
+            const frameImg = await loadFrameImg(frameOpt.src);
+            ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+          } else {
+            ctx.fillStyle = "#f5f0e8";
+            ctx.fillRect(0, 0, SIZE, SIZE);
+            const scale = Math.min(
+              SIZE / artImg.naturalWidth,
+              SIZE / artImg.naturalHeight,
+            );
+            const dw = artImg.naturalWidth * scale;
+            const dh = artImg.naturalHeight * scale;
+            ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
+            const frameImg = await loadFrameImg(frameOpt.src);
+            ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+          }
+        } catch (e) {
+          // アート読込失敗時はフレームのみ表示
+          if (frameOpt.src) {
+            try {
+              const frameImg = await loadFrameImg(frameOpt.src);
+              ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+            } catch (e2) {
+              // noop
+            }
+          } else {
+            ctx.fillStyle = "#e8e0d8";
+            ctx.fillRect(0, 0, SIZE, SIZE);
+          }
+        }
+      }
+
+      function buildFrameOptions() {
+        const grid = document.getElementById("frameOptionsGrid");
+        if (!grid) return;
+        const currentFrame = state.selectedFrame || "none";
+        grid.innerHTML = FRAME_OPTIONS.map(
+          (f) => `
+          <div class="frame-option-card${f.id === currentFrame ? " selected" : ""}"
+               data-frame-id="${f.id}"
+               onclick="selectFrame('${f.id}')">
+            <canvas class="frame-option-thumb-canvas"
+                    id="frameThumb_${f.id}"
+                    width="56" height="56"></canvas>
+            <span class="frame-option-label">${f.label}</span>
+          </div>`,
+        ).join("");
+
+        const rawUrl = state.rawArtUrl || state.generatedArtUrl;
+        if (rawUrl) {
+          FRAME_OPTIONS.forEach((f) => renderFrameThumb(f, rawUrl));
+        }
+      }
 
       // ============================================================
       //  #13: 未ログイン入力データ保護 — sessionStorage 保存・復元
@@ -6454,11 +6770,17 @@
         document.getElementById("mockupLoader").style.display = "none";
         document.getElementById("mockupImg").src = artImageUrl;
         state.generatedArtUrl = artImageUrl;
+        state.rawArtUrl = artImageUrl; // フレーム合成の元画像を保存
+        state.finalArtUrl = artImageUrl;
+        state.selectedFrame = "none"; // 新しいアート生成ごとにリセット
 
         // サマリー構築
         buildPreviewSummary();
 
         document.getElementById("artResultArea").style.display = "block";
+
+        // フレーム選択UIを構築（サムネイルを非同期レンダリング）
+        buildFrameOptions();
 
         // アートオーバーレイのpreviewAreaを artOverlayArea に更新
         updatePositionPreview();
