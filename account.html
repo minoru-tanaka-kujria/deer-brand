@@ -955,7 +955,15 @@
           return;
         }
 
-        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        const stripeKey = window._deerStripeKey || STRIPE_PUBLISHABLE_KEY;
+        if (!stripeKey) {
+          showToast(
+            "Stripe設定が読み込まれていません。ページを再読み込みしてください。",
+            "error",
+          );
+          return;
+        }
+        const stripe = Stripe(stripeKey);
         const elements = stripe.elements();
         const cardEl = elements.create("card", {
           style: {

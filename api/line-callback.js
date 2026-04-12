@@ -57,7 +57,18 @@ function getRequiredEnvError() {
 }
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  const ALLOWED_ORIGINS = [
+    "https://custom.deer.gift",
+    "https://deer-brand.vercel.app",
+    process.env.ALLOWED_ORIGIN,
+  ].filter(Boolean);
+  const origin = (req.headers.origin || "").trim();
+  const corsOrigin =
+    ALLOWED_ORIGINS.includes(origin) ||
+    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
+      ? origin
+      : ALLOWED_ORIGINS[0];
+  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
