@@ -5007,6 +5007,7 @@
       ];
 
       const _frameImgCache = {};
+      let _applyFrameGen = 0; // レースコンディション防止カウンター
 
       function loadFrameImg(src) {
         return new Promise((resolve, reject) => {
@@ -5041,6 +5042,9 @@
         const ctx = canvas.getContext("2d");
 
         const artImg = await loadFrameImg(artUrl);
+        if (!artImg.naturalWidth || !artImg.naturalHeight) {
+          throw new Error("invalid art image dimensions");
+        }
 
         if (frameOpt.type === "wappen") {
           // 円形クロップしてアートを描画
@@ -5077,6 +5081,7 @@
       }
 
       async function applySelectedFrame() {
+        const gen = ++_applyFrameGen; // 世代番号を取得してレースコンディションを防ぐ
         const frameOpt =
           FRAME_OPTIONS.find((f) => f.id === state.selectedFrame) ||
           FRAME_OPTIONS[0];
@@ -5086,9 +5091,11 @@
         const mockupImg = document.getElementById("mockupImg");
         try {
           const compositeUrl = await compositeFrameOnArt(rawUrl, frameOpt);
+          if (gen !== _applyFrameGen) return; // 後発の呼び出しが完了済みなら破棄
           if (mockupImg) mockupImg.src = compositeUrl;
           state.finalArtUrl = compositeUrl;
         } catch (e) {
+          if (gen !== _applyFrameGen) return;
           console.warn("[frame] composite failed:", e);
           if (mockupImg) mockupImg.src = rawUrl;
           state.finalArtUrl = rawUrl;
@@ -5113,6 +5120,8 @@
 
         try {
           const artImg = await loadFrameImg(artUrl);
+          if (!artImg.naturalWidth || !artImg.naturalHeight)
+            throw new Error("zero dimensions");
           if (frameOpt.type === "none") {
             const scale = Math.min(
               SIZE / artImg.naturalWidth,
