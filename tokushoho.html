@@ -1,324 +1,462 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>特定商取引法に基づく表記 | Deer</title>
-  <meta name="description" content="Deer（ディア）の特定商取引法に基づく表記ページです。">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --terracotta: #c97a42;
-      --gold: #c4a265;
-      --charcoal: #2c2824;
-      --text-mid: #6b6460;
-      --border: #e8dfd5;
-      --bg: #faf8f5;
-      --sans: 'Zen Maru Gothic', sans-serif;
-      --serif: 'Shippori Mincho', serif;
-    }
-    body {
-      font-family: var(--sans);
-      color: var(--charcoal);
-      background: var(--bg);
-      line-height: 1.8;
-      font-size: 0.95rem;
-    }
-    /* NAV */
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      height: 3.5rem;
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav-logo img { height: 2rem; }
-    .nav-back {
-      font-size: 0.82rem;
-      color: var(--text-mid);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    .nav-back:hover { color: var(--terracotta); }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>特定商取引法に基づく表記 | Deer</title>
+    <meta
+      name="description"
+      content="Deer（ディア）の特定商取引法に基づく表記ページです。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --terracotta: #c97a42;
+        --gold: #c4a265;
+        --charcoal: #2c2824;
+        --text-mid: #6b6460;
+        --border: #e8dfd5;
+        --bg: #faf8f5;
+        --sans: "Zen Maru Gothic", sans-serif;
+        --serif: "Shippori Mincho", serif;
+      }
+      body {
+        font-family: var(--sans);
+        color: var(--charcoal);
+        background: var(--bg);
+        line-height: 1.8;
+        font-size: 0.95rem;
+      }
+      /* NAV */
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        height: 3.5rem;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-logo img {
+        height: 2rem;
+      }
+      .nav-back {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .nav-back:hover {
+        color: var(--terracotta);
+      }
 
-    /* HERO */
-    .page-hero {
-      background: linear-gradient(135deg, #fff8f0 0%, #faf3e8 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 3rem 2rem 2.5rem;
-      text-align: center;
-    }
-    .page-hero h1 {
-      font-family: var(--serif);
-      font-size: 1.6rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      margin-bottom: 0.5rem;
-    }
-    .page-hero p {
-      font-size: 0.82rem;
-      color: var(--text-mid);
-    }
+      /* HERO */
+      .page-hero {
+        background: linear-gradient(135deg, #fff8f0 0%, #faf3e8 100%);
+        border-bottom: 1px solid var(--border);
+        padding: 3rem 2rem 2.5rem;
+        text-align: center;
+      }
+      .page-hero h1 {
+        font-family: var(--serif);
+        font-size: 1.6rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        margin-bottom: 0.5rem;
+      }
+      .page-hero p {
+        font-size: 0.82rem;
+        color: var(--text-mid);
+      }
 
-    /* CONTENT */
-    .container {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 3rem 2rem 5rem;
-    }
-    .table-wrap {
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    tr {
-      border-bottom: 1px solid var(--border);
-    }
-    tr:last-child { border-bottom: none; }
-    th {
-      width: 200px;
-      min-width: 160px;
-      padding: 1.1rem 1.4rem;
-      background: #faf8f5;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--charcoal);
-      vertical-align: top;
-      text-align: left;
-      border-right: 1px solid var(--border);
-    }
-    td {
-      padding: 1.1rem 1.4rem;
-      font-size: 0.88rem;
-      color: var(--charcoal);
-      vertical-align: top;
-      line-height: 1.8;
-    }
-    td a {
-      color: var(--terracotta);
-      text-decoration: none;
-    }
-    td a:hover { text-decoration: underline; }
-    .note {
-      margin-top: 2rem;
-      font-size: 0.8rem;
-      color: var(--text-mid);
-      line-height: 1.8;
-      padding: 1rem 1.2rem;
-      background: #fff;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-    }
+      /* CONTENT */
+      .container {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 3rem 2rem 5rem;
+      }
+      .table-wrap {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      tr {
+        border-bottom: 1px solid var(--border);
+      }
+      tr:last-child {
+        border-bottom: none;
+      }
+      th {
+        width: 200px;
+        min-width: 160px;
+        padding: 1.1rem 1.4rem;
+        background: #faf8f5;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--charcoal);
+        vertical-align: top;
+        text-align: left;
+        border-right: 1px solid var(--border);
+      }
+      td {
+        padding: 1.1rem 1.4rem;
+        font-size: 0.88rem;
+        color: var(--charcoal);
+        vertical-align: top;
+        line-height: 1.8;
+      }
+      td a {
+        color: var(--terracotta);
+        text-decoration: none;
+      }
+      td a:hover {
+        text-decoration: underline;
+      }
+      .note {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: var(--text-mid);
+        line-height: 1.8;
+        padding: 1rem 1.2rem;
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
 
-    /* FOOTER */
-    footer {
-      background: var(--charcoal);
-      color: rgba(255,255,255,0.6);
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.78rem;
-    }
-    footer a { color: rgba(255,255,255,0.6); text-decoration: none; margin: 0 0.6rem; }
-    footer a:hover { color: #fff; }
-    .footer-links { margin-bottom: 0.8rem; }
+      /* FOOTER */
+      footer {
+        background: var(--charcoal);
+        color: rgba(255, 255, 255, 0.6);
+        text-align: center;
+        padding: 2rem 1rem;
+        font-size: 0.78rem;
+      }
+      footer a {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        margin: 0 0.6rem;
+      }
+      footer a:hover {
+        color: #fff;
+      }
+      .footer-links {
+        margin-bottom: 0.8rem;
+      }
 
-    @media (max-width: 600px) {
-      .page-hero { padding: 2rem 1.2rem; }
-      .container { padding: 2rem 1rem 4rem; }
-      th { width: 120px; min-width: 100px; padding: 0.9rem 0.8rem; font-size: 0.78rem; }
-      td { padding: 0.9rem 0.8rem; font-size: 0.82rem; }
-    }
-  </style>
-</head>
-<body>
+      @media (max-width: 600px) {
+        .page-hero {
+          padding: 2rem 1.2rem;
+        }
+        .container {
+          padding: 2rem 1rem 4rem;
+        }
+        th {
+          width: 120px;
+          min-width: 100px;
+          padding: 0.9rem 0.8rem;
+          font-size: 0.78rem;
+        }
+        td {
+          padding: 0.9rem 0.8rem;
+          font-size: 0.82rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav class="nav">
+      <a href="index.html" class="nav-logo">
+        <img src="img/logo.svg" alt="Deer" />
+      </a>
+      <a href="index.html" class="nav-back">← トップへ戻る</a>
+    </nav>
 
-  <!-- NAV -->
-  <nav class="nav">
-    <a href="index.html" class="nav-logo">
-      <img src="img/logo.svg" alt="Deer">
-    </a>
-    <a href="index.html" class="nav-back">← トップへ戻る</a>
-  </nav>
-
-  <!-- HERO -->
-  <div class="page-hero">
-    <h1>特定商取引法に基づく表記</h1>
-    <p>Act on Specified Commercial Transactions</p>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="container">
-    <div class="table-wrap">
-      <table>
-        <tr>
-          <th>販売業者</th>
-          <td>株式会社九地良（くじら）<br><small>法人番号: 7120001063093</small></td>
-        </tr>
-        <tr>
-          <th>運営統括責任者</th>
-          <td>田中 実（代表取締役）</td>
-        </tr>
-        <tr>
-          <th>所在地</th>
-          <td>
-            〒550-0005<br>
-            大阪府大阪市西区西本町1丁目15番6号 西本町ビル4階
-          </td>
-        </tr>
-        <tr>
-          <th>電話番号</th>
-          <td>
-            0120-840-946<br>
-            <small>（受付時間：平日 10:00〜18:00 ※土日祝日を除く）</small>
-          </td>
-        </tr>
-        <tr>
-          <th>メールアドレス</th>
-          <td><a href="mailto:info@deer.gift">info@deer.gift</a><br><small>（24時間受付・2営業日以内に返信）</small></td>
-        </tr>
-        <tr>
-          <th>ウェブサイト</th>
-          <td><a href="https://custom.deer.gift" target="_blank">https://custom.deer.gift</a></td>
-        </tr>
-        <tr>
-          <th>販売価格<br>（税込表示）</th>
-          <td>
-            各商品の注文画面に表示される価格（すべて消費税込み・送料込み）<br><br>
-            <table style="width:100%;font-size:0.82rem;border-collapse:collapse">
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">Tシャツ</td><td style="text-align:right;padding:0.2rem 0">¥4,980〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">パーカー</td><td style="text-align:right;padding:0.2rem 0">¥7,980〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">マグカップ</td><td style="text-align:right;padding:0.2rem 0">¥3,480〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">スマホケース</td><td style="text-align:right;padding:0.2rem 0">¥4,980〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">アートポスター</td><td style="text-align:right;padding:0.2rem 0">¥5,480〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">ポストカード（5枚）</td><td style="text-align:right;padding:0.2rem 0">¥1,980〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">ステッカー</td><td style="text-align:right;padding:0.2rem 0">¥1,980〜</td></tr>
-              <tr style="border-bottom:1px solid #eee"><td style="padding:0.2rem 0">刺繍キャップ</td><td style="text-align:right;padding:0.2rem 0">¥4,980〜</td></tr>
-              <tr><td style="padding:0.2rem 0">刺繍パーカー</td><td style="text-align:right;padding:0.2rem 0">¥12,980〜</td></tr>
-            </table>
-            <small>※オプション（プリント配置・複数頭対応）により価格が変動します。最終金額は注文確定画面に表示されます。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>販売数量</th>
-          <td>各商品1点から注文可能。在庫制限なし（受注生産）。</td>
-        </tr>
-        <tr>
-          <th>商品以外の<br>必要料金</th>
-          <td>
-            <strong>配送料：全品送料無料</strong><br>
-            その他の追加料金はかかりません。<br>
-            <small>※表示価格には消費税が含まれています。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>支払方法</th>
-          <td>
-            クレジットカード（Visa・Mastercard・American Express・JCB）<br>
-            Apple Pay / Google Pay<br>
-            <small>※すべての決済は Stripe 社の安全な決済基盤を通じて処理されます。カード情報は当社サーバーに保存されません。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>支払時期</th>
-          <td>
-            ご注文確定時（「注文を確定する」ボタンをクリックした時点）にお支払いが確定します。<br>
-            <small>※クレジットカードの引き落とし日はカード会社の規定に準じます。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>商品の引渡し<br>時期</th>
-          <td>
-            ご注文確定後、<strong>7〜14営業日以内に発送</strong>いたします。<br>
-            発送後、国内配送で1〜3日でお届けします。<br>
-            <small>※すべての商品はご注文ごとに1点ずつ制作するオーダーメイド品です。繁忙期には通常より日数をいただく場合がございます。</small><br>
-            <small>※発送完了時にメールでお知らせいたします。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>申込みの有効期限</th>
-          <td>
-            特に期限はありません。注文画面にて「注文を確定する」ボタンをクリックした時点で契約が成立します。<br>
-            <small>※キャンペーン・クーポン等には個別に有効期限が設定される場合があります。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>返品・交換に<br>ついて</th>
-          <td>
-            <strong>【返品・交換条件】</strong><br>
-            商品はお客様のペット写真をもとに1点ずつ制作するオーダーメイド品のため、<strong>お客様都合による返品・交換はお受けできません。</strong><br><br>
-            <strong>【返品・交換が可能な場合】</strong><br>
-            以下に該当する場合は、商品の交換または全額返金にて対応いたします。<br>
-            ・商品に破損・汚損・印刷不良などの初期不良があった場合<br>
-            ・ご注文内容と異なる商品が届いた場合<br><br>
-            <strong>【返品の方法・期限】</strong><br>
-            商品到着後<strong>7日以内</strong>に、メール（<a href="mailto:info@deer.gift">info@deer.gift</a>）にてご連絡ください。商品の写真をお送りいただき、確認後に交換品の発送または返金手続きを行います。<br><br>
-            <strong>【返品送料】</strong><br>
-            初期不良・誤配送の場合：当社負担<br>
-            <small>※返品の際は着払いにてお送りください。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>契約の解除<br>（キャンセル）</th>
-          <td>
-            <strong>【キャンセル方法】</strong><br>
-            メール（<a href="mailto:info@deer.gift">info@deer.gift</a>）にて注文番号をお知らせください。<br><br>
-            <strong>【キャンセル条件】</strong><br>
-            ・注文確定後、<strong>制作開始前</strong>であればキャンセル可能です（全額返金）。<br>
-            ・制作開始後のキャンセルはお受けできません。<br>
-            <small>※通常、注文確定から24時間以内に制作を開始します。キャンセルはお早めにご連絡ください。</small>
-          </td>
-        </tr>
-        <tr>
-          <th>動作環境</th>
-          <td>
-            本サービスはウェブブラウザ上でご利用いただくサービスです。<br>
-            推奨環境：Google Chrome・Safari・Firefox・Microsoft Edge（いずれも最新バージョン）<br>
-            対応デバイス：スマートフォン・タブレット・PC
-          </td>
-        </tr>
-        <tr>
-          <th>特別条件</th>
-          <td>
-            ・本サービスにおける商品はすべて受注生産（オーダーメイド）です。<br>
-            ・商品画像はAI技術を用いて生成されます。生成結果はスタイルや元写真により異なります。<br>
-            ・定期購入（サブスクリプション）は行っておりません。すべて都度購入です。
-          </td>
-        </tr>
-      </table>
+    <!-- HERO -->
+    <div class="page-hero">
+      <h1>特定商取引法に基づく表記</h1>
+      <p>Act on Specified Commercial Transactions</p>
     </div>
 
-    <p class="note">
-      ※ 本表記は、特定商取引法（特定商取引に関する法律）第11条に基づき記載しています。<br>
-      ※ 価格・サービス内容は予告なく変更される場合があります。最新情報は各商品ページをご確認ください。
-    </p>
-  </div>
+    <!-- CONTENT -->
+    <div class="container">
+      <div class="table-wrap">
+        <table>
+          <tr>
+            <th>販売業者</th>
+            <td>
+              株式会社九地良（くじら）<br /><small
+                >法人番号: 7120001063093</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>運営統括責任者</th>
+            <td>田中 実（代表取締役）</td>
+          </tr>
+          <tr>
+            <th>所在地</th>
+            <td>
+              〒550-0005<br />
+              大阪府大阪市西区西本町1丁目15番6号 西本町ビル4階
+            </td>
+          </tr>
+          <tr>
+            <th>電話番号</th>
+            <td>
+              0120-840-946<br />
+              <small>（受付時間：平日 10:00〜18:00 ※土日祝日を除く）</small>
+            </td>
+          </tr>
+          <tr>
+            <th>メールアドレス</th>
+            <td>
+              <a href="mailto:info@deer.gift">info@deer.gift</a><br /><small
+                >（24時間受付・2営業日以内に返信）</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>ウェブサイト</th>
+            <td>
+              <a href="https://custom.deer.gift" target="_blank"
+                >https://custom.deer.gift</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>販売価格<br />（税込表示）</th>
+            <td>
+              各商品の注文画面に表示される価格（すべて消費税込み・送料込み）<br /><br />
+              <table
+                style="
+                  width: 100%;
+                  font-size: 0.82rem;
+                  border-collapse: collapse;
+                "
+              >
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">Tシャツ</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥4,980〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">パーカー</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥7,980〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">マグカップ</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥3,480〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">スマホケース</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥4,980〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">アートポスター</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥5,480〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">ポストカード（5枚）</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥1,980〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">ステッカー</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥1,980〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">刺繍キャップ</td>
+                  <td style="text-align: right; padding: 0.2rem 0">¥4,980〜</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee">
+                  <td style="padding: 0.2rem 0">刺繍パーカー</td>
+                  <td style="text-align: right; padding: 0.2rem 0">
+                    ¥12,980〜
+                  </td>
+                </tr>
+                <tr style="border-top: 2px solid var(--gold)">
+                  <td style="padding: 0.4rem 0; font-weight: 600">
+                    虹の橋メモリアル動画（デジタル商品）
+                  </td>
+                  <td
+                    style="
+                      text-align: right;
+                      padding: 0.4rem 0;
+                      font-weight: 600;
+                    "
+                  >
+                    ¥1,980
+                  </td>
+                </tr>
+              </table>
+              <small
+                >※物理商品はオプション（プリント配置・複数頭対応）により価格が変動します。最終金額は注文確定画面に表示されます。<br />※虹の橋メモリアル動画は固定価格です。運営コスト（AI生成費・決済手数料）を除いた全額を一般社団法人愛玩動物健康管理協会（CAHA）に寄付します。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>販売数量</th>
+            <td>各商品1点から注文可能。在庫制限なし（受注生産）。</td>
+          </tr>
+          <tr>
+            <th>商品以外の<br />必要料金</th>
+            <td>
+              <strong>配送料：全品送料無料</strong><br />
+              その他の追加料金はかかりません。<br />
+              <small>※表示価格には消費税が含まれています。</small>
+            </td>
+          </tr>
+          <tr>
+            <th>支払方法</th>
+            <td>
+              クレジットカード（Visa・Mastercard・American Express・JCB）<br />
+              Apple Pay / Google Pay<br />
+              <small
+                >※すべての決済は Stripe
+                社の安全な決済基盤を通じて処理されます。カード情報は当社サーバーに保存されません。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>支払時期</th>
+            <td>
+              ご注文確定時（「注文を確定する」ボタンをクリックした時点）にお支払いが確定します。<br />
+              <small
+                >※クレジットカードの引き落とし日はカード会社の規定に準じます。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>商品の引渡し<br />時期</th>
+            <td>
+              <strong>【物理商品（グッズ）】</strong><br />
+              ご注文確定後、<strong>7〜14営業日以内に発送</strong>いたします。<br />
+              発送後、国内配送で1〜3日でお届けします。<br />
+              <small
+                >※すべての商品はご注文ごとに1点ずつ制作するオーダーメイド品です。繁忙期には通常より日数をいただく場合がございます。</small
+              ><br />
+              <small>※発送完了時にメールでお知らせいたします。</small
+              ><br /><br />
+              <strong>【デジタル商品（虹の橋メモリアル動画）】</strong><br />
+              決済完了後、AI動画生成を開始します。<strong>通常1〜2分で完了</strong>し、画面上でダウンロード可能になります。<br />
+              <small
+                >※AI生成のため、まれに生成に失敗する場合があります。その場合は無料で再生成いたします。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>申込みの有効期限</th>
+            <td>
+              特に期限はありません。注文画面にて「注文を確定する」ボタンをクリックした時点で契約が成立します。<br />
+              <small
+                >※キャンペーン・クーポン等には個別に有効期限が設定される場合があります。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>返品・交換に<br />ついて</th>
+            <td>
+              <strong>【返品・交換条件】</strong><br />
+              商品はお客様のペット写真をもとに1点ずつ制作するオーダーメイド品のため、<strong
+                >お客様都合による返品・交換はお受けできません。</strong
+              ><br /><br />
+              <strong>【返品・交換が可能な場合】</strong><br />
+              以下に該当する場合は、商品の交換または全額返金にて対応いたします。<br />
+              ・商品に破損・汚損・印刷不良などの初期不良があった場合<br />
+              ・ご注文内容と異なる商品が届いた場合<br /><br />
+              <strong>【返品の方法・期限】</strong><br />
+              商品到着後<strong>7日以内</strong>に、メール（<a
+                href="mailto:info@deer.gift"
+                >info@deer.gift</a
+              >）にてご連絡ください。商品の写真をお送りいただき、確認後に交換品の発送または返金手続きを行います。<br /><br />
+              <strong>【返品送料】</strong><br />
+              初期不良・誤配送の場合：当社負担<br />
+              <small>※返品の際は着払いにてお送りください。</small><br /><br />
+              <strong>【デジタル商品（虹の橋メモリアル動画）の返金】</strong
+              ><br />
+              AI生成の性質上、生成結果にご満足いただけない場合は<strong>1回まで無料で再生成</strong>いたします。<br />
+              再生成後もご満足いただけない場合は、メール（<a
+                href="mailto:info@deer.gift"
+                >info@deer.gift</a
+              >）にてご連絡ください。個別に対応いたします。<br />
+              <small
+                >※料金のうち寄付済みの金額は返金対象外となる場合があります。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>契約の解除<br />（キャンセル）</th>
+            <td>
+              <strong>【キャンセル方法】</strong><br />
+              メール（<a href="mailto:info@deer.gift">info@deer.gift</a
+              >）にて注文番号をお知らせください。<br /><br />
+              <strong>【キャンセル条件】</strong><br />
+              ・注文確定後、<strong>制作開始前</strong>であればキャンセル可能です（全額返金）。<br />
+              ・制作開始後のキャンセルはお受けできません。<br />
+              <small
+                >※通常、注文確定から24時間以内に制作を開始します。キャンセルはお早めにご連絡ください。</small
+              >
+            </td>
+          </tr>
+          <tr>
+            <th>動作環境</th>
+            <td>
+              本サービスはウェブブラウザ上でご利用いただくサービスです。<br />
+              推奨環境：Google Chrome・Safari・Firefox・Microsoft
+              Edge（いずれも最新バージョン）<br />
+              対応デバイス：スマートフォン・タブレット・PC
+            </td>
+          </tr>
+          <tr>
+            <th>特別条件</th>
+            <td>
+              ・本サービスにおける商品はすべて受注生産（オーダーメイド）です。<br />
+              ・商品画像はAI技術を用いて生成されます。生成結果はスタイルや元写真により異なります。<br />
+              ・定期購入（サブスクリプション）は行っておりません。すべて都度購入です。
+            </td>
+          </tr>
+        </table>
+      </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-links">
-      <a href="tokushoho">特定商取引法</a>
-      <a href="privacy">プライバシーポリシー</a>
-      <a href="terms">利用規約</a>
-      <a href="mailto:info@deer.gift">お問い合わせ</a>
+      <p class="note">
+        ※
+        本表記は、特定商取引法（特定商取引に関する法律）第11条に基づき記載しています。<br />
+        ※
+        価格・サービス内容は予告なく変更される場合があります。最新情報は各商品ページをご確認ください。
+      </p>
     </div>
-    &copy; 2026 Deer. All rights reserved.
-  </footer>
 
-</body>
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-links">
+        <a href="tokushoho">特定商取引法</a>
+        <a href="privacy">プライバシーポリシー</a>
+        <a href="terms">利用規約</a>
+        <a href="mailto:info@deer.gift">お問い合わせ</a>
+      </div>
+      &copy; 2026 Deer. All rights reserved.
+    </footer>
+  </body>
 </html>

@@ -14,11 +14,11 @@
     />
     <meta
       property="og:description"
-      content="5〜10枚の写真からAIが愛犬のメモリアル動画を生成。運営コストを除いた全額を寄付。"
+      content="愛犬のベストショット1枚からAIがメモリアル動画を生成。運営コストを除いた全額を寄付。"
     />
     <meta
       property="og:image"
-      content="https://custom.deer.gift/img/hero-dog.jpg"
+      content="https://custom.deer.gift/memorial/photo-rainbow.jpg"
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -27,6 +27,7 @@
       href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&family=Nunito:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script type="module" src="../js/auth-config.js"></script>
     <script src="../js/auth-modal.js" defer></script>
@@ -456,7 +457,7 @@
         display: flex;
       }
       .donation-bar-api {
-        width: 25%;
+        width: 21%;
         background: var(--memorial-blue);
         display: flex;
         align-items: center;
@@ -466,7 +467,7 @@
         font-weight: 600;
       }
       .donation-bar-fee {
-        width: 8%;
+        width: 4%;
         background: var(--warm-gray);
         display: flex;
         align-items: center;
@@ -770,6 +771,15 @@
         .donation-grid {
           grid-template-columns: 1fr;
         }
+        .sample [style*="grid-template-columns"] {
+          grid-template-columns: 1fr !important;
+          gap: 16px !important;
+        }
+        .sample
+          [style*="grid-template-columns"]
+          > div[style*="font-size: 2rem"] {
+          transform: rotate(90deg);
+        }
         .hero {
           min-height: auto;
           padding: 100px 20px 60px;
@@ -964,7 +974,7 @@
             </div>
             <h3>写真から動画へ</h3>
             <p>
-              5〜10枚のベストショットをアップロード。AIが愛犬の姿を捉え、自然に動くメモリアル動画を生成します。
+              お気に入りの1枚をアップロード。AIが愛犬の姿を捉え、自然に動くメモリアル動画を生成します。
             </p>
           </div>
           <div class="concept-card">
@@ -1048,7 +1058,7 @@
             /></span>
             <h3>写真をアップロード</h3>
             <p>
-              愛犬のベストショットを5〜10枚アップロード。正面・横・全身など様々なアングルがあると、よりリアルな動画に。
+              愛犬のベストショットを1枚アップロード。正面の写真がおすすめです。
             </p>
           </div>
           <div class="step">
@@ -1198,16 +1208,20 @@
           <div class="pricing-price">¥1,980<span>（税込）</span></div>
           <p class="pricing-note">メモリアル動画 1本</p>
           <ul class="pricing-list">
-            <li>写真5〜10枚からAI動画生成（約30秒）</li>
+            <li>写真1枚からAI動画生成（約5秒の動画）</li>
             <li>BGM＋テキスト付きメモリアル版</li>
             <li>高画質ダウンロード（MP4）</li>
             <li>生成し直し 1回無料</li>
             <li>寄付証明レポート送付</li>
           </ul>
           <a
-            href="#"
-            class="btn-primary"
+            href="#pricing"
+            class="btn-primary start-memorial"
             style="width: 100%; justify-content: center"
+            onclick="
+              event.preventDefault();
+              openApp();
+            "
           >
             メモリアル動画を作る →
           </a>
@@ -1219,7 +1233,7 @@
             </div>
             <div class="pricing-breakdown-row">
               <span>決済手数料（Stripe 3.6%）</span>
-              <span>約 ¥72</span>
+              <span>約 ¥71</span>
             </div>
             <div class="pricing-breakdown-row">
               <span>システム運営費</span>
@@ -1244,7 +1258,7 @@
             <button class="faq-q">写真は何枚必要ですか？</button>
             <div class="faq-a">
               <div class="faq-a-inner">
-                5〜10枚のベストショットをご用意ください。正面・横・全身・アップなど異なるアングルの写真があると、AIがより自然な動画を生成できます。スマホの写真フォルダからお気に入りを選ぶだけでOKです。
+                お気に入りの1枚をご用意ください。正面からの写真がおすすめです。顔がはっきり写っている写真ほど、AIがより自然な動画を生成できます。スマホの写真フォルダからベストショットを選ぶだけでOKです。
               </div>
             </div>
           </div>
@@ -1923,7 +1937,7 @@
           <a href="../tokushoho">特定商取引法に基づく表示</a>
         </div>
         <div class="footer-copy">
-          &copy; 2025 Deer — 国内生産鹿肉フレッシュドッグフード
+          &copy; 2026 Deer — 国内生産鹿肉フレッシュドッグフード
         </div>
       </div>
     </footer>
@@ -2171,6 +2185,7 @@
           appState.orderId = orderId;
 
           // 2. Confirm payment
+          let confirmedPaymentIntentId = null;
           if (clientSecret) {
             const { error, paymentIntent } =
               await appState.stripe.confirmCardPayment(clientSecret, {
@@ -2182,6 +2197,7 @@
               btn.textContent = "¥1,980 を支払って動画を生成する";
               return;
             }
+            confirmedPaymentIntentId = paymentIntent.id;
           }
 
           // 3. Create order record
@@ -2192,12 +2208,17 @@
             }),
             body: JSON.stringify({
               orderId: appState.orderId,
-              paymentIntentId: clientSecret ? "from_stripe" : null,
+              paymentIntentId: confirmedPaymentIntentId,
               productName: "虹の橋メモリアル動画",
               item: "memorial-video",
               amount: 1980,
             }),
           });
+          if (!orderRes.ok) {
+            const orderErr = await orderRes.json().catch(() => ({}));
+            console.error("create-order error:", orderErr);
+            // 決済は成功しているので動画生成は続行（注文記録は後で手動対応可能）
+          }
 
           // 4. Start video generation
           goToStep(4);
@@ -2274,12 +2295,11 @@
 
       async function pollGeneration(predictionId) {
         const INTERVAL = 3000;
-        const MAX = 60; // 3分
+        const MAX = 60;
         let polls = 0;
         return new Promise((resolve, reject) => {
-          const timer = setInterval(async () => {
+          async function tick() {
             if (polls > MAX) {
-              clearInterval(timer);
               reject(new Error("タイムアウト"));
               return;
             }
@@ -2290,25 +2310,28 @@
               });
               if (!r.ok) {
                 polls++;
+                setTimeout(tick, INTERVAL);
                 return;
               }
               const d = await r.json();
               if (d.status === "succeeded" && d.outputUrl) {
-                clearInterval(timer);
                 resolve(d.outputUrl);
-              } else if (d.status === "failed" || d.status === "canceled") {
-                clearInterval(timer);
-                reject(new Error(d.error || "生成に失敗しました"));
-              } else {
-                polls++;
-                const sec = Math.round((polls * INTERVAL) / 1000);
-                document.getElementById("gen-status").textContent =
-                  "生成中... (" + sec + "秒経過)";
+                return;
               }
+              if (d.status === "failed" || d.status === "canceled") {
+                reject(new Error(d.error || "生成に失敗しました"));
+                return;
+              }
+              polls++;
+              const sec = Math.round((polls * INTERVAL) / 1000);
+              document.getElementById("gen-status").textContent =
+                "生成中... (" + sec + "秒経過)";
             } catch {
               polls++;
             }
-          }, INTERVAL);
+            setTimeout(tick, INTERVAL);
+          }
+          setTimeout(tick, INTERVAL);
         });
       }
     </script>
