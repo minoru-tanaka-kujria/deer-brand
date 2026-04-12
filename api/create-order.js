@@ -39,6 +39,7 @@ function normalizeCheckoutItem(body, fallbackItem) {
       : Array.isArray(source.petNames)
         ? source.petNames
         : [],
+    style: body?.style ?? body?.styleId ?? source.style ?? null,
   };
 }
 
@@ -211,6 +212,7 @@ export default async function handler(req, res) {
           productName: item.productName,
           placement: item.placementName,
           placementId: item.placementId,
+          style: item.style,
           color: item.colorId,
           size: item.size,
           petCount: item.petCount,

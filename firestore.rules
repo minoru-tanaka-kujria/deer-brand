@@ -21,7 +21,7 @@ service cloud.firestore {
 
     // 注文: 本人のみ読み可、書き込みはサーバーAPIのみ（Admin SDK）
     match /orders/{orderId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read: if request.auth != null && (request.auth.uid == resource.data.uid || request.auth.uid == resource.data.userId);
       allow write: if false; // Admin SDKのみ
     }
 
@@ -33,7 +33,7 @@ service cloud.firestore {
 
     // クーポン使用履歴: Admin SDKのみ
     match /couponUsage/{docId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read: if request.auth != null && (request.auth.uid == resource.data.uid || request.auth.uid == resource.data.userId);
       allow write: if false;
     }
   }
