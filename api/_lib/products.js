@@ -104,6 +104,14 @@ export const PRODUCTS = {
       { id: "back", name: "バック刺繍", price: 3000 },
     ],
   },
+  "memorial-video": {
+    name: "虹の橋メモリアル動画",
+    base: 1980,
+    sizes: [],
+    colors: [],
+    placements: [{ id: "default", name: "メモリアル動画", price: 0 }],
+    isDigital: true,
+  },
 };
 
 export const PET_COUNT_PRICES = {
@@ -124,7 +132,7 @@ function resolveProduct(item) {
 function resolvePlacement(product, placementInput) {
   const placementValue =
     typeof placementInput === "object" && placementInput !== null
-      ? placementInput.id ?? placementInput.name
+      ? (placementInput.id ?? placementInput.name)
       : placementInput;
 
   const placement = product.placements.find(
@@ -172,7 +180,10 @@ export function calculateTotal({
   resolveSize(product, size);
 
   const normalizedPetCount = Number(petCount);
-  if (!Number.isInteger(normalizedPetCount) || !(normalizedPetCount in PET_COUNT_PRICES)) {
+  if (
+    !Number.isInteger(normalizedPetCount) ||
+    !(normalizedPetCount in PET_COUNT_PRICES)
+  ) {
     throw new Error("INVALID_PET_COUNT");
   }
 

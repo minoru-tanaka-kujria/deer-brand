@@ -258,6 +258,51 @@ export default async function handler(req, res) {
       }
     }
 
+    // ── メモリアル動画モード（Seedance 2.0）──────────────────
+    if (mode === "memorial-video") {
+      if (!photoDataUrl) {
+        return res.status(400).json({ error: "写真が必要です" });
+      }
+      const MEMORIAL_VIDEO_PROMPTS = {
+        "wag-tail":
+          "The dog turns its head slightly, blinks its eyes gently, and wags its tail happily. Warm natural sunlight, gentle breeze ruffling its fur. The dog looks content and peaceful.",
+        "look-around":
+          "The dog looks around curiously, turning its head left and right, ears perking up. Natural outdoor setting with warm golden light.",
+        run: "The dog starts running joyfully across the field, tongue out, ears flapping. Beautiful golden hour sunlight, soft bokeh background.",
+        sleep:
+          "The dog is sleeping peacefully, breathing softly, occasionally twitching its paws as if dreaming. Warm cozy atmosphere with soft light.",
+        smile:
+          "The dog looks directly at the camera with a happy smile, tongue slightly out, eyes sparkling. Warm natural light, shallow depth of field.",
+      };
+      const videoPrompt =
+        body.videoPrompt ||
+        MEMORIAL_VIDEO_PROMPTS[body.action] ||
+        MEMORIAL_VIDEO_PROMPTS["wag-tail"];
+      try {
+        const { id } = await createPrediction({
+          token,
+          model: "bytedance/seedance-1-lite",
+          input: {
+            image: photoDataUrl,
+            prompt: videoPrompt,
+            duration: 5,
+          },
+        });
+        // Firestoreに生成記録を保存
+        const db = getFirestore(getAdminApp());
+        await db.collection("memorial_generations").add({
+          uid: authUser.uid,
+          predictionId: id,
+          action: body.action || "wag-tail",
+          createdAt: new Date(),
+        });
+        return res.json({ predictionId: id });
+      } catch (error) {
+        console.error("[generate-art/memorial-video] Replicate error:", error);
+        return res.status(502).json({ error: "動画を生成できませんでした" });
+      }
+    }
+
     // ── テキスト→画像モード（背景サンプル生成用）──────────────
     if (mode === "txt2img") {
       const txt2imgPrompts = {
