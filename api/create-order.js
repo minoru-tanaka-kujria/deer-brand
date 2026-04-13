@@ -8,6 +8,13 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { calculateTotal } from "./_lib/products.js";
 
+// モジュールスコープでキャッシュ
+const _stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY.trim(), {
+      apiVersion: "2024-04-10",
+    })
+  : null;
+
 const STATUS_ORDER = {
   pending_payment: 0,
   paid: 1,
@@ -104,10 +111,12 @@ export default async function handler(req, res) {
   }
 
   const db = getFirestore(getAdminApp());
-  const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2024-04-10",
-    httpClient: Stripe.createNodeHttpClient(),
-  });
+  const stripe =
+    _stripe ??
+    new Stripe(stripeSecretKey, {
+      apiVersion: "2024-04-10",
+      httpClient: Stripe.createNodeHttpClient(),
+    });
 
   try {
     let paymentIntent = null;

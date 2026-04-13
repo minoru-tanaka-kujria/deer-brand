@@ -7,6 +7,13 @@ import Stripe from "stripe";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp } from "./_lib/auth.js";
 
+// モジュールスコープでキャッシュ
+const _stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY.trim(), {
+      apiVersion: "2024-04-10",
+    })
+  : null;
+
 export const config = {
   api: {
     bodyParser: false,
@@ -85,7 +92,8 @@ export default async function handler(req, res) {
 
   let event;
   try {
-    const stripe = new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
+    const stripe =
+      _stripe ?? new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (error) {
     console.error("[stripe-webhook] signature verification error:", error);

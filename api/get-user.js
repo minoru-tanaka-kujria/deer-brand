@@ -14,6 +14,13 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { getAdminApp } from "./_lib/auth.js";
 
+// モジュールスコープでキャッシュ
+const _stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY.trim(), {
+      apiVersion: "2024-04-10",
+    })
+  : null;
+
 export default async function handler(req, res) {
   const ALLOWED_ORIGINS = [
     "https://custom.deer.gift",
@@ -111,9 +118,8 @@ export default async function handler(req, res) {
 
     if (stripeSecretKey && user.stripeCustomerId) {
       try {
-        const stripe = new Stripe(stripeSecretKey, {
-          apiVersion: "2024-04-10",
-        });
+        const stripe =
+          _stripe ?? new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
         const pmList = await stripe.paymentMethods.list({
           customer: user.stripeCustomerId,
           type: "card",

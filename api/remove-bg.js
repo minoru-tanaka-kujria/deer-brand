@@ -48,18 +48,21 @@ export default async function handler(req, res) {
 
   const db = getFirestore(getAdminApp());
   try {
-    await consumeRateLimit(
-      db,
-      `remove_bg_uid_${authUser.uid}`,
-      RATE_LIMIT,
-      RATE_WINDOW_MS,
-    );
-    await consumeRateLimit(
-      db,
-      `remove_bg_ip_${getClientIp(req)}`,
-      RATE_LIMIT,
-      RATE_WINDOW_MS,
-    );
+    // UID・IP のレートリミットを並列チェック
+    await Promise.all([
+      consumeRateLimit(
+        db,
+        `remove_bg_uid_${authUser.uid}`,
+        RATE_LIMIT,
+        RATE_WINDOW_MS,
+      ),
+      consumeRateLimit(
+        db,
+        `remove_bg_ip_${getClientIp(req)}`,
+        RATE_LIMIT,
+        RATE_WINDOW_MS,
+      ),
+    ]);
   } catch (error) {
     console.error("[remove-bg] rate limit error:", error);
     return res

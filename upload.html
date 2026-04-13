@@ -15,10 +15,10 @@
       name="description"
       content="ペットの写真をアップロードして注文を開始"
     />
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <script src="js/auth-modal.js" defer></script>
     <script type="module" src="js/auth-config.js"></script>
-    <script src="js/auth-modal.js"></script>
+    <!-- Stripe: 支払いステップに到達したときだけロード（レンダーブロッキング回避） -->
+    <!-- heic2any: 写真アップロード時に動的ロード（レンダーブロッキング回避） -->
     <style>
       :root {
         --ivory: #faf7f2;
@@ -5455,10 +5455,19 @@
       // 各フィールドの完了状態
       const _cardFieldComplete = { number: false, expiry: false, cvc: false };
 
-      function initStripe() {
-        if (typeof Stripe === "undefined") return;
+      async function initStripe() {
         if (cardNumberElement) return; // 二重初期化防止
-        // auth-config.js から注入された公開鍵を使用（firebase-config.js の値）
+        // Stripe.js を動的ロード（初回のみ）
+        if (typeof Stripe === "undefined") {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement("script");
+            s.src = "https://js.stripe.com/v3/";
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        // auth-config.js から注入された公開鍵を使用
         const stripeKey = window._deerStripeKey;
         if (!stripeKey) {
           // auth-config.js がまだ完了していない場合はリトライ
@@ -6330,6 +6339,17 @@
         if (isHeic) {
           showToast("📷 HEICファイルを変換中...", "info");
           try {
+            // heic2any を動的ロード（HEICファイルを開いた時だけ）
+            if (typeof heic2any === "undefined") {
+              await new Promise((resolve, reject) => {
+                const s = document.createElement("script");
+                s.src =
+                  "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+                s.onload = resolve;
+                s.onerror = reject;
+                document.head.appendChild(s);
+              });
+            }
             const converted = await heic2any({
               blob: file,
               toType: "image/jpeg",

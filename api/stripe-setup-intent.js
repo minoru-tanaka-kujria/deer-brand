@@ -8,6 +8,13 @@ import Stripe from "stripe";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 
+// モジュールスコープでキャッシュ
+const _stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY.trim(), {
+      apiVersion: "2024-04-10",
+    })
+  : null;
+
 export default async function handler(req, res) {
   const ALLOWED_ORIGINS = [
     "https://custom.deer.gift",
@@ -47,7 +54,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const stripe = new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
+    const stripe =
+      _stripe ?? new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
     const db = getFirestore(getAdminApp());
     const userRef = db.collection("users").doc(authUser.uid);
     const userSnap = await userRef.get();
