@@ -263,12 +263,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const stripe =
-      _stripe ??
-      new Stripe(stripeSecretKey, {
-        apiVersion: "2024-04-10",
-        httpClient: Stripe.createNodeHttpClient(),
-      });
+    const stripe = _stripe; // CONFIG_ERROR チェック済みなので必ず非null
 
     const userSnap = await db.collection("users").doc(authUser.uid).get();
     const customerId = userSnap.exists

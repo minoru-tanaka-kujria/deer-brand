@@ -110,8 +110,7 @@ export default async function handler(req, res) {
 
     if (stripeSecretKey && user.stripeCustomerId) {
       try {
-        const stripe =
-          _stripe ?? new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
+        const stripe = _stripe; // STRIPE_SECRET_KEY が存在する場合のみ到達するため必ず非null
         const pmList = await stripe.paymentMethods.list({
           customer: user.stripeCustomerId,
           type: "card",

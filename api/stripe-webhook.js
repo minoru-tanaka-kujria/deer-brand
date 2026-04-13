@@ -92,8 +92,7 @@ export default async function handler(req, res) {
 
   let event;
   try {
-    const stripe =
-      _stripe ?? new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
+    const stripe = _stripe; // CONFIG_ERROR チェック済みなので必ず非null
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (error) {
     console.error("[stripe-webhook] signature verification error:", error);
