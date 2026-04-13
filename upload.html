@@ -5224,8 +5224,11 @@
         const frameOpt =
           FRAME_OPTIONS.find((f) => f.id === state.selectedFrame) ||
           FRAME_OPTIONS[0];
-        const rawUrl = state.rawArtUrl || state.generatedArtUrl;
+        const rawUrl =
+          state.rawArtUrl || state.generatedArtUrl || state.finalArtUrl;
         if (!rawUrl) return;
+        // 元画像を記録（フレーム切り替え時に再合成できるよう）
+        if (!state.rawArtUrl) state.rawArtUrl = rawUrl;
 
         const mockupImg = document.getElementById("mockupImg");
         try {
@@ -5331,7 +5334,8 @@
           </div>`,
         ).join("");
 
-        const rawUrl = state.rawArtUrl || state.generatedArtUrl;
+        const rawUrl =
+          state.rawArtUrl || state.generatedArtUrl || state.finalArtUrl;
         if (rawUrl) {
           FRAME_OPTIONS.forEach((f) => renderFrameThumb(f, rawUrl));
         }
@@ -8985,6 +8989,7 @@
       function buildTextOrderStep() {
         buildArtFontGrid();
         buildTextPositionGrid();
+        buildFrameOptions(); // フレーム・ワッペン選択UIを更新
         // Restore artText
         const inp = document.getElementById("artTextInput");
         if (inp) inp.value = state.artText || "";
