@@ -4387,6 +4387,145 @@
             制作には通常3〜5営業日かかります。<br />
             完成次第、発送のご連絡をいたします。
           </p>
+
+          <!-- シェア&クーポン -->
+          <div
+            id="shareSection"
+            style="
+              margin-top: 1.8rem;
+              padding: 1.2rem 1rem;
+              background: var(--cream);
+              border-radius: 14px;
+              border: 1px solid var(--border);
+              text-align: center;
+            "
+          >
+            <p
+              style="
+                font-size: 0.8rem;
+                color: var(--text-mid);
+                margin-bottom: 0.2rem;
+                font-weight: 600;
+              "
+            >
+              シェアで次回500円OFF
+            </p>
+            <p
+              style="
+                font-size: 0.72rem;
+                color: var(--text-light);
+                margin-bottom: 1rem;
+              "
+            >
+              SNSでシェアするとクーポンコードが発行されます
+            </p>
+            <div
+              style="
+                display: flex;
+                gap: 0.6rem;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button
+                onclick="shareOnX()"
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 0.4rem;
+                  padding: 0.55rem 1.1rem;
+                  background: #000;
+                  color: #fff;
+                  border: none;
+                  border-radius: 8px;
+                  font-size: 0.78rem;
+                  cursor: pointer;
+                  font-family: var(--sans);
+                "
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                  />
+                </svg>
+                X（Twitter）
+              </button>
+              <button
+                onclick="shareOnLine()"
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 0.4rem;
+                  padding: 0.55rem 1.1rem;
+                  background: #06c755;
+                  color: #fff;
+                  border: none;
+                  border-radius: 8px;
+                  font-size: 0.78rem;
+                  cursor: pointer;
+                  font-family: var(--sans);
+                "
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M12 2C6.48 2 2 6.21 2 11.4c0 3.38 1.93 6.36 4.84 8.07L6 22l2.86-1.5c.99.27 2.04.41 3.14.41 5.52 0 10-4.21 10-9.4S17.52 2 12 2z"
+                  />
+                </svg>
+                LINE
+              </button>
+            </div>
+            <div
+              id="shareCouponResult"
+              style="
+                display: none;
+                margin-top: 1rem;
+                padding: 0.6rem 1rem;
+                background: var(--white);
+                border-radius: 8px;
+                border: 1.5px dashed var(--gold);
+              "
+            >
+              <p
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-mid);
+                  margin-bottom: 0.2rem;
+                "
+              >
+                クーポンコードが発行されました
+              </p>
+              <div
+                id="shareCouponCode"
+                style="
+                  font-size: 1.1rem;
+                  font-family: monospace;
+                  font-weight: 700;
+                  color: var(--gold);
+                  letter-spacing: 2px;
+                "
+              ></div>
+              <p
+                style="
+                  font-size: 0.65rem;
+                  color: var(--text-light);
+                  margin-top: 0.2rem;
+                "
+              >
+                マイページで確認できます
+              </p>
+            </div>
+          </div>
+
           <a
             href="index.html"
             class="btn-primary"
@@ -4394,7 +4533,7 @@
               display: inline-block;
               width: auto;
               padding: 0.8rem 2.5rem;
-              margin-top: 2rem;
+              margin-top: 1.5rem;
               text-decoration: none;
             "
             >トップページに戻る</a
@@ -5048,6 +5187,52 @@
         checkDraftBanner();
       }
 
+      // artId から Firestore のアートを読み込み、写真ステップをスキップする
+      async function loadArtFromFirestore(artId) {
+        // auth が確立するまで最大3秒待つ
+        let waited = 0;
+        while (!window._currentUser && waited < 3000) {
+          await new Promise((r) => setTimeout(r, 200));
+          waited += 200;
+        }
+        const uid = window._currentUser?.uid;
+        if (!uid) {
+          // 未ログインならルックブックへ（アートは使えない）
+          showStep("lookbook");
+          return;
+        }
+        try {
+          const { doc, getDoc } =
+            await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const db = window._deerFirebaseDb;
+          const snap = await getDoc(doc(db, "users", uid, "arts", artId));
+          if (!snap.exists()) throw new Error("art not found");
+          const art = snap.data();
+          // アートを state に設定し写真・生成ステップをスキップ
+          state.generatedArtUrl = art.url;
+          state.selectedStyleUrl = art.url;
+          state.finalArtUrl = art.url;
+          state.selectedStyle = art.style || "";
+          state.photoDataUrl = art.url;
+          // スタイル選択済みとしてアイテム選択へ
+          state.fromStylePage = true;
+          buildItemSelect(art.style || "");
+          showStep("item-select");
+          buildProgress();
+          showToast(
+            "マイアートを読み込みました。商品を選んでください。",
+            "success",
+          );
+        } catch (e) {
+          console.warn("[loadArtFromFirestore] 失敗:", e.message);
+          showToast(
+            "アートの読み込みに失敗しました。最初から選び直してください。",
+            "error",
+          );
+          showStep("lookbook");
+        }
+      }
+
       function handleUrlParams() {
         const params = new URLSearchParams(window.location.search);
         const item = params.get("item") || params.get("product"); // product-detail.htmlはproduct=で渡す
@@ -5055,6 +5240,14 @@
         const placement = params.get("placement");
         const color = params.get("color");
         const size = params.get("size");
+        const artId = params.get("artId");
+
+        // artId: マイアートから再注文 — アートをFirestoreから読み込み写真ステップをスキップ
+        if (artId) {
+          state.preloadArtId = artId;
+          loadArtFromFirestore(artId);
+          return;
+        }
 
         if (style && !item) {
           // Coming from art-styles: show item selection step
@@ -6978,6 +7171,28 @@
         showStep("complete");
         document.querySelector(".progress-bar").style.display = "none";
 
+        // Firestoreにアートを保存（マイアート機能）
+        if (userId && state.finalArtUrl) {
+          try {
+            const {
+              collection: col,
+              addDoc,
+              serverTimestamp: srvTs,
+            } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+            const db = window._deerFirebaseDb;
+            await addDoc(col(db, "users", userId, "arts"), {
+              url: state.finalArtUrl,
+              style: state.selectedStyle || "",
+              product: state.selectedItem || "",
+              orderId: serverOrderId || "",
+              createdAt: srvTs(),
+            });
+            dlog("ART", "アート保存完了", { userId });
+          } catch (e) {
+            console.warn("[completeOrder] アート保存失敗:", e.message);
+          }
+        }
+
         // ログインユーザーに住所保存確認ダイアログを表示
         const currentUser = window._currentUser;
         if (currentUser && shippingAddress && shippingAddress.address1) {
@@ -7017,6 +7232,88 @@
               }
             };
           }
+        }
+      }
+
+      // ============================================================
+      //  SOCIAL SHARE & COUPON
+      // ============================================================
+      async function issueShareCoupon() {
+        const uid = window._currentUser?.uid;
+        if (!uid) return null;
+        try {
+          const { doc, getDoc, setDoc, arrayUnion } =
+            await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const db = window._deerFirebaseDb;
+          // 既存のシェアクーポンがあれば再発行しない（連打・二重シェア防止）
+          const snap = await getDoc(doc(db, "users", uid));
+          if (snap.exists()) {
+            const existing = snap.data().availableCoupons || [];
+            const activeShare = existing.find(
+              (c) =>
+                c.description === "SNSシェア特典" &&
+                (!c.expiresAt || new Date(c.expiresAt) > new Date()),
+            );
+            if (activeShare) return activeShare.code;
+          }
+          const code =
+            "SHARE" + Math.random().toString(36).slice(2, 7).toUpperCase();
+          const expiry = new Date();
+          expiry.setDate(expiry.getDate() + 30);
+          await setDoc(
+            doc(db, "users", uid),
+            {
+              availableCoupons: arrayUnion({
+                code,
+                description: "SNSシェア特典",
+                type: "fixed",
+                discount: 500,
+                expiresAt: expiry.toISOString(),
+              }),
+            },
+            { merge: true },
+          );
+          return code;
+        } catch (e) {
+          console.warn("クーポン発行失敗:", e.message);
+          showToast(
+            "クーポンの発行に失敗しました。マイページからご確認ください。",
+            "error",
+          );
+          return null;
+        }
+      }
+
+      async function shareOnX() {
+        const text = encodeURIComponent(
+          "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾 #Deer #うちの子アート",
+        );
+        const url = encodeURIComponent("https://custom.deer.gift");
+        window.open(
+          `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+          "_blank",
+        );
+        const code = await issueShareCoupon();
+        if (code) {
+          document.getElementById("shareCouponCode").textContent = code;
+          document.getElementById("shareCouponResult").style.display = "block";
+          showToast("クーポンコードを発行しました！", "success");
+        }
+      }
+
+      async function shareOnLine() {
+        const text = encodeURIComponent(
+          "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾 https://custom.deer.gift",
+        );
+        window.open(
+          `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent("https://custom.deer.gift")}&text=${text}`,
+          "_blank",
+        );
+        const code = await issueShareCoupon();
+        if (code) {
+          document.getElementById("shareCouponCode").textContent = code;
+          document.getElementById("shareCouponResult").style.display = "block";
+          showToast("クーポンコードを発行しました！", "success");
         }
       }
 
