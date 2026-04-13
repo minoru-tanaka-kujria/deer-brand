@@ -38,7 +38,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { uid } = req.query;
+  const { uid, type } = req.query;
+
+  // /api/config の代替: ?type=config で公開設定を返す（認証不要）
+  if (type === "config") {
+    res.setHeader("Cache-Control", "public, max-age=300");
+    return res.status(200).json({
+      stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
+    });
+  }
 
   if (!uid) {
     return res.status(400).json({ error: "uid クエリパラメータは必須です" });
