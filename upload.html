@@ -5455,23 +5455,41 @@
       // 各フィールドの完了状態
       const _cardFieldComplete = { number: false, expiry: false, cvc: false };
 
-      async function initStripe() {
+      async function initStripe(_retryCount = 0) {
         if (cardNumberElement) return; // 二重初期化防止
         // Stripe.js を動的ロード（初回のみ）
         if (typeof Stripe === "undefined") {
-          await new Promise((resolve, reject) => {
-            const s = document.createElement("script");
-            s.src = "https://js.stripe.com/v3/";
-            s.onload = resolve;
-            s.onerror = reject;
-            document.head.appendChild(s);
-          });
+          try {
+            await new Promise((resolve, reject) => {
+              const s = document.createElement("script");
+              s.src = "https://js.stripe.com/v3/";
+              s.onload = resolve;
+              s.onerror = () =>
+                reject(new Error("Stripe.js の読み込みに失敗しました"));
+              document.head.appendChild(s);
+            });
+          } catch (e) {
+            console.error("[initStripe] CDN load error:", e);
+            showToast(
+              "決済システムの読み込みに失敗しました。ページを再読み込みしてください。",
+              "error",
+            );
+            return;
+          }
         }
         // auth-config.js から注入された公開鍵を使用
         const stripeKey = window._deerStripeKey;
         if (!stripeKey) {
-          // auth-config.js がまだ完了していない場合はリトライ
-          setTimeout(() => initStripe(), 200);
+          // auth-config.js がまだ完了していない場合はリトライ（最大15回 = 3秒）
+          if (_retryCount >= 15) {
+            console.error("[initStripe] _deerStripeKey not set after 3s");
+            showToast(
+              "決済システムの初期化に失敗しました。ページを再読み込みしてください。",
+              "error",
+            );
+            return;
+          }
+          setTimeout(() => initStripe(_retryCount + 1), 200);
           return;
         }
         stripe = Stripe(stripeKey);
@@ -7903,7 +7921,15 @@
         if (target) target.classList.add("active");
         // paymentステップが表示されたときStripe Elementsを初期化
         if (stepId === "payment") {
-          requestAnimationFrame(() => initStripe());
+          requestAnimationFrame(() =>
+            initStripe().catch((e) => {
+              console.error("[initStripe] unexpected error:", e);
+              showToast(
+                "決済システムの読み込みに失敗しました。ページを再読み込みしてください。",
+                "error",
+              );
+            }),
+          );
         }
       }
 

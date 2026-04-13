@@ -54,8 +54,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const stripe =
-      _stripe ?? new Stripe(stripeSecretKey, { apiVersion: "2024-04-10" });
+    const stripe = _stripe; // CONFIG_ERROR チェック済みなので必ず非null
     const db = getFirestore(getAdminApp());
     const userRef = db.collection("users").doc(authUser.uid);
     const userSnap = await userRef.get();
