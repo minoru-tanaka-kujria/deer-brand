@@ -2,7 +2,12 @@
   "cleanUrls": true,
   "functions": {
     "api/generate-art.js": { "maxDuration": 60 },
-    "api/remove-bg.js": { "maxDuration": 60 }
+    "api/remove-bg.js": { "maxDuration": 60 },
+    "api/stripe-payment-intent.js": { "maxDuration": 30 },
+    "api/create-order.js": { "maxDuration": 30 },
+    "api/stripe-webhook.js": { "maxDuration": 30 },
+    "api/stripe-setup-intent.js": { "maxDuration": 15 },
+    "api/get-user.js": { "maxDuration": 15 }
   },
   "rewrites": [{ "source": "/stamp", "destination": "/stamp/index.html" }],
   "headers": [

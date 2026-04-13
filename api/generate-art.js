@@ -186,18 +186,21 @@ export default async function handler(req, res) {
 
   const db = getFirestore(getAdminApp());
   try {
-    await consumeRateLimit(
-      db,
-      `generate_art_uid_${authUser.uid}`,
-      RATE_LIMIT,
-      RATE_WINDOW_MS,
-    );
-    await consumeRateLimit(
-      db,
-      `generate_art_ip_${getClientIp(req)}`,
-      RATE_LIMIT,
-      RATE_WINDOW_MS,
-    );
+    // UID・IP のレートリミットを並列チェック（直列→並列で約半分の時間に）
+    await Promise.all([
+      consumeRateLimit(
+        db,
+        `generate_art_uid_${authUser.uid}`,
+        RATE_LIMIT,
+        RATE_WINDOW_MS,
+      ),
+      consumeRateLimit(
+        db,
+        `generate_art_ip_${getClientIp(req)}`,
+        RATE_LIMIT,
+        RATE_WINDOW_MS,
+      ),
+    ]);
   } catch (error) {
     console.error("[generate-art] rate limit error:", error);
     return res

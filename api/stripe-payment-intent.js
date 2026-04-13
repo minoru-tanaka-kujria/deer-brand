@@ -12,6 +12,14 @@ import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { resolveCouponDiscount, resolveIgDiscount } from "./_lib/discounts.js";
 import { PRODUCTS, calculateTotal } from "./_lib/products.js";
 
+// モジュールスコープでキャッシュ（ウォームインスタンスで再生成コスト不要）
+const _stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY.trim(), {
+      apiVersion: "2024-04-10",
+      httpClient: Stripe.createNodeHttpClient(),
+    })
+  : null;
+
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 60 * 1000;
 
@@ -255,10 +263,12 @@ export default async function handler(req, res) {
       });
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2024-04-10",
-      httpClient: Stripe.createNodeHttpClient(),
-    });
+    const stripe =
+      _stripe ??
+      new Stripe(stripeSecretKey, {
+        apiVersion: "2024-04-10",
+        httpClient: Stripe.createNodeHttpClient(),
+      });
 
     const userSnap = await db.collection("users").doc(authUser.uid).get();
     const customerId = userSnap.exists
