@@ -6,7 +6,7 @@ service cloud.firestore {
     }
 
     function userWritableFields() {
-      return ["displayName", "photoURL", "phone"];
+      return ["displayName", "photoURL", "phone", "savedAddresses", "availableCoupons"];
     }
 
     // ユーザーデータ: 本人のみ読取可。書込は許可フィールドのみ
@@ -16,6 +16,14 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(userWritableFields());
       allow update: if isSignedInOwner(userId)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(userWritableFields());
+      allow delete: if false;
+    }
+
+    // アート履歴: 本人のみ読み書き可
+    match /users/{userId}/arts/{artId} {
+      allow read: if isSignedInOwner(userId);
+      allow create: if isSignedInOwner(userId);
+      allow update: if false;
       allow delete: if false;
     }
 

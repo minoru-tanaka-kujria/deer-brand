@@ -641,6 +641,21 @@
         }
         userData._resolvedOrders = orderDocs;
 
+        // マイアート: users/{uid}/arts サブコレクション
+        let artDocs = [];
+        try {
+          const artsQ = query(
+            collection(db, "users", user.uid, "arts"),
+            orderBy("createdAt", "desc"),
+            limit(12),
+          );
+          const artsSnap = await getDocs(artsQ);
+          artDocs = artsSnap.docs.map((d) => ({ ...d.data(), id: d.id }));
+        } catch (e) {
+          console.warn("アート取得失敗:", e.message);
+        }
+        userData._arts = artDocs;
+
         renderAccountPage(user, userData);
       });
 
@@ -652,6 +667,7 @@
         const orders = data._resolvedOrders || [];
         const coupons = data.availableCoupons || [];
         const addresses = data.savedAddresses || [];
+        const arts = data._arts || [];
         const now = new Date();
 
         // ログインプロバイダーアイコン
@@ -794,6 +810,29 @@
                   </div>`;
                       })
                       .join("")
+              }
+            </div>
+          </div>
+
+          <!-- マイアート -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <h2>マイアート</h2>
+            </div>
+            <div class="section-card-body">
+              ${
+                arts.length === 0
+                  ? `<p class="empty-state">保存されたアートがありません。<br>注文完了時に自動保存されます。</p>`
+                  : `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem">${arts
+                      .map(
+                        (a) => `
+                  <div style="position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:10px;border:1.5px solid var(--border);background:var(--cream)">
+                    <img src="${escHtml(a.url)}" alt="${escHtml(a.style || "アート")}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'">
+                    <a href="upload?artId=${escHtml(a.id)}" style="position:absolute;bottom:0;left:0;right:0;background:rgba(44,40,36,0.82);color:#fff;font-size:0.62rem;text-align:center;padding:0.3rem 0.2rem;font-family:var(--sans)">再注文 →</a>
+                  </div>`,
+                      )
+                      .join("")}</div>`
               }
             </div>
           </div>
