@@ -140,19 +140,34 @@ async function issueRepeatCoupon(db, order, orderId) {
 // ── 注文確認メール送信（スタンプ+リピートクーポン込み） ──
 async function sendOrderConfirmationEmail(db, order, orderId) {
   const apiKey = process.env.SENDGRID_API_KEY;
-  if (!apiKey || !order.email) return;
+  // ギフト注文時は注文者メールに送信、通常は配送先メールに送信
+  const toEmail =
+    order.isGift && order.ordererInfo?.email
+      ? order.ordererInfo.email
+      : order.email;
+  if (!apiKey || !toEmail) return;
 
   // クーポン発行（冪等）
   const stampCode = await issueStampCoupon(db, order, orderId);
   const repeatCode = await issueRepeatCoupon(db, order, orderId);
 
-  const customerName = order.shippingAddress?.fullName || "お客様";
+  const customerName = order.isGift
+    ? order.ordererInfo?.name || "お客様"
+    : order.shippingAddress?.fullName || "お客様";
   const amount = (order.total ?? order.amount ?? 0).toLocaleString();
   const itemName =
     (order.items?.[0]?.productName ?? order.productName ?? order.product) || "";
   const s = order.shippingAddress || {};
   const shippingBlock = s.fullName
     ? `<p style="margin:0;line-height:1.6">〒${s.zip || ""}<br>${s.prefecture || ""}${s.address1 || ""}${s.address2 || ""}<br>${s.fullName}</p>`
+    : "";
+  // ギフト注文時の追加セクション
+  const giftInfoBlock = order.isGift
+    ? `<div style="background:#fff8e1;border:1px solid #c8956c;border-radius:8px;padding:16px;margin:16px 0">
+<p style="margin:0 0 8px;font-size:13px;color:#c8956c;font-weight:600">🎁 ギフト注文</p>
+<p style="margin:0;font-size:12px;color:#5d4037">お届け先: ${s.fullName || ""} 様<br>金額非表示の納品書でお届けします。</p>
+${order.giftMessage ? `<p style="margin:8px 0 0;font-size:12px;color:#666;border-top:1px dashed #e8e0d4;padding-top:8px">💌 ${order.giftMessage}</p>` : ""}
+</div>`
     : "";
 
   const stampSection = stampCode
@@ -187,6 +202,7 @@ async function sendOrderConfirmationEmail(db, order, orderId) {
 <tr style="border-bottom:1px solid #e8e0d4"><td style="color:#999">合計金額</td><td style="color:#3e2c23;font-weight:bold">¥${amount}</td></tr>
 </table>
 ${shippingBlock ? `<div style="background:#faf7f2;border-radius:8px;padding:16px;margin:16px 0"><p style="margin:0 0 8px;font-size:13px;color:#999">お届け先</p>${shippingBlock}</div>` : ""}
+${giftInfoBlock}
 ${stampSection}
 ${repeatSection}
 <p style="color:#5d4037;line-height:1.8;margin-top:24px">制作が完了次第、改めてご連絡いたします。<br>通常3〜5営業日でお届けいたします。</p>
@@ -202,7 +218,7 @@ ${repeatSection}
 </body></html>`;
 
   const body = {
-    personalizations: [{ to: [{ email: order.email }] }],
+    personalizations: [{ to: [{ email: toEmail }] }],
     from: { email: "noreply@deer.gift", name: "Deer Brand" },
     subject: `【Deer Brand】ご注文ありがとうございます（${orderId}）`,
     content: [{ type: "text/html", value: htmlBody }],
@@ -305,6 +321,7 @@ async function triggerPrintfulOrder(db, order, orderId) {
       recipient: {
         name: s.fullName || "",
         address1: s.address1 || "",
+        address2: s.address2 || "",
         city: s.prefecture || "Tokyo",
         country_code: "JP",
         zip: s.zip || "",
@@ -314,6 +331,20 @@ async function triggerPrintfulOrder(db, order, orderId) {
       items: [{ variant_id: variant.id, quantity: 1, files: [fileEntry] }],
       retail_costs: { currency: "JPY", subtotal: String(order.total ?? 0) },
     };
+    // ギフト注文: 金額非表示納品書 + メッセージ
+    if (order.isGift) {
+      printfulBody.gift = {
+        subject: "Deer Brand からのギフト",
+        message: order.giftMessage || "心を込めてお届けします。",
+      };
+      printfulBody.packing_slip = {
+        email: order.ordererInfo?.email || order.email || "",
+        phone: "",
+        message: order.giftMessage || "",
+        logo_url: "https://custom.deer.gift/img/deer-logo.png",
+        store_name: "Deer Brand",
+      };
+    }
 
     const pfRes = await fetch("https://api.printful.com/orders", {
       method: "POST",

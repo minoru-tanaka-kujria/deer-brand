@@ -85,6 +85,9 @@ export default async function handler(req, res) {
     orderId: requestedOrderId,
     shippingAddress,
     artImageUrl,
+    isGift,
+    giftMessage,
+    ordererInfo,
   } = req.body ?? {};
   if (!paymentIntentId && !requestedOrderId) {
     return res.status(400).json({ error: "INVALID_REQUEST" });
@@ -221,6 +224,16 @@ export default async function handler(req, res) {
             sanitizeShipping(shippingAddress) ??
             reservedOrder.shippingAddress ??
             null,
+          isGift: !!isGift,
+          giftMessage:
+            typeof giftMessage === "string" ? giftMessage.slice(0, 200) : "",
+          ordererInfo: isGift
+            ? {
+                name: ordererInfo?.name || "",
+                email: ordererInfo?.email || "",
+                phone: ordererInfo?.phone || "",
+              }
+            : null,
           status: nextStatus,
           paidAt: reservedOrder.paidAt ?? now,
           finalizedAt: now,

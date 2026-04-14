@@ -3925,8 +3925,102 @@
 
       <!-- ========== STEP 7: SHIPPING ========== -->
       <section class="step-section" id="step-shipping">
-        <h2 class="step-title">お届け先</h2>
-        <p class="step-subtitle">商品のお届け先情報を入力してください</p>
+        <h2 class="step-title" id="shippingTitle">お届け先</h2>
+        <p class="step-subtitle" id="shippingSubtitle">
+          商品のお届け先情報を入力してください
+        </p>
+
+        <!-- ギフト切替 -->
+        <div
+          style="
+            margin-bottom: 1.2rem;
+            padding: 0.8rem 1rem;
+            background: linear-gradient(135deg, #fff8e1, #faf7f2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+          "
+        >
+          <label
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.6rem;
+              cursor: pointer;
+              font-size: 0.88rem;
+              font-weight: 600;
+              color: var(--text-mid);
+            "
+          >
+            <input
+              type="checkbox"
+              id="isGiftCheckbox"
+              onchange="toggleGiftMode()"
+              style="width: 18px; height: 18px; accent-color: var(--gold)"
+            />
+            🎁 ギフトとして注文する（お届け先が注文者と異なる場合）
+          </label>
+        </div>
+
+        <!-- 注文者情報（ギフト時のみ表示） -->
+        <div
+          id="ordererInfoSection"
+          style="
+            display: none;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              font-weight: 600;
+              color: var(--text-mid);
+              margin-bottom: 0.8rem;
+            "
+          >
+            📋 注文者情報
+          </p>
+          <div class="form-group">
+            <label>注文者のお名前<span class="req">*</span></label>
+            <input
+              type="text"
+              id="ordererName"
+              placeholder="田中 太郎"
+              autocomplete="name"
+            />
+          </div>
+          <div class="form-group">
+            <label>注文者のメールアドレス<span class="req">*</span></label>
+            <input
+              type="email"
+              id="ordererEmail"
+              placeholder="taro@example.com"
+              autocomplete="email"
+            />
+          </div>
+          <div class="form-group">
+            <label>注文者の電話番号<span class="req">*</span></label>
+            <input
+              type="tel"
+              id="ordererPhone"
+              placeholder="090-1234-5678"
+              autocomplete="tel"
+            />
+          </div>
+        </div>
+
+        <!-- 贈り先ラベル（ギフト時に切替） -->
+        <div
+          id="giftRecipientLabel"
+          style="display: none; margin-bottom: 0.5rem"
+        >
+          <p style="font-size: 0.85rem; font-weight: 600; color: var(--gold)">
+            🎁 贈り先（お届け先）
+          </p>
+        </div>
 
         <div class="form-group">
           <label>お名前（フルネーム）<span class="req">*</span></label>
@@ -4021,6 +4115,55 @@
             id="address2"
             placeholder="ABCマンション 101号室"
           />
+        </div>
+
+        <!-- ギフトメッセージ（ギフト時のみ表示） -->
+        <div
+          id="giftMessageSection"
+          style="
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #fff8e1;
+            border: 1px dashed var(--gold);
+            border-radius: 10px;
+          "
+        >
+          <label
+            style="
+              font-size: 0.85rem;
+              font-weight: 600;
+              color: var(--gold);
+              margin-bottom: 0.4rem;
+              display: block;
+            "
+            >💌 ギフトメッセージ（任意・納品書に印字されます）</label
+          >
+          <textarea
+            id="giftMessage"
+            maxlength="200"
+            placeholder="お誕生日おめでとう！いつも元気なポチと一緒に楽しんでね。"
+            style="
+              width: 100%;
+              min-height: 70px;
+              border: 1px solid var(--border);
+              border-radius: 8px;
+              padding: 0.6rem;
+              font-size: 0.82rem;
+              resize: vertical;
+              box-sizing: border-box;
+            "
+          ></textarea>
+          <p
+            style="
+              font-size: 0.7rem;
+              color: var(--text-light);
+              margin-top: 0.3rem;
+              text-align: right;
+            "
+          >
+            <span id="giftMsgCount">0</span>/200文字
+          </p>
         </div>
 
         <div class="btn-row">
@@ -4192,76 +4335,117 @@
           <!-- built by JS -->
         </div>
 
-        <!-- Gift Wrapping Option (Coming Soon) -->
+        <!-- ギフト注文の確認表示 -->
         <div
-          class="option-group"
+          id="giftConfirmBox"
           style="
+            display: none;
             margin: 1.5rem 0;
             padding: 1.2rem;
-            background: var(--white);
+            background: linear-gradient(135deg, #fff8e1, #faf7f2);
             border-radius: 12px;
-            border: 1px solid var(--border);
-            position: relative;
-            opacity: 0.6;
+            border: 1px solid var(--gold);
           "
         >
           <div
             style="
-              position: absolute;
-              top: 0.6rem;
-              right: 0.8rem;
-              background: var(--terracotta);
-              color: #fff;
-              font-family: var(--serif);
-              font-size: 0.6rem;
-              font-weight: 600;
-              letter-spacing: 1px;
-              padding: 0.2rem 0.5rem;
-              border-radius: 1rem;
-              text-transform: uppercase;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.8rem;
             "
           >
-            Coming Soon
+            <span style="font-size: 1.2rem">🎁</span>
+            <span
+              style="font-size: 0.88rem; font-weight: 600; color: var(--gold)"
+              >ギフト注文</span
+            >
+            <span style="font-size: 0.7rem; color: var(--text-light)"
+              >（金額非表示の納品書でお届け）</span
+            >
           </div>
           <div
-            class="option-label"
             style="
-              font-size: 0.82rem;
-              font-weight: 600;
-              color: var(--charcoal);
-              margin-bottom: 0.5rem;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 0.8rem;
+              font-size: 0.8rem;
             "
           >
-            ギフトラッピング
+            <div
+              style="
+                padding: 0.6rem;
+                background: #fff;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+              "
+            >
+              <p
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-light);
+                  margin-bottom: 0.2rem;
+                "
+              >
+                📋 注文者
+              </p>
+              <p
+                id="giftConfirmOrderer"
+                style="font-weight: 600; color: var(--charcoal)"
+              ></p>
+            </div>
+            <div
+              style="
+                padding: 0.6rem;
+                background: #fff;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+              "
+            >
+              <p
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-light);
+                  margin-bottom: 0.2rem;
+                "
+              >
+                🎁 贈り先
+              </p>
+              <p
+                id="giftConfirmRecipient"
+                style="font-weight: 600; color: var(--charcoal)"
+              ></p>
+            </div>
           </div>
-          <select
-            disabled
+          <div
+            id="giftConfirmMessage"
             style="
-              width: 100%;
-              padding: 0.6rem 0.8rem;
-              border: 2px solid var(--border);
+              display: none;
+              margin-top: 0.6rem;
+              padding: 0.6rem;
+              background: #fff;
               border-radius: 8px;
-              font-family: var(--sans);
-              font-size: 0.82rem;
-              color: var(--text-light);
-              background: var(--cream);
-              cursor: not-allowed;
-              -webkit-appearance: auto;
+              border: 1px dashed var(--gold);
             "
           >
-            <option>ラッピングなし</option>
-            <option>ギフトラッピング（+¥500）</option>
-            <option>ギフトラッピング＋メッセージカード（+¥800）</option>
-          </select>
-          <p
-            style="
-              font-size: 0.7rem;
-              color: var(--text-light);
-              margin-top: 0.4rem;
-            "
-          >
-            ギフトラッピングは現在準備中です。近日対応予定。
-          </p>
+            <p
+              style="
+                font-size: 0.7rem;
+                color: var(--gold);
+                margin-bottom: 0.2rem;
+              "
+            >
+              💌 ギフトメッセージ
+            </p>
+            <p
+              id="giftConfirmMsgText"
+              style="
+                font-size: 0.8rem;
+                color: var(--charcoal);
+                white-space: pre-wrap;
+              "
+            ></p>
+          </div>
         </div>
 
         <!-- Instagram Follow Discount -->
@@ -7864,6 +8048,26 @@
               },
               couponCode: state.couponVerified ? state.couponCode : null,
               igDiscountToken: state.igVerified ? state.igDiscountToken : null,
+              isGift: !!state.isGift,
+              giftMessage: state.isGift
+                ? (document.getElementById("giftMessage")?.value || "").slice(
+                    0,
+                    200,
+                  )
+                : "",
+              ordererInfo: state.isGift
+                ? {
+                    name:
+                      document.getElementById("ordererName")?.value?.trim() ||
+                      "",
+                    email:
+                      document.getElementById("ordererEmail")?.value?.trim() ||
+                      "",
+                    phone:
+                      document.getElementById("ordererPhone")?.value?.trim() ||
+                      "",
+                  }
+                : null,
             }),
           });
 
@@ -7976,6 +8180,26 @@
               igDiscount: state.igVerified ? 500 : 0,
               couponDiscount: state.couponVerified ? state.couponDiscount : 0,
               artImageUrl: state.finalArtUrl || null,
+              isGift: !!state.isGift,
+              giftMessage: state.isGift
+                ? (document.getElementById("giftMessage")?.value || "").slice(
+                    0,
+                    200,
+                  )
+                : "",
+              ordererInfo: state.isGift
+                ? {
+                    name:
+                      document.getElementById("ordererName")?.value?.trim() ||
+                      "",
+                    email:
+                      document.getElementById("ordererEmail")?.value?.trim() ||
+                      "",
+                    phone:
+                      document.getElementById("ordererPhone")?.value?.trim() ||
+                      "",
+                  }
+                : null,
             }),
           });
           const data = await res.json().catch(() => ({}));
@@ -8224,6 +8448,64 @@
             "error",
           );
           return null;
+        }
+      }
+
+      // ============================================================
+      //  ギフト注文
+      // ============================================================
+      function toggleGiftMode() {
+        const isGift =
+          document.getElementById("isGiftCheckbox")?.checked || false;
+        state.isGift = isGift;
+        const ordererSection = document.getElementById("ordererInfoSection");
+        const recipientLabel = document.getElementById("giftRecipientLabel");
+        const msgSection = document.getElementById("giftMessageSection");
+        const title = document.getElementById("shippingTitle");
+        const subtitle = document.getElementById("shippingSubtitle");
+        if (ordererSection)
+          ordererSection.style.display = isGift ? "block" : "none";
+        if (recipientLabel)
+          recipientLabel.style.display = isGift ? "block" : "none";
+        if (msgSection) msgSection.style.display = isGift ? "block" : "none";
+        if (title)
+          title.textContent = isGift ? "お届け先・ギフト設定" : "お届け先";
+        if (subtitle)
+          subtitle.textContent = isGift
+            ? "注文者情報と贈り先を入力してください"
+            : "商品のお届け先情報を入力してください";
+      }
+      // ギフトメッセージ文字数カウント
+      document.addEventListener("DOMContentLoaded", function () {
+        const gm = document.getElementById("giftMessage");
+        const gc = document.getElementById("giftMsgCount");
+        if (gm && gc)
+          gm.addEventListener("input", function () {
+            gc.textContent = gm.value.length;
+          });
+      });
+      // confirm画面にギフト情報を反映
+      function updateGiftConfirmUI() {
+        const box = document.getElementById("giftConfirmBox");
+        if (!box) return;
+        if (!state.isGift) {
+          box.style.display = "none";
+          return;
+        }
+        box.style.display = "block";
+        const ordererName = document.getElementById("ordererName")?.value || "";
+        const recipientName = document.getElementById("fullName")?.value || "";
+        document.getElementById("giftConfirmOrderer").textContent =
+          ordererName + " 様";
+        document.getElementById("giftConfirmRecipient").textContent =
+          recipientName + " 様";
+        const msg = document.getElementById("giftMessage")?.value || "";
+        const msgBox = document.getElementById("giftConfirmMessage");
+        if (msg && msgBox) {
+          msgBox.style.display = "block";
+          document.getElementById("giftConfirmMsgText").textContent = msg;
+        } else if (msgBox) {
+          msgBox.style.display = "none";
         }
       }
 
@@ -8516,6 +8798,9 @@
             }),
           );
         }
+        // confirmステップ表示時にギフト確認UIを更新
+        if (stepId === "confirm" && typeof updateGiftConfirmUI === "function")
+          updateGiftConfirmUI();
         // FAQパネルの内容をステップに合わせて更新
         if (typeof updateFaqPanel === "function")
           updateFaqPanel("step-" + stepId);
