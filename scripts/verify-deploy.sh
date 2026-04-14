@@ -65,6 +65,10 @@ for file in $CHANGED; do
       [ -n "$KW" ] && TARGETS+=("terms.html|${SITE}/terms|${KW}")
       ;;
     api/*.js)
+      # _lib/ ディレクトリはライブラリファイルでエンドポイントではないためスキップ
+      if echo "$file" | grep -q "^api/_lib/"; then
+        continue
+      fi
       ep=$(echo "$file" | sed 's|^api/||;s|\.js$||')
       TARGETS+=("$file|${SITE}/api/${ep}|API_RESPONDS")
       ;;
