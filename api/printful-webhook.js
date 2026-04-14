@@ -34,7 +34,9 @@ const STATUS_ORDER = {
 };
 
 function canAdvanceStatus(currentStatus, nextStatus) {
-  return (STATUS_ORDER[nextStatus] ?? -1) >= (STATUS_ORDER[currentStatus] ?? -1);
+  return (
+    (STATUS_ORDER[nextStatus] ?? -1) >= (STATUS_ORDER[currentStatus] ?? -1)
+  );
 }
 
 function readRawBody(req) {
@@ -66,6 +68,75 @@ function verifyPrintfulSignature(rawBody, signature, secret) {
     return false;
   }
   return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+}
+
+// ---------------------------------------------------------------------------
+// ステータス変更メール送信
+// ---------------------------------------------------------------------------
+async function sendStatusEmail(order, orderId, status, extra = {}) {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  if (!apiKey || !order.email) return;
+
+  const name = order.shippingAddress?.fullName || "お客様";
+  const templates = {
+    preparing: {
+      subject: `【Deer Brand】制作を開始しました（${orderId}）`,
+      body: `<p>${name} 様</p>
+<p>ご注文いただいた商品の制作を開始いたしました。</p>
+<table style="border-collapse:collapse;margin:16px 0">
+<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">注文番号</td><td style="padding:8px;font-weight:600">${orderId}</td></tr>
+<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">ステータス</td><td style="padding:8px;color:#c4a265;font-weight:600">制作中 🎨</td></tr>
+</table>
+<p>完成まで通常2〜3営業日ほどお時間をいただきます。<br>発送準備が整い次第、改めてご連絡いたします。</p>`,
+    },
+    shipped: {
+      subject: `【Deer Brand】発送しました（${orderId}）`,
+      body: `<p>${name} 様</p>
+<p>ご注文いただいた商品を発送いたしました！</p>
+<table style="border-collapse:collapse;margin:16px 0">
+<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">注文番号</td><td style="padding:8px;font-weight:600">${orderId}</td></tr>
+<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">ステータス</td><td style="padding:8px;color:#c4a265;font-weight:600">発送済み 📦</td></tr>
+${extra.trackingUrl ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">追跡</td><td style="padding:8px"><a href="${extra.trackingUrl}" style="color:#c4a265">${extra.trackingCarrier || "配送状況を確認"} →</a></td></tr>` : ""}
+</table>
+<p>お届けまで1〜3日ほどお待ちください。</p>`,
+    },
+  };
+
+  const tmpl = templates[status];
+  if (!tmpl) return;
+
+  const htmlBody = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f5f1eb;font-family:'Helvetica Neue',Arial,sans-serif">
+<div style="max-width:600px;margin:0 auto;background:#fffdf8">
+<div style="background:#3e2c23;padding:20px;text-align:center">
+<h1 style="margin:0;color:#f5f1eb;font-size:20px;font-weight:300;letter-spacing:3px">DEER BRAND</h1>
+</div>
+<div style="padding:28px 24px">${tmpl.body}
+<p style="color:#5d4037;margin-top:20px">ご不明な点はサポート（<a href="mailto:support@deer.gift" style="color:#c4a265">support@deer.gift</a>）までお問い合わせください。</p>
+</div>
+<div style="background:#3e2c23;padding:16px;text-align:center">
+<p style="margin:0;color:#a08979;font-size:10px">Deer Brand ｜ support@deer.gift</p>
+</div></div></body></html>`;
+
+  try {
+    const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: order.email }] }],
+        from: { email: "noreply@deer.gift", name: "Deer Brand" },
+        subject: tmpl.subject,
+        content: [{ type: "text/html", value: htmlBody }],
+      }),
+    });
+    if (!res.ok) console.warn("[printful-webhook] email failed:", res.status);
+    else console.log("[printful-webhook] status email sent:", status);
+  } catch (e) {
+    console.warn("[printful-webhook] email error:", e.message);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -122,13 +193,12 @@ export default async function handler(req, res) {
 
   const eventType = event?.type || "";
   const eventData = event?.data || {};
-  const eventId =
-    String(
-      event?.id ??
+  const eventId = String(
+    event?.id ??
       eventData?.id ??
       req.headers["x-printful-event-id"] ??
       crypto.createHash("sha256").update(rawBody).digest("hex"),
-    );
+  );
 
   console.log(`[printful-webhook] イベント受信: type=${eventType}`);
 
@@ -191,7 +261,9 @@ export default async function handler(req, res) {
         nextStatus = "delivered";
         break;
       default:
-        console.log(`[printful-webhook] 未対応イベント: type=${eventType}（無視）`);
+        console.log(
+          `[printful-webhook] 未対応イベント: type=${eventType}（無視）`,
+        );
         await eventRef.set({
           provider: "printful",
           eventId,
@@ -225,7 +297,8 @@ export default async function handler(req, res) {
       const shipment = eventData.shipment || {};
       const trackingUrl = shipment.tracking_url || shipment.trackingUrl || null;
       const trackingCarrier = shipment.carrier || shipment.service || null;
-      const trackingNumber = shipment.tracking_number || shipment.trackingNumber || null;
+      const trackingNumber =
+        shipment.tracking_number || shipment.trackingNumber || null;
       if (trackingUrl) updatePayload.trackingUrl = trackingUrl;
       if (trackingCarrier) updatePayload.trackingCarrier = trackingCarrier;
       if (trackingNumber) updatePayload.trackingNumber = trackingNumber;
@@ -266,6 +339,23 @@ export default async function handler(req, res) {
         statusApplied: nextStatus,
       });
     });
+
+    // トランザクション外でメール送信（非同期・ノンブロッキング）
+    if (nextStatus === "preparing" || nextStatus === "shipped") {
+      const latestOrder = (await orderRef.get()).data();
+      if (latestOrder) {
+        const extra =
+          nextStatus === "shipped"
+            ? {
+                trackingUrl: updatePayload.trackingUrl,
+                trackingCarrier: updatePayload.trackingCarrier,
+              }
+            : {};
+        sendStatusEmail(latestOrder, orderRef.id, nextStatus, extra).catch(
+          (e) => console.warn("[printful-webhook] email error:", e.message),
+        );
+      }
+    }
 
     return res.status(200).json({ received: true });
   } catch (err) {

@@ -4828,6 +4828,55 @@
             ></p>
           </div>
 
+          <!-- 同じアートで別商品を作る -->
+          <div
+            id="reuseArtSection"
+            style="
+              margin-top: 1.8rem;
+              padding: 1.2rem;
+              background: linear-gradient(135deg, #faf7f2, #fff8e1);
+              border-radius: 14px;
+              border: 1px solid var(--border);
+              text-align: center;
+              display: none;
+            "
+          >
+            <p
+              style="
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--text-mid);
+                margin-bottom: 0.4rem;
+              "
+            >
+              🎨 同じアートで別の商品もつくれます
+            </p>
+            <p
+              style="
+                font-size: 0.72rem;
+                color: var(--text-light);
+                margin-bottom: 0.8rem;
+              "
+            >
+              生成済みのアートをそのまま使えるので、スタイル選択をスキップできます
+            </p>
+            <button
+              onclick="reuseArtForNewProduct()"
+              style="
+                padding: 0.7rem 2rem;
+                background: var(--gold);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                cursor: pointer;
+              "
+            >
+              別の商品にも載せる →
+            </button>
+          </div>
+
           <a
             href="index.html"
             class="btn-primary"
@@ -7984,6 +8033,7 @@
           console.warn("[completeOrder] repeat coupon error:", e),
         );
         if (typeof showReviewForm === "function") showReviewForm();
+        if (typeof showReuseArtSection === "function") showReuseArtSection();
         document.querySelector(".progress-bar").style.display = "none";
 
         // Firestoreにアートを保存（マイアート機能）
@@ -8177,11 +8227,21 @@
         }
       }
 
+      function buildShareUrl() {
+        const artUrl = state.finalArtUrl || "";
+        const petName = (state.petNames && state.petNames[0]) || "愛犬";
+        if (artUrl) {
+          return `https://custom.deer.gift/api/get-user?type=share&art=${encodeURIComponent(artUrl)}&name=${encodeURIComponent(petName)}`;
+        }
+        return "https://custom.deer.gift";
+      }
+
       async function shareOnX() {
+        const shareUrl = buildShareUrl();
         const text = encodeURIComponent(
           "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾 #Deer #うちの子アート",
         );
-        const url = encodeURIComponent("https://custom.deer.gift");
+        const url = encodeURIComponent(shareUrl);
         window.open(
           `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
           "_blank",
@@ -8195,11 +8255,12 @@
       }
 
       async function shareOnLine() {
+        const shareUrl = buildShareUrl();
         const text = encodeURIComponent(
-          "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾 https://custom.deer.gift",
+          "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾",
         );
         window.open(
-          `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent("https://custom.deer.gift")}&text=${text}`,
+          `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${text}`,
           "_blank",
         );
         const code = await issueShareCoupon();
@@ -10003,10 +10064,29 @@
           }
         }
       }
-      // 注文完了時にレビューフォームを表示
+      // 注文完了時にレビューフォーム + 別商品ボタンを表示
       function showReviewForm() {
         const el = document.getElementById("reviewFormSection");
         if (el) el.style.display = "block";
+      }
+      function showReuseArtSection() {
+        if (state.finalArtUrl) {
+          const el = document.getElementById("reuseArtSection");
+          if (el) el.style.display = "block";
+        }
+      }
+      // 同じアートで別商品を注文
+      function reuseArtForNewProduct() {
+        // アートURLをsessionStorageに保持して、商品選択ステップにジャンプ
+        sessionStorage.setItem(
+          "deer_reuse_art",
+          JSON.stringify({
+            artUrl: state.finalArtUrl,
+            photoUrl: state.photoDataUrl || state.originalPhoto,
+            petNames: state.petNames || [],
+          }),
+        );
+        location.href = "upload.html?reuse=1";
       }
 
       // ============================================================

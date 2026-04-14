@@ -65,6 +65,34 @@ export default async function handler(req, res) {
     }
   }
 
+  // ?type=share で動的OGPページを返す（認証不要）
+  // 例: /api/get-user?type=share&art=https://...&name=ポチ
+  if (type === "share") {
+    const artUrl = req.query.art || "https://custom.deer.gift/img/hero-dog.jpg";
+    const petName = req.query.name || "愛犬";
+    const title = `${petName}のオリジナルアート｜Deer Brand`;
+    const desc = `${petName}の写真からAIが生成したアート。あなたも愛犬・愛猫のオリジナルグッズを作りませんか？`;
+    const safeTitle = title.replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    const safeDesc = desc.replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    const safeArt = artUrl.replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    return res.status(200).send(`<!DOCTYPE html><html lang="ja"><head>
+<meta charset="utf-8">
+<meta property="og:type" content="website">
+<meta property="og:title" content="${safeTitle}">
+<meta property="og:description" content="${safeDesc}">
+<meta property="og:image" content="${safeArt}">
+<meta property="og:url" content="https://custom.deer.gift/upload">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${safeTitle}">
+<meta name="twitter:description" content="${safeDesc}">
+<meta name="twitter:image" content="${safeArt}">
+<meta http-equiv="refresh" content="0;url=https://custom.deer.gift/">
+<title>${safeTitle}</title>
+</head><body><p>リダイレクト中...</p></body></html>`);
+  }
+
   if (!uid) {
     return res.status(400).json({ error: "uid クエリパラメータは必須です" });
   }
