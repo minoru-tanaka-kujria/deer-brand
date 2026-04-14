@@ -1,6 +1,19 @@
 <!doctype html>
 <html lang="ja">
   <head>
+    <!-- Google Analytics (GA4) — G-PLACEHOLDER を実際のIDに置換 -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-PLACEHOLDER");
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Deer — 愛犬・愛猫をアートに。世界にひとつのオリジナルグッズ</title>
@@ -1092,6 +1105,78 @@
         }
       }
     </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Deer Brand",
+        "url": "https://custom.deer.gift",
+        "logo": "https://custom.deer.gift/img/deer-logo.png",
+        "description": "写真1枚から、愛犬・愛猫のオリジナルアートグッズを制作。23種類のAIアートスタイルで、世界にひとつだけのTシャツ・パーカー・マグカップをお届けします。",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "support@deer.gift",
+          "contactType": "customer service",
+          "availableLanguage": "Japanese"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "何日で届きますか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "制作に3〜5営業日、その後発送から1〜3日でお届けします。通常、ご注文から1週間前後でお届けが可能です。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "返品・交換はできますか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "お届けから7日以内であれば、未使用品に限り返品を承ります。印刷不良等の品質問題は無料で再制作いたします。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "どんな写真を用意すればいいですか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "お顔がはっきり写っている正面〜やや横向きの写真がベストです。明るい場所で撮影されたものをお選びください。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "送料はかかりますか？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "全品送料無料です。日本国内への配送に追加料金はかかりません。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "ペットが2匹以上の場合は？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "1つのアートに最大4匹まで描けます。2匹目以降は追加料金（+¥1,000〜）がかかります。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "AIアートのクオリティは？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "プロのアーティストが監修した23種類のスタイルテンプレートを使用。生成結果にご満足いただけない場合は、無料で再生成いたします。"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <!-- NAV -->
@@ -2098,6 +2183,206 @@
         >
           いますぐつくる →
         </button>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="section-label fade-up">FAQ</div>
+      <h2 class="section-title fade-up">よくあるご質問</h2>
+      <div style="max-width: 720px; margin: 0 auto" class="fade-up">
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            何日で届きますか？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            制作に3〜5営業日、その後発送から1〜3日でお届けします。通常、ご注文から1週間前後でお届けが可能です。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            返品・交換はできますか？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            お届けから7日以内であれば、未使用品に限り返品を承ります。オーダーメイド商品のため、イメージ違いによる返品はお受けできませんが、印刷不良等の品質問題は無料で再制作いたします。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            どんな写真を用意すればいいですか？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            お顔がはっきり写っている正面〜やや横向きの写真がベストです。明るい場所で撮影されたもの、ピントが合っているものをお選びください。JPEG・PNG・HEICに対応しています。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            サイズはどう選べばいいですか？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            Tシャツ・パーカーはS〜2XLをご用意。普段お使いのサイズと同じものをお選びください。マグカップ・スマホケース等はワンサイズです。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            支払い方法は？<span style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            クレジットカード（Visa / Mastercard / AMEX /
+            JCB）に対応。Stripeによる安全な決済で、カード情報は当社に保存されません。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            送料はかかりますか？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            全品送料無料です。日本国内への配送に追加料金はかかりません。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            ペットが2匹以上の場合は？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            1つのアートに最大4匹まで描けます。2匹目以降は追加料金（+¥1,000〜）がかかります。それぞれ別の写真からでもOKです。
+          </p>
+        </details>
+        <details>
+          <summary
+            style="
+              cursor: pointer;
+              padding: 1rem 0;
+              border-bottom: 1px solid #e8e0d4;
+              font-size: 1rem;
+              color: var(--charcoal);
+              font-weight: 600;
+              list-style: none;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            AIアートのクオリティは？<span
+              style="font-size: 1.2rem; color: var(--gold)"
+              >+</span
+            >
+          </summary>
+          <p style="padding: 0.8rem 0 1.2rem; color: #666; line-height: 1.8">
+            プロのアーティストが監修した23種類のスタイルテンプレートを使用。油絵風・水彩画・ポップアート等、お好みのテイストをお選びいただけます。生成結果にご満足いただけない場合は、無料で再生成いたします。
+          </p>
+        </details>
       </div>
     </section>
 

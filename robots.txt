@@ -2,4 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /upload
 Disallow: /account
-Sitemap: https://deer-brand.vercel.app/sitemap.xml
+Disallow: /api/
+Sitemap: https://custom.deer.gift/sitemap.xml

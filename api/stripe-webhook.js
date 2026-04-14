@@ -3,8 +3,9 @@
  * POST /api/stripe-webhook
  */
 
+import crypto from "node:crypto";
 import Stripe from "stripe";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getAdminApp } from "./_lib/auth.js";
 
 // モジュールスコープでキャッシュ
@@ -43,30 +44,168 @@ function readRawBody(req) {
   });
 }
 
-// トランザクション外で実行（冪等性のため webhookEvents が既存なら skip）
-async function sendOrderConfirmationEmail(order, orderId) {
+// ── クーポンコード生成ヘルパー ──
+function generateCouponCode(prefix) {
+  const seg = () =>
+    crypto.randomBytes(4).toString("hex").toUpperCase().slice(0, 4);
+  return `${prefix}-${seg()}-${seg()}`;
+}
+
+// ── スタンプ無料クーポン発行（冪等: 既発行ならスキップ） ──
+async function issueStampCoupon(db, order, orderId) {
+  if (order.stampCouponCode) return order.stampCouponCode;
+  const code = generateCouponCode("STAMP");
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+  try {
+    await db.collection("coupons").doc(code).set({
+      type: "fixed",
+      discount: 4980,
+      maxUses: 1,
+      usedCount: 0,
+      isActive: true,
+      description: "うちの子スタンプ無料クーポン",
+      expiresAt,
+      createdAt: now,
+      sourceOrderId: orderId,
+    });
+    if (order.uid) {
+      await db
+        .collection("users")
+        .doc(order.uid)
+        .update({
+          availableCoupons: FieldValue.arrayUnion({
+            code,
+            description: "うちの子スタンプ無料クーポン（¥4,980OFF）",
+            discount: 4980,
+            expiresAt: expiresAt.toISOString(),
+          }),
+        });
+    }
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({ stampCouponCode: code });
+    console.log("[stripe-webhook] stamp coupon issued:", code);
+    return code;
+  } catch (e) {
+    console.warn("[stripe-webhook] stamp coupon error:", e.message);
+    return null;
+  }
+}
+
+// ── リピート購入クーポン発行（メール用） ──
+async function issueRepeatCoupon(db, order, orderId) {
+  if (order.repeatCouponCode) return order.repeatCouponCode;
+  const code = generateCouponCode("REPEAT");
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+  try {
+    await db.collection("coupons").doc(code).set({
+      type: "fixed",
+      discount: 300,
+      maxUses: 1,
+      usedCount: 0,
+      isActive: true,
+      description: "リピート購入クーポン",
+      expiresAt,
+      createdAt: now,
+      sourceOrderId: orderId,
+    });
+    if (order.uid) {
+      await db
+        .collection("users")
+        .doc(order.uid)
+        .update({
+          availableCoupons: FieldValue.arrayUnion({
+            code,
+            description: "次回¥300OFFクーポン",
+            discount: 300,
+            expiresAt: expiresAt.toISOString(),
+          }),
+        });
+    }
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({ repeatCouponCode: code });
+    console.log("[stripe-webhook] repeat coupon issued:", code);
+    return code;
+  } catch (e) {
+    console.warn("[stripe-webhook] repeat coupon error:", e.message);
+    return null;
+  }
+}
+
+// ── 注文確認メール送信（スタンプ+リピートクーポン込み） ──
+async function sendOrderConfirmationEmail(db, order, orderId) {
   const apiKey = process.env.SENDGRID_API_KEY;
   if (!apiKey || !order.email) return;
+
+  // クーポン発行（冪等）
+  const stampCode = await issueStampCoupon(db, order, orderId);
+  const repeatCode = await issueRepeatCoupon(db, order, orderId);
+
+  const customerName = order.shippingAddress?.fullName || "お客様";
+  const amount = (order.total ?? order.amount ?? 0).toLocaleString();
+  const itemName =
+    (order.items?.[0]?.productName ?? order.productName ?? order.product) || "";
+  const s = order.shippingAddress || {};
+  const shippingBlock = s.fullName
+    ? `<p style="margin:0;line-height:1.6">〒${s.zip || ""}<br>${s.prefecture || ""}${s.address1 || ""}${s.address2 || ""}<br>${s.fullName}</p>`
+    : "";
+
+  const stampSection = stampCode
+    ? `<div style="background:#fff8e1;border:2px dashed #c8956c;border-radius:12px;padding:20px;margin:24px 0;text-align:center">
+<p style="margin:0 0 8px;font-size:14px;color:#8d6e63">🎁 うちの子スタンプ無料クーポン</p>
+<p style="margin:0;font-size:24px;font-weight:bold;letter-spacing:2px;color:#5d4037">${stampCode}</p>
+<p style="margin:8px 0 0;font-size:12px;color:#999">有効期限: 90日間 ｜ <a href="https://custom.deer.gift/stamp?coupon=${encodeURIComponent(stampCode)}" style="color:#c8956c">スタンプを作る →</a></p>
+</div>`
+    : "";
+
+  const repeatSection = repeatCode
+    ? `<div style="background:#f1f8e9;border:1px solid #c5e1a5;border-radius:8px;padding:16px;margin:16px 0;text-align:center">
+<p style="margin:0 0 4px;font-size:13px;color:#689f38">🎉 次回のご注文で使える ¥300 OFF クーポン</p>
+<p style="margin:0;font-size:18px;font-weight:bold;color:#33691e">${repeatCode}</p>
+<p style="margin:6px 0 0;font-size:11px;color:#999">有効期限: 60日間</p>
+</div>`
+    : "";
+
+  const htmlBody = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f5f1eb;font-family:'Helvetica Neue',Arial,sans-serif">
+<div style="max-width:600px;margin:0 auto;background:#fffdf8">
+<div style="background:#3e2c23;padding:24px;text-align:center">
+<h1 style="margin:0;color:#f5f1eb;font-size:22px;font-weight:300;letter-spacing:3px">DEER BRAND</h1>
+</div>
+<div style="padding:32px 28px">
+<p style="font-size:16px;color:#3e2c23">${customerName} 様</p>
+<p style="color:#5d4037;line-height:1.8">この度はDeer Brandをご利用いただきありがとうございます。<br>ご注文を承りましたのでお知らせいたします。</p>
+<table style="width:100%;border-collapse:collapse;margin:20px 0" cellpadding="8">
+<tr style="border-bottom:1px solid #e8e0d4"><td style="color:#999;width:100px">注文番号</td><td style="color:#3e2c23;font-weight:bold">${orderId}</td></tr>
+<tr style="border-bottom:1px solid #e8e0d4"><td style="color:#999">商品</td><td style="color:#3e2c23">${itemName}</td></tr>
+<tr style="border-bottom:1px solid #e8e0d4"><td style="color:#999">合計金額</td><td style="color:#3e2c23;font-weight:bold">¥${amount}</td></tr>
+</table>
+${shippingBlock ? `<div style="background:#faf7f2;border-radius:8px;padding:16px;margin:16px 0"><p style="margin:0 0 8px;font-size:13px;color:#999">お届け先</p>${shippingBlock}</div>` : ""}
+${stampSection}
+${repeatSection}
+<p style="color:#5d4037;line-height:1.8;margin-top:24px">制作が完了次第、改めてご連絡いたします。<br>通常3〜5営業日でお届けいたします。</p>
+<div style="text-align:center;margin:28px 0">
+<a href="https://custom.deer.gift/upload" style="display:inline-block;background:#c8956c;color:#fff;text-decoration:none;padding:12px 32px;border-radius:6px;font-size:14px">もう一着つくる →</a>
+</div>
+</div>
+<div style="background:#3e2c23;padding:20px;text-align:center">
+<p style="margin:0;color:#a08979;font-size:11px">Deer Brand ｜ <a href="mailto:support@deer.gift" style="color:#c8956c">support@deer.gift</a></p>
+<p style="margin:4px 0 0;color:#6d5c52;font-size:10px"><a href="https://custom.deer.gift/tokushoho" style="color:#6d5c52">特定商取引法に基づく表記</a> ｜ <a href="https://custom.deer.gift/privacy" style="color:#6d5c52">プライバシーポリシー</a></p>
+</div>
+</div>
+</body></html>`;
+
   const body = {
     personalizations: [{ to: [{ email: order.email }] }],
     from: { email: "noreply@deer.gift", name: "Deer Brand" },
-    subject: `【Deer Brand】ご注文を承りました（注文番号: ${orderId}）`,
-    content: [
-      {
-        type: "text/html",
-        value: `<p>${order.shippingAddress?.fullName || "お客様"} 様</p>
-<p>この度はDeer Brandをご利用いただきありがとうございます。<br>
-以下のご注文を承りました。</p>
-<table>
-<tr><td>注文番号</td><td>${orderId}</td></tr>
-<tr><td>商品</td><td>${order.productName || order.product || ""}</td></tr>
-<tr><td>スタイル</td><td>${order.style || ""}</td></tr>
-<tr><td>合計金額</td><td>¥${(order.total ?? order.amount ?? 0).toLocaleString()}</td></tr>
-</table>
-<p>制作開始次第、ご連絡いたします。<br>ご不明な点はサポート（support@deer.gift）までお問い合わせください。</p>
-<p>Deer Brand チーム</p>`,
-      },
-    ],
+    subject: `【Deer Brand】ご注文ありがとうございます（${orderId}）`,
+    content: [{ type: "text/html", value: htmlBody }],
   };
   try {
     const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
@@ -307,8 +446,8 @@ export default async function handler(req, res) {
       const orderRef2 = db.collection("orders").doc(succeededOrderId);
       const finalOrder = (await orderRef2.get()).data();
       if (finalOrder) {
-        sendOrderConfirmationEmail(finalOrder, succeededOrderId).catch((e) =>
-          console.warn("[webhook] email error:", e),
+        sendOrderConfirmationEmail(db, finalOrder, succeededOrderId).catch(
+          (e) => console.warn("[webhook] email error:", e),
         );
         triggerPrintfulOrder(db, finalOrder, succeededOrderId).catch((e) =>
           console.warn("[webhook] printful error:", e),
