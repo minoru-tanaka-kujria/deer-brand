@@ -391,10 +391,14 @@
 
     // ------ LINE ------
     loginLine() {
-      const lineClientId = window._deerLineClientId;
+      // window._deerLineClientId が未設定の場合は firebase-config.js の LINE_CHANNEL_ID をフォールバック
+      const lineClientId =
+        window._deerLineClientId ||
+        window._deerConfig?.lineChannelId ||
+        "2009690645";
       if (!lineClientId) {
         this.showError(
-          "LINEログインは現在準備中です。Google または メールアドレスでログインしてください。",
+          "LINEログインは現在ご利用いただけません。Google またはメールアドレスでログインしてください。",
         );
         return;
       }

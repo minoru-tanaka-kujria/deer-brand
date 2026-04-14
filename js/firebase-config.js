@@ -1,3 +1,8 @@
+// NOTE: Stripe Publishable Keys (pk_test_*, pk_live_*) are intentionally hardcoded here.
+// These are CLIENT-SIDE keys designed to be public. They do NOT grant API access.
+// The SECRET key (sk_*) is stored only in Vercel environment variables and never exposed to clients.
+// Firebase API Key is also public by design and restricted by authorized domains in Firebase Console.
+
 /**
  * Deer Brand — Firebase設定
  * ★ Firebase ConsoleでWebアプリを登録後、以下の値を貼り付けてください

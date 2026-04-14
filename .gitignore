@@ -5,5 +5,7 @@
 .admin_key_backup.txt
 node_modules/
 package-lock.json
+.env
+.env.local
 .env*.local
 server.py

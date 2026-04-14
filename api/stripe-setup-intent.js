@@ -7,6 +7,7 @@
 import Stripe from "stripe";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
+import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -16,24 +17,8 @@ const _stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export default async function handler(req, res) {
-  const ALLOWED_ORIGINS = [
-    "https://custom.deer.gift",
-    "https://deer-brand.vercel.app",
-    process.env.ALLOWED_ORIGIN,
-  ].filter(Boolean);
-  const origin = (req.headers.origin || "").trim();
-  const corsOrigin =
-    ALLOWED_ORIGINS.includes(origin) ||
-    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
-      ? origin
-      : ALLOWED_ORIGINS[0];
-  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
+  setCorsHeaders(req, res);
+  if (handlePreflight(req, res)) return;
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "METHOD_NOT_ALLOWED" });

@@ -7,6 +7,7 @@ import Stripe from "stripe";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { calculateTotal } from "./_lib/products.js";
+import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -64,24 +65,8 @@ function sanitizeShipping(shipping) {
 }
 
 export default async function handler(req, res) {
-  const ALLOWED_ORIGINS = [
-    "https://custom.deer.gift",
-    "https://deer-brand.vercel.app",
-    process.env.ALLOWED_ORIGIN,
-  ].filter(Boolean);
-  const origin = (req.headers.origin || "").trim();
-  const corsOrigin =
-    ALLOWED_ORIGINS.includes(origin) ||
-    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
-      ? origin
-      : ALLOWED_ORIGINS[0];
-  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
+  setCorsHeaders(req, res);
+  if (handlePreflight(req, res)) return;
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "METHOD_NOT_ALLOWED" });
@@ -99,6 +84,7 @@ export default async function handler(req, res) {
     paymentIntentId,
     orderId: requestedOrderId,
     shippingAddress,
+    artImageUrl,
   } = req.body ?? {};
   if (!paymentIntentId && !requestedOrderId) {
     return res.status(400).json({ error: "INVALID_REQUEST" });
@@ -221,6 +207,10 @@ export default async function handler(req, res) {
           size: item.size,
           petCount: item.petCount,
           petNames: item.petNames,
+          artImageUrl:
+            typeof artImageUrl === "string" && artImageUrl.startsWith("http")
+              ? artImageUrl
+              : (reservedOrder.artImageUrl ?? null),
           total: expectedAmount,
           amount: expectedAmount,
           paymentIntentId,
@@ -247,8 +237,42 @@ export default async function handler(req, res) {
         { merge: true },
       );
 
-      return { orderId };
+      return { orderId, couponCode: reservedOrder.couponCode ?? null };
     });
+
+    // クーポン使用確定（P0-3）
+    if (result.couponCode) {
+      try {
+        const couponRef = db.collection("coupons").doc(result.couponCode);
+        const userRef2 = db.collection("users").doc(authUser.uid);
+        await db.runTransaction(async (tx2) => {
+          const [cSnap, uSnap] = await Promise.all([
+            tx2.get(couponRef),
+            tx2.get(userRef2),
+          ]);
+          const c = cSnap.data();
+          if (!c || c.isActive === false) return;
+          const maxUses = c.maxUses == null ? Infinity : Number(c.maxUses);
+          if ((c.usedCount ?? 0) >= maxUses) return;
+          if (
+            uSnap.exists &&
+            (uSnap.data().appliedCoupons ?? []).includes(result.couponCode)
+          )
+            return;
+          tx2.update(couponRef, {
+            usedCount: FieldValue.increment(1),
+            updatedAt: new Date(),
+          });
+          tx2.set(
+            userRef2,
+            { appliedCoupons: FieldValue.arrayUnion(result.couponCode) },
+            { merge: true },
+          );
+        });
+      } catch (couponErr) {
+        console.warn("[create-order] coupon usage mark failed:", couponErr);
+      }
+    }
 
     return res.status(201).json(result);
   } catch (error) {

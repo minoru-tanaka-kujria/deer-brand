@@ -43,6 +43,171 @@ function readRawBody(req) {
   });
 }
 
+// トランザクション外で実行（冪等性のため webhookEvents が既存なら skip）
+async function sendOrderConfirmationEmail(order, orderId) {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  if (!apiKey || !order.email) return;
+  const body = {
+    personalizations: [{ to: [{ email: order.email }] }],
+    from: { email: "noreply@deer.gift", name: "Deer Brand" },
+    subject: `【Deer Brand】ご注文を承りました（注文番号: ${orderId}）`,
+    content: [
+      {
+        type: "text/html",
+        value: `<p>${order.shippingAddress?.fullName || "お客様"} 様</p>
+<p>この度はDeer Brandをご利用いただきありがとうございます。<br>
+以下のご注文を承りました。</p>
+<table>
+<tr><td>注文番号</td><td>${orderId}</td></tr>
+<tr><td>商品</td><td>${order.productName || order.product || ""}</td></tr>
+<tr><td>スタイル</td><td>${order.style || ""}</td></tr>
+<tr><td>合計金額</td><td>¥${(order.total ?? order.amount ?? 0).toLocaleString()}</td></tr>
+</table>
+<p>制作開始次第、ご連絡いたします。<br>ご不明な点はサポート（support@deer.gift）までお問い合わせください。</p>
+<p>Deer Brand チーム</p>`,
+      },
+    ],
+  };
+  try {
+    const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok)
+      console.warn("[stripe-webhook] email send failed:", res.status);
+    else
+      console.log("[stripe-webhook] confirmation email sent to", order.email);
+  } catch (e) {
+    console.warn("[stripe-webhook] email error:", e.message);
+  }
+}
+
+async function triggerPrintfulOrder(db, order, orderId) {
+  const apiKey = process.env.PRINTFUL_API_KEY;
+  if (!apiKey) return;
+  if (!order.artImageUrl) {
+    console.warn("[stripe-webhook] Printful skip: no artImageUrl for", orderId);
+    return;
+  }
+  if (order.printfulOrderId) {
+    console.log("[stripe-webhook] Printful skip: already ordered", orderId);
+    return;
+  }
+
+  const PRINTFUL_PRODUCT_IDS = {
+    poster: 1,
+    "tshirt-unisex": 71,
+    "hoodie-pullover": 146,
+    "mug-11oz": 19,
+    "tote-bag": 587,
+    "phone-case": 31,
+    "canvas-wrap": 3,
+    "sticker-sheet": 505,
+    "emb-cap": 167,
+    "emb-hoodie": 212,
+  };
+  const COLOR_MAP = {
+    white: "White",
+    black: "Black",
+    navy: "Navy",
+    gray: "Sport Gray",
+  };
+  const PLACEMENT_FILE_TYPE = {
+    front: "front",
+    back: "back",
+    "left-chest": "front",
+  };
+
+  const productId = PRINTFUL_PRODUCT_IDS[order.product];
+  if (!productId) {
+    console.warn("[stripe-webhook] Printful: unknown product", order.product);
+    return;
+  }
+
+  try {
+    // バリアントID取得
+    const varRes = await fetch(
+      `https://api.printful.com/products/${productId}`,
+      {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      },
+    );
+    const varData = await varRes.json();
+    const colorName = COLOR_MAP[order.color || ""] || "White";
+    const variant = (varData.result?.variants || []).find(
+      (v) => v.color === colorName && (!order.size || v.size === order.size),
+    );
+    if (!variant) {
+      console.warn("[stripe-webhook] Printful: no variant found");
+      return;
+    }
+
+    const isEmb = order.product === "emb-cap" || order.product === "emb-hoodie";
+    const fileType = isEmb
+      ? "embroidery"
+      : PLACEMENT_FILE_TYPE[order.placementId || ""] || "front";
+    const fileEntry = { url: order.artImageUrl, type: fileType };
+    if (!isEmb)
+      fileEntry.position = {
+        area_width: 1800,
+        area_height: 2400,
+        width: 1800,
+        height: 1800,
+        top: 300,
+        left: 0,
+      };
+
+    const s = order.shippingAddress || {};
+    const printfulBody = {
+      recipient: {
+        name: s.fullName || "",
+        address1: s.address1 || "",
+        city: s.prefecture || "Tokyo",
+        country_code: "JP",
+        zip: s.zip || "",
+        phone: s.phone || "",
+        email: s.email || order.email || "",
+      },
+      items: [{ variant_id: variant.id, quantity: 1, files: [fileEntry] }],
+      retail_costs: { currency: "JPY", subtotal: String(order.total ?? 0) },
+    };
+
+    const pfRes = await fetch("https://api.printful.com/orders", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(printfulBody),
+    });
+    const pfData = await pfRes.json();
+    if (!pfRes.ok) {
+      console.error("[stripe-webhook] Printful order failed:", pfData);
+      return;
+    }
+
+    const printfulOrderId = pfData.result?.id ?? null;
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({
+        printfulOrderId,
+        printfulOrderUrl: printfulOrderId
+          ? `https://www.printful.com/dashboard/orders/${printfulOrderId}`
+          : null,
+        status: "printing",
+        updatedAt: new Date(),
+      });
+    console.log("[stripe-webhook] Printful order created:", printfulOrderId);
+  } catch (e) {
+    console.error("[stripe-webhook] Printful error:", e.message);
+  }
+}
+
 export default async function handler(req, res) {
   const ALLOWED_ORIGINS = [
     "https://custom.deer.gift",
@@ -101,6 +266,9 @@ export default async function handler(req, res) {
 
   const db = getFirestore(getAdminApp());
 
+  // payment_intent.succeeded の場合、トランザクション外で orderId を参照するため
+  let succeededOrderId = null;
+
   try {
     await db.runTransaction(async (tx) => {
       const eventRef = db.collection("webhookEvents").doc(event.id);
@@ -141,6 +309,7 @@ export default async function handler(req, res) {
           });
         }
         // 既に paid 以降のステータスなら何もしない（べき等: 重複webhookを安全に無視）
+        succeededOrderId = orderId;
       }
 
       tx.set(eventRef, {
@@ -149,6 +318,20 @@ export default async function handler(req, res) {
         processedAt: new Date(),
       });
     });
+
+    // トランザクション外で email + Printful を非同期実行（Webhook レスポンスをブロックしない）
+    if (succeededOrderId) {
+      const orderRef2 = db.collection("orders").doc(succeededOrderId);
+      const finalOrder = (await orderRef2.get()).data();
+      if (finalOrder) {
+        sendOrderConfirmationEmail(finalOrder, succeededOrderId).catch((e) =>
+          console.warn("[webhook] email error:", e),
+        );
+        triggerPrintfulOrder(db, finalOrder, succeededOrderId).catch((e) =>
+          console.warn("[webhook] printful error:", e),
+        );
+      }
+    }
 
     return res.status(200).json({ received: true });
   } catch (error) {

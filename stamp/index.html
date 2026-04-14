@@ -2666,7 +2666,7 @@
       const couponInput = document.getElementById("coupon");
       const redeemBtn = document.getElementById("redeem");
       const statusEl = document.getElementById("status");
-      const VALID = ["DEER-WELCOME-0000", "DEER-FOOD-8888", "DEER-GIFT-2026"];
+      // P3-8: ハードコードを廃止 — API で検証する
 
       drop.addEventListener("click", () => fileInput.click());
       drop.addEventListener("dragover", (e) => {
@@ -2743,31 +2743,47 @@
         tick();
       }
 
-      redeemBtn.addEventListener("click", () => {
+      // P3-8: API でクーポン検証 → upload.html へリダイレクト
+      redeemBtn.addEventListener("click", async () => {
         const code = couponInput.value.trim().toUpperCase();
         if (!code) {
           statusEl.textContent = "クーポンコードを入力してください";
           statusEl.className = "status-msg ng";
           return;
         }
-        if (VALID.includes(code)) {
-          statusEl.textContent = "認証成功！ダウンロードを開始します...";
-          statusEl.className = "status-msg ok";
-          setTimeout(() => {
-            const blob = new Blob(["Demo: LINE Sticker ZIP"], {
-              type: "application/zip",
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "uchinoko-stamp.zip";
-            a.click();
-            URL.revokeObjectURL(url);
-          }, 700);
-        } else {
+        redeemBtn.disabled = true;
+        statusEl.textContent = "確認中...";
+        statusEl.className = "status-msg";
+        try {
+          const res = await fetch("../api/validate-coupon", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "check", code }),
+          });
+          const data = await res.json();
+          if (res.ok && data.valid) {
+            statusEl.textContent =
+              "認証成功！スタンプ制作ページに移動します...";
+            statusEl.className = "status-msg ok";
+            setTimeout(() => {
+              location.href =
+                "../upload.html?coupon=" + encodeURIComponent(code);
+            }, 800);
+          } else {
+            statusEl.textContent =
+              data.error === "COUPON_ALREADY_USED"
+                ? "このクーポンはすでに使用済みです"
+                : data.error === "COUPON_EXPIRED"
+                  ? "このクーポンの有効期限が切れています"
+                  : "無効なコードです。Deer商品ご購入時のメールをご確認ください";
+            statusEl.className = "status-msg ng";
+            redeemBtn.disabled = false;
+          }
+        } catch {
           statusEl.textContent =
-            "無効なコードです。Deer商品ご購入時のメールをご確認ください";
+            "通信エラーが発生しました。しばらく経ってから再度お試しください";
           statusEl.className = "status-msg ng";
+          redeemBtn.disabled = false;
         }
       });
     </script>

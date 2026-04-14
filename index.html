@@ -1002,6 +1002,95 @@
           padding: 0.8rem 1rem;
         }
       }
+      /* ===== ハンバーガーメニュー (P3-3) ===== */
+      .hamburger-btn {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 36px;
+        height: 36px;
+        padding: 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background 0.2s;
+      }
+      .hamburger-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .hamburger-btn span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: var(--charcoal);
+        border-radius: 2px;
+        transition:
+          transform 0.25s,
+          opacity 0.25s;
+        transform-origin: center;
+      }
+      .hamburger-btn.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .hamburger-btn.open span:nth-child(2) {
+        opacity: 0;
+      }
+      .hamburger-btn.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+      /* モバイルドロワー */
+      .mobile-menu {
+        display: none;
+        position: fixed;
+        top: 56px;
+        left: 0;
+        right: 0;
+        background: rgba(255, 248, 243, 0.98);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+        padding: 1.2rem 1.5rem 1.5rem;
+        z-index: 99;
+        flex-direction: column;
+        gap: 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+      .mobile-menu.open {
+        display: flex;
+      }
+      .mobile-menu a {
+        display: block;
+        padding: 0.75rem 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--charcoal);
+        text-decoration: none;
+        border-bottom: 1px solid var(--border);
+        letter-spacing: 0.5px;
+      }
+      .mobile-menu a:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0.5rem;
+      }
+      .mobile-menu .mobile-cta {
+        display: block;
+        text-align: center;
+        margin-top: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--brand);
+        color: #fff;
+        border-radius: 100px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        letter-spacing: 1px;
+      }
+      @media (max-width: 900px) {
+        .hamburger-btn {
+          display: flex;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1042,8 +1131,51 @@
           <span id="navUserName">マイページ</span>
         </a>
         <a href="upload" class="nav-cta">はじめる</a>
+        <!-- ハンバーガーボタン（モバイル用） -->
+        <button
+          class="hamburger-btn"
+          id="hamburgerBtn"
+          aria-label="メニューを開く"
+          aria-expanded="false"
+          onclick="toggleMobileMenu()"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
     </nav>
+
+    <!-- モバイルメニュードロワー -->
+    <div class="mobile-menu" id="mobileMenu" role="navigation">
+      <a href="#styles" onclick="closeMobileMenu()">アートスタイル</a>
+      <a href="#products" onclick="closeMobileMenu()">グッズ一覧</a>
+      <a href="upload.html" class="mobile-cta">無料でつくる →</a>
+    </div>
+
+    <script>
+      function toggleMobileMenu() {
+        const btn = document.getElementById("hamburgerBtn");
+        const menu = document.getElementById("mobileMenu");
+        const isOpen = menu.classList.toggle("open");
+        btn.classList.toggle("open", isOpen);
+        btn.setAttribute("aria-expanded", String(isOpen));
+        document.body.style.overflow = isOpen ? "hidden" : "";
+      }
+      function closeMobileMenu() {
+        const btn = document.getElementById("hamburgerBtn");
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.remove("open");
+        btn.classList.remove("open");
+        btn.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      }
+      // Escキーで閉じる
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMobileMenu();
+      });
+    </script>
+
     <script type="module" src="js/auth-config.js"></script>
     <script src="js/auth-modal.js"></script>
 
@@ -1182,7 +1314,7 @@
         <div class="how-step fade-up">
           <div class="how-num">01</div>
           <div class="how-icon">
-            <img src="img/how-step1.png" alt="写真を撮影" />
+            <img loading="lazy" src="img/how-step1.png" alt="写真を撮影" />
           </div>
           <div class="how-name">写真をアップロード</div>
           <div class="how-desc">
@@ -1192,7 +1324,7 @@
         <div class="how-step fade-up" style="transition-delay: 0.15s">
           <div class="how-num">02</div>
           <div class="how-icon">
-            <img src="img/how-step2.png" alt="スタイルを選ぶ" />
+            <img loading="lazy" src="img/how-step2.png" alt="スタイルを選ぶ" />
           </div>
           <div class="how-name">スタイルとグッズを選ぶ</div>
           <div class="how-desc">
@@ -1202,7 +1334,7 @@
         <div class="how-step fade-up" style="transition-delay: 0.3s">
           <div class="how-num">03</div>
           <div class="how-icon">
-            <img src="img/how-step3.png" alt="お届け" />
+            <img loading="lazy" src="img/how-step3.png" alt="お届け" />
           </div>
           <div class="how-name">おうちにお届け</div>
           <div class="how-desc">
@@ -1224,7 +1356,11 @@
           class="style-item fade-up"
           onclick="location.href = 'upload?style=oil-impressionism'"
         >
-          <img src="img/styles/oil-impressionism.png" alt="印象派" />
+          <img
+            loading="lazy"
+            src="img/styles/oil-impressionism.png"
+            alt="印象派"
+          />
           <div class="overlay">
             <div class="s-name">印象派</div>
             <div class="s-desc">モネ風の柔らかな光</div>
@@ -1235,7 +1371,7 @@
           style="transition-delay: 0.05s"
           onclick="location.href = 'upload?style=oil-baroque'"
         >
-          <img src="img/styles/oil-baroque.png" alt="バロック" />
+          <img loading="lazy" src="img/styles/oil-baroque.png" alt="バロック" />
           <div class="overlay">
             <div class="s-name">バロック</div>
             <div class="s-desc">レンブラント風の荘厳さ</div>
@@ -1246,7 +1382,7 @@
           style="transition-delay: 0.1s"
           onclick="location.href = 'upload?style=wc-loose'"
         >
-          <img src="img/styles/wc-loose.png" alt="ルーズ水彩" />
+          <img loading="lazy" src="img/styles/wc-loose.png" alt="ルーズ水彩" />
           <div class="overlay">
             <div class="s-name">ルーズ水彩</div>
             <div class="s-desc">ふんわり柔らかなにじみ</div>
@@ -1257,7 +1393,11 @@
           style="transition-delay: 0.15s"
           onclick="location.href = 'upload?style=wc-botanical'"
         >
-          <img src="img/styles/wc-botanical.png" alt="ボタニカル" />
+          <img
+            loading="lazy"
+            src="img/styles/wc-botanical.png"
+            alt="ボタニカル"
+          />
           <div class="overlay">
             <div class="s-name">ボタニカル水彩</div>
             <div class="s-desc">図鑑のような精密さ</div>
@@ -1268,7 +1408,7 @@
           style="transition-delay: 0.05s"
           onclick="location.href = 'upload?style=ink-sumie'"
         >
-          <img src="img/styles/ink-sumie.png" alt="水墨画" />
+          <img loading="lazy" src="img/styles/ink-sumie.png" alt="水墨画" />
           <div class="overlay">
             <div class="s-name">水墨画</div>
             <div class="s-desc">和の余白の美</div>
@@ -1279,7 +1419,11 @@
           style="transition-delay: 0.1s"
           onclick="location.href = 'upload?style=pop-warhol'"
         >
-          <img src="img/styles/pop-warhol.png" alt="ウォーホル風" />
+          <img
+            loading="lazy"
+            src="img/styles/pop-warhol.png"
+            alt="ウォーホル風"
+          />
           <div class="overlay">
             <div class="s-name">ウォーホル風</div>
             <div class="s-desc">カラフルなポップアート</div>
@@ -1290,7 +1434,11 @@
           style="transition-delay: 0.15s"
           onclick="location.href = 'upload?style=oil-expressionism'"
         >
-          <img src="img/styles/oil-expressionism.png" alt="表現主義" />
+          <img
+            loading="lazy"
+            src="img/styles/oil-expressionism.png"
+            alt="表現主義"
+          />
           <div class="overlay">
             <div class="s-name">表現主義</div>
             <div class="s-desc">ゴッホ「星月夜」風</div>
@@ -1301,7 +1449,7 @@
           style="transition-delay: 0.2s"
           onclick="location.href = 'upload?style=future-neon'"
         >
-          <img src="img/styles/future-neon.png" alt="ネオン" />
+          <img loading="lazy" src="img/styles/future-neon.png" alt="ネオン" />
           <div class="overlay">
             <div class="s-name">ネオングロウ</div>
             <div class="s-desc">光のアウトライン</div>
@@ -1312,7 +1460,7 @@
           style="transition-delay: 0.05s"
           onclick="location.href = 'upload?style=pop-comic'"
         >
-          <img src="img/styles/pop-comic.png" alt="コミック" />
+          <img loading="lazy" src="img/styles/pop-comic.png" alt="コミック" />
           <div class="overlay">
             <div class="s-name">コミック風</div>
             <div class="s-desc">アメコミのBen-Day dots</div>
@@ -1323,7 +1471,11 @@
           style="transition-delay: 0.1s"
           onclick="location.href = 'upload?style=mono-charcoal'"
         >
-          <img src="img/styles/mono-charcoal.png" alt="チャコール" />
+          <img
+            loading="lazy"
+            src="img/styles/mono-charcoal.png"
+            alt="チャコール"
+          />
           <div class="overlay">
             <div class="s-name">チャコール画</div>
             <div class="s-desc">温かみのあるモノクロ</div>
@@ -1334,7 +1486,11 @@
           style="transition-delay: 0.15s"
           onclick="location.href = 'upload?style=line-oneline'"
         >
-          <img src="img/styles/line-oneline.png" alt="ワンライン" />
+          <img
+            loading="lazy"
+            src="img/styles/line-oneline.png"
+            alt="ワンライン"
+          />
           <div class="overlay">
             <div class="s-name">ワンライン</div>
             <div class="s-desc">一筆書きのシンプルさ</div>
@@ -1345,7 +1501,11 @@
           style="transition-delay: 0.2s"
           onclick="location.href = 'upload?style=collage-papercut'"
         >
-          <img src="img/styles/collage-papercut.png" alt="ペーパーカット" />
+          <img
+            loading="lazy"
+            src="img/styles/collage-papercut.png"
+            alt="ペーパーカット"
+          />
           <div class="overlay">
             <div class="s-name">ペーパーカット</div>
             <div class="s-desc">立体的な切り紙アート</div>
@@ -1486,7 +1646,11 @@
             location.href = 'placement-detail?product=mug&placement=wrap'
           "
         >
-          <img src="img/placement/mug-wrap.png" alt="マグカップ" />
+          <img
+            loading="lazy"
+            src="img/placement/mug-wrap.png"
+            alt="マグカップ"
+          />
           <div class="lookbook-caption">
             <div class="lookbook-product">マグカップ</div>
             <div class="lookbook-style">ラップアラウンド</div>
@@ -1500,7 +1664,11 @@
             location.href = 'placement-detail?product=case&placement=back'
           "
         >
-          <img src="img/placement/case-back.png" alt="スマホケース" />
+          <img
+            loading="lazy"
+            src="img/placement/case-back.png"
+            alt="スマホケース"
+          />
           <div class="lookbook-caption">
             <div class="lookbook-product">スマホケース</div>
             <div class="lookbook-style">背面プリント</div>
@@ -1542,7 +1710,7 @@
           class="product-card fade-up"
           onclick="location.href = 'product-detail?product=hoodie'"
         >
-          <img src="img/product-hoodie.png" alt="パーカー" />
+          <img loading="lazy" src="img/product-hoodie.png" alt="パーカー" />
           <div class="product-info">
             <div class="product-name">パーカー</div>
             <div class="product-price">¥7,980</div>
@@ -1577,7 +1745,7 @@
           style="transition-delay: 0.08s"
           onclick="location.href = 'product-detail?product=tshirt'"
         >
-          <img src="img/product-tshirt.png" alt="Tシャツ" />
+          <img loading="lazy" src="img/product-tshirt.png" alt="Tシャツ" />
           <div class="product-info">
             <div class="product-name">Tシャツ</div>
             <div class="product-price">¥4,980</div>
@@ -1612,7 +1780,7 @@
           style="transition-delay: 0.24s"
           onclick="location.href = 'product-detail?product=mug'"
         >
-          <img src="img/product-mug.png" alt="マグカップ" />
+          <img loading="lazy" src="img/product-mug.png" alt="マグカップ" />
           <div class="product-info">
             <div class="product-name">マグカップ</div>
             <div class="product-price">¥3,480</div>
@@ -1624,7 +1792,7 @@
           class="product-card fade-up"
           onclick="location.href = 'product-detail?product=case'"
         >
-          <img src="img/product-case.png" alt="スマホケース" />
+          <img loading="lazy" src="img/product-case.png" alt="スマホケース" />
           <div class="product-info">
             <div class="product-name">スマホケース</div>
             <div class="product-price">¥4,980</div>
@@ -1637,7 +1805,11 @@
           style="transition-delay: 0.08s"
           onclick="location.href = 'product-detail?product=poster'"
         >
-          <img src="img/product-poster.png" alt="アートポスター" />
+          <img
+            loading="lazy"
+            src="img/product-poster.png"
+            alt="アートポスター"
+          />
           <div class="product-info">
             <div class="product-name">アートポスター</div>
             <div class="product-price">¥5,480</div>
@@ -1650,7 +1822,11 @@
           style="transition-delay: 0.16s"
           onclick="location.href = 'product-detail?product=postcard'"
         >
-          <img src="img/product-postcard.png" alt="ポストカード" />
+          <img
+            loading="lazy"
+            src="img/product-postcard.png"
+            alt="ポストカード"
+          />
           <div class="product-info">
             <div class="product-name">ポストカードセット</div>
             <div class="product-price">¥1,980</div>
@@ -1663,7 +1839,7 @@
           style="transition-delay: 0.24s"
           onclick="location.href = 'product-detail?product=emb-cap'"
         >
-          <img src="img/product-cap.png" alt="刺繍キャップ" />
+          <img loading="lazy" src="img/product-cap.png" alt="刺繍キャップ" />
           <div class="product-info">
             <div class="product-name">刺繍キャップ</div>
             <div class="product-price">¥4,980</div>
@@ -1697,7 +1873,11 @@
           class="product-card fade-up"
           onclick="location.href = 'product-detail?product=emb-hoodie'"
         >
-          <img src="img/product-embroidery-hoodie.png" alt="刺繍パーカー" />
+          <img
+            loading="lazy"
+            src="img/product-embroidery-hoodie.png"
+            alt="刺繍パーカー"
+          />
           <div class="product-info">
             <div class="product-name">刺繍パーカー</div>
             <div class="product-price">¥12,980</div>
@@ -1732,7 +1912,11 @@
           style="transition-delay: 0.08s"
           onclick="location.href = 'product-detail?product=sticker'"
         >
-          <img src="img/product-sticker.png" alt="カッティングステッカー" />
+          <img
+            loading="lazy"
+            src="img/product-sticker.png"
+            alt="カッティングステッカー"
+          />
           <div class="product-info">
             <div class="product-name">カッティングステッカー</div>
             <div class="product-price">¥1,980</div>
@@ -1757,13 +1941,21 @@
         "
       >
         <div class="style-item" style="border-radius: 12px; overflow: hidden">
-          <img src="img/styles/oil-impressionism.png" alt="柴犬・印象派" />
+          <img
+            loading="lazy"
+            src="img/styles/oil-impressionism.png"
+            alt="柴犬・印象派"
+          />
           <div class="overlay">
             <div class="s-name">柴犬・印象派</div>
           </div>
         </div>
         <div class="style-item" style="border-radius: 12px; overflow: hidden">
-          <img src="img/styles/wc-soft.png" alt="トイプードル・水彩" />
+          <img
+            loading="lazy"
+            src="img/styles/wc-soft.png"
+            alt="トイプードル・水彩"
+          />
           <div class="overlay">
             <div class="s-name">トイプードル・水彩</div>
           </div>
@@ -1778,19 +1970,31 @@
           </div>
         </div>
         <div class="style-item" style="border-radius: 12px; overflow: hidden">
-          <img src="img/styles/oil-baroque.png" alt="ゴールデン・バロック" />
+          <img
+            loading="lazy"
+            src="img/styles/oil-baroque.png"
+            alt="ゴールデン・バロック"
+          />
           <div class="overlay">
             <div class="s-name">ゴールデン・バロック</div>
           </div>
         </div>
         <div class="style-item" style="border-radius: 12px; overflow: hidden">
-          <img src="img/styles/mono-noir.png" alt="ダックスフント・モノクロ" />
+          <img
+            loading="lazy"
+            src="img/styles/mono-noir.png"
+            alt="ダックスフント・モノクロ"
+          />
           <div class="overlay">
             <div class="s-name">ダックス・モノクロ</div>
           </div>
         </div>
         <div class="style-item" style="border-radius: 12px; overflow: hidden">
-          <img src="img/styles/future-cyber.png" alt="猫・サイバーパンク" />
+          <img
+            loading="lazy"
+            src="img/styles/future-cyber.png"
+            alt="猫・サイバーパンク"
+          />
           <div class="overlay">
             <div class="s-name">猫・サイバーパンク</div>
           </div>
@@ -1807,15 +2011,69 @@
       </div>
     </section>
 
+    <!-- REVIEWS (P3-2: Firestore動的ロード) -->
+    <section class="section" id="reviews" style="display: none">
+      <div class="section-label fade-up">Reviews</div>
+      <h2 class="section-title fade-up">お客様の声</h2>
+      <div class="reviews-grid fade-up" id="reviewsGrid"></div>
+    </section>
+    <script>
+      (function () {
+        fetch("/api/get-user?type=reviews")
+          .then(function (r) {
+            return r.ok ? r.json() : null;
+          })
+          .then(function (data) {
+            if (!data || !data.reviews || !data.reviews.length) return;
+            var section = document.getElementById("reviews");
+            var grid = document.getElementById("reviewsGrid");
+            var html = data.reviews
+              .map(function (rv) {
+                var stars = "★".repeat(Math.min(5, rv.rating || 5));
+                return (
+                  '<div class="review-card">' +
+                  '<div class="review-stars">' +
+                  stars +
+                  "</div>" +
+                  '<p class="review-text">' +
+                  escHtml(rv.comment || "") +
+                  "</p>" +
+                  '<div class="review-author">' +
+                  '<div class="review-avatar"></div>' +
+                  '<div><div class="review-name">' +
+                  escHtml(rv.userName || "匿名") +
+                  "</div>" +
+                  '<div class="review-pet">' +
+                  escHtml(rv.petName || "") +
+                  "</div></div>" +
+                  "</div>" +
+                  "</div>"
+                );
+              })
+              .join("");
+            grid.innerHTML = html;
+            section.style.display = "";
+          })
+          .catch(function () {});
+        function escHtml(s) {
+          return s
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+      })();
+    </script>
+
     <!-- LIFESTYLE BANNER -->
     <section class="lifestyle">
       <div class="lifestyle-bg">
-        <img src="img/styles/wc-botanical.png" alt="" />
-        <img src="img/styles/oil-baroque.png" alt="" />
-        <img src="img/styles/pop-graffiti.png" alt="" />
-        <img src="img/styles/mono-noir.png" alt="" />
-        <img src="img/styles/future-cyber.png" alt="" />
-        <img src="img/styles/collage-mixed.png" alt="" />
+        <img loading="lazy" src="img/styles/wc-botanical.png" alt="" />
+        <img loading="lazy" src="img/styles/oil-baroque.png" alt="" />
+        <img loading="lazy" src="img/styles/pop-graffiti.png" alt="" />
+        <img loading="lazy" src="img/styles/mono-noir.png" alt="" />
+        <img loading="lazy" src="img/styles/future-cyber.png" alt="" />
+        <img loading="lazy" src="img/styles/collage-mixed.png" alt="" />
       </div>
       <div class="lifestyle-content">
         <h2 class="lifestyle-title fade-up">

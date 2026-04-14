@@ -9,26 +9,11 @@
 
 import { createIgDiscountToken } from "./_lib/discounts.js";
 import { verifyAuth } from "./_lib/auth.js";
+import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 export default async function handler(req, res) {
-  const ALLOWED_ORIGINS = [
-    "https://custom.deer.gift",
-    "https://deer-brand.vercel.app",
-    process.env.ALLOWED_ORIGIN,
-  ].filter(Boolean);
-  const origin = (req.headers.origin || "").trim();
-  const corsOrigin =
-    ALLOWED_ORIGINS.includes(origin) ||
-    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
-      ? origin
-      : ALLOWED_ORIGINS[0];
-  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
+  setCorsHeaders(req, res);
+  if (handlePreflight(req, res)) return;
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -123,7 +108,7 @@ export default async function handler(req, res) {
       /* parse error — デフォルト値使用 */
     }
 
-    const verified = parsed.isInstagram && parsed.isFollowing;
+    const verified = parsed.isInstagram && parsed.isFollowing && parsed.hasDeer;
     const confidence =
       [parsed.isInstagram, parsed.hasDeer, parsed.isFollowing].filter(Boolean)
         .length / 3;
@@ -134,6 +119,9 @@ export default async function handler(req, res) {
     } else if (confidence < 0.34) {
       message =
         "画像が不鮮明またはInstagramの画面ではない可能性があります。画面全体が映ったスクリーンショットをお試しください";
+    } else if (!parsed.hasDeer) {
+      message =
+        "deer_dogfoodのプロフィール画面のスクリーンショットをお送りください。現在のスクリーンショットでは対象アカウントが確認できませんでした";
     } else if (!parsed.isFollowing) {
       message =
         "フォロー中の状態が確認できませんでした。deer_dogfoodをフォローした後、プロフィール画面のスクリーンショットをお送りください";

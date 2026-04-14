@@ -11,6 +11,8 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { resolveCouponDiscount, resolveIgDiscount } from "./_lib/discounts.js";
 import { PRODUCTS, calculateTotal } from "./_lib/products.js";
+import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
+import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 // モジュールスコープでキャッシュ（ウォームインスタンスで再生成コスト不要）
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -22,14 +24,6 @@ const _stripe = process.env.STRIPE_SECRET_KEY
 
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 60 * 1000;
-
-function getClientIp(req) {
-  const forwarded = req.headers["x-forwarded-for"];
-  if (typeof forwarded === "string" && forwarded.trim()) {
-    return forwarded.split(",")[0].trim();
-  }
-  return req.socket?.remoteAddress ?? "unknown";
-}
 
 function normalizeCheckoutItem(rawItem) {
   const itemId = rawItem?.item ?? rawItem?.product ?? rawItem?.productId;
@@ -97,69 +91,10 @@ function sanitizeShipping(shipping) {
   };
 }
 
-async function consumeRateLimit(db, key) {
-  const ref = db.collection("rateLimits").doc(key);
-  const now = Date.now();
-
-  await db.runTransaction(async (tx) => {
-    const snap = await tx.get(ref);
-    if (!snap.exists) {
-      tx.set(ref, {
-        count: 1,
-        windowStart: new Date(now),
-        updatedAt: new Date(now),
-      });
-      return;
-    }
-
-    const data = snap.data();
-    const windowStart =
-      typeof data.windowStart?.toDate === "function"
-        ? data.windowStart.toDate().getTime()
-        : new Date(data.windowStart).getTime();
-
-    if (!Number.isFinite(windowStart) || now - windowStart >= RATE_WINDOW_MS) {
-      tx.set(
-        ref,
-        {
-          count: 1,
-          windowStart: new Date(now),
-          updatedAt: new Date(now),
-        },
-        { merge: true },
-      );
-      return;
-    }
-
-    const nextCount = Number(data.count ?? 0) + 1;
-    if (nextCount > RATE_LIMIT) {
-      throw new Error("RATE_LIMITED");
-    }
-
-    tx.update(ref, {
-      count: nextCount,
-      updatedAt: new Date(now),
-    });
-  });
-}
-
 export default async function handler(req, res) {
-  const ALLOWED_ORIGINS = [
-    "https://custom.deer.gift",
-    "https://deer-brand.vercel.app",
-    process.env.ALLOWED_ORIGIN,
-  ].filter(Boolean);
-  const origin = (req.headers.origin || "").trim();
-  const corsOrigin =
-    ALLOWED_ORIGINS.includes(origin) ||
-    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
-      ? origin
-      : ALLOWED_ORIGINS[0];
-  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  setCorsHeaders(req, res);
+  if (handlePreflight(req, res)) return;
 
-  if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") {
     return res.status(405).json({ error: "METHOD_NOT_ALLOWED" });
   }

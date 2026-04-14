@@ -11,6 +11,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
 import { createPrediction, pollPrediction } from "./_lib/replicate.js";
+import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 const REMBG_VERSION =
   "fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003";
@@ -18,21 +19,8 @@ const RATE_LIMIT = 6;
 const RATE_WINDOW_MS = 60 * 1000;
 
 export default async function handler(req, res) {
-  const ALLOWED_ORIGINS = [
-    "https://custom.deer.gift",
-    "https://deer-brand.vercel.app",
-    process.env.ALLOWED_ORIGIN,
-  ].filter(Boolean);
-  const origin = (req.headers.origin || "").trim();
-  const corsOrigin =
-    ALLOWED_ORIGINS.includes(origin) ||
-    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
-      ? origin
-      : ALLOWED_ORIGINS[0];
-  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") return res.status(204).end();
+  setCorsHeaders(req, res, "GET, POST, OPTIONS");
+  if (handlePreflight(req, res)) return;
 
   const token = process.env.REPLICATE_API_TOKEN;
   if (!token)

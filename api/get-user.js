@@ -13,6 +13,7 @@ import Stripe from "stripe";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { getAdminApp } from "./_lib/auth.js";
+import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -22,24 +23,8 @@ const _stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export default async function handler(req, res) {
-  const ALLOWED_ORIGINS = [
-    "https://custom.deer.gift",
-    "https://deer-brand.vercel.app",
-    process.env.ALLOWED_ORIGIN,
-  ].filter(Boolean);
-  const origin = (req.headers.origin || "").trim();
-  const corsOrigin =
-    ALLOWED_ORIGINS.includes(origin) ||
-    /^https:\/\/deer-brand[a-z0-9-]*\.vercel\.app$/.test(origin)
-      ? origin
-      : ALLOWED_ORIGINS[0];
-  res.setHeader("Access-Control-Allow-Origin", corsOrigin);
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
+  setCorsHeaders(req, res, "GET, OPTIONS");
+  if (handlePreflight(req, res)) return;
 
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -52,7 +37,32 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "public, max-age=300");
     return res.status(200).json({
       stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
+      sentryDsn: process.env.SENTRY_DSN || null,
     });
+  }
+
+  // ?type=reviews でFirestoreの承認済みレビューを返す（認証不要）
+  if (type === "reviews") {
+    try {
+      const db = getFirestore(getAdminApp());
+      const snap = await db
+        .collection("reviews")
+        .where("approved", "==", true)
+        .orderBy("createdAt", "desc")
+        .limit(10)
+        .get();
+      const reviews = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          rating: data.rating,
+          comment: data.comment,
+          petName: data.petName,
+        };
+      });
+      return res.status(200).json({ reviews });
+    } catch (e) {
+      return res.status(200).json({ reviews: [] });
+    }
   }
 
   if (!uid) {
