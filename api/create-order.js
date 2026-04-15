@@ -8,6 +8,10 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { calculateTotal } from "./_lib/products.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
+import {
+  sendOrderConfirmationEmail,
+  triggerPrintfulOrder,
+} from "./_lib/post-payment.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -229,9 +233,9 @@ export default async function handler(req, res) {
             typeof giftMessage === "string" ? giftMessage.slice(0, 200) : "",
           ordererInfo: isGift
             ? {
-                name: ordererInfo?.name || "",
-                email: ordererInfo?.email || "",
-                phone: ordererInfo?.phone || "",
+                name: String(ordererInfo?.name || "").slice(0, 100),
+                email: String(ordererInfo?.email || "").slice(0, 200),
+                phone: String(ordererInfo?.phone || "").slice(0, 20),
               }
             : null,
           status: nextStatus,
@@ -284,6 +288,24 @@ export default async function handler(req, res) {
         });
       } catch (couponErr) {
         console.warn("[create-order] coupon usage mark failed:", couponErr);
+      }
+    }
+
+    // BUG2修正: total=0注文はStripe Webhookが発火しないため、ここで後処理を直接実行する。
+    // （paymentIntentId === null の場合 = 決済スキップルート）
+    if (!paymentIntentId) {
+      const finalOrderSnap = await db
+        .collection("orders")
+        .doc(result.orderId)
+        .get();
+      const finalOrder = finalOrderSnap.data();
+      if (finalOrder) {
+        sendOrderConfirmationEmail(db, finalOrder, result.orderId).catch((e) =>
+          console.warn("[create-order] email error (free order):", e),
+        );
+        triggerPrintfulOrder(db, finalOrder, result.orderId).catch((e) =>
+          console.warn("[create-order] printful error (free order):", e),
+        );
       }
     }
 

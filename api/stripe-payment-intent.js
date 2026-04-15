@@ -107,7 +107,15 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "UNAUTHORIZED" });
   }
 
-  const { items, shipping, couponCode, igDiscountToken } = req.body ?? {};
+  const {
+    items,
+    shipping,
+    couponCode,
+    igDiscountToken,
+    isGift,
+    giftMessage,
+    ordererInfo,
+  } = req.body ?? {};
   if (!Array.isArray(items) || items.length !== 1) {
     return res.status(400).json({ error: "INVALID_ITEMS" });
   }
@@ -165,6 +173,8 @@ export default async function handler(req, res) {
     }
 
     const orderId = crypto.randomUUID();
+    // BUG1修正: ギフト情報をここで保存する。
+    // Webhookが /api/create-order より先に発火するレースコンディション対策。
     const orderData = {
       orderId,
       uid: authUser.uid,
@@ -177,6 +187,16 @@ export default async function handler(req, res) {
       couponCode: resolvedCouponCode,
       couponDiscount,
       igDiscount,
+      isGift: !!isGift,
+      giftMessage:
+        typeof giftMessage === "string" ? giftMessage.slice(0, 200) : "",
+      ordererInfo: isGift
+        ? {
+            name: String(ordererInfo?.name || "").slice(0, 100),
+            email: String(ordererInfo?.email || "").slice(0, 200),
+            phone: String(ordererInfo?.phone || "").slice(0, 20),
+          }
+        : null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

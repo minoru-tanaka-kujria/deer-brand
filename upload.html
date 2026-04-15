@@ -6168,9 +6168,48 @@
                       petCount: state.petCount,
                     },
                   ],
+                  shipping: {
+                    fullName:
+                      document.getElementById("fullName")?.value?.trim() || "",
+                    zip: document.getElementById("zip")?.value?.trim() || "",
+                    prefecture:
+                      document.getElementById("prefecture")?.value || "",
+                    address1:
+                      document.getElementById("address1")?.value?.trim() || "",
+                    address2:
+                      document.getElementById("address2")?.value?.trim() || "",
+                    phone:
+                      document.getElementById("phone")?.value?.trim() || "",
+                    email:
+                      document.getElementById("emailInput")?.value?.trim() ||
+                      "",
+                  },
                   couponCode: state.couponVerified ? state.couponCode : null,
                   igDiscountToken: state.igVerified
                     ? state.igDiscountToken
+                    : null,
+                  isGift: !!state.isGift,
+                  giftMessage: state.isGift
+                    ? (
+                        document.getElementById("giftMessage")?.value?.trim() ||
+                        ""
+                      ).slice(0, 200)
+                    : "",
+                  ordererInfo: state.isGift
+                    ? {
+                        name:
+                          document
+                            .getElementById("ordererName")
+                            ?.value?.trim() || "",
+                        email:
+                          document
+                            .getElementById("ordererEmail")
+                            ?.value?.trim() || "",
+                        phone:
+                          document
+                            .getElementById("ordererPhone")
+                            ?.value?.trim() || "",
+                      }
                     : null,
                 }),
               });
