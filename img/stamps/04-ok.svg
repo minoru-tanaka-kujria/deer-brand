@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 320" width="370" height="320">
+  <defs>
+    <radialGradient id="bg4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#F0FFF0"/><stop offset="100%" stop-color="#C8E6C9"/></radialGradient>
+  </defs>
+  <rect width="370" height="320" rx="20" fill="url(#bg4)"/>
+  <!-- Body -->
+  <ellipse cx="185" cy="235" rx="70" ry="50" fill="#F5C67A"/>
+  <!-- Head -->
+  <ellipse cx="185" cy="148" rx="72" ry="65" fill="#F5C67A"/>
+  <!-- Ears - perky -->
+  <path d="M125 105 L100 42 L148 88 Z" fill="#E8A94E"/>
+  <path d="M245 105 L270 42 L222 88 Z" fill="#E8A94E"/>
+  <path d="M128 102 L108 50 L150 86 Z" fill="#FFD699"/>
+  <path d="M242 102 L262 50 L220 86 Z" fill="#FFD699"/>
+  <!-- Face mask -->
+  <ellipse cx="185" cy="168" rx="45" ry="38" fill="#FFF5E0"/>
+  <!-- Eyes - confident wink -->
+  <ellipse cx="160" cy="142" rx="9" ry="11" fill="white"/>
+  <circle cx="162" cy="141" r="6" fill="#5D4037"/>
+  <circle cx="164" cy="139" r="2" fill="white"/>
+  <path d="M198 142 Q208 132 218 142" stroke="#5D4037" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Star wink -->
+  <text x="225" y="138" font-size="12" fill="#FFD54F">&#x2728;</text>
+  <!-- Nose -->
+  <ellipse cx="185" cy="160" rx="7" ry="5" fill="#5D4037"/>
+  <!-- Mouth - smirk -->
+  <path d="M175 170 Q190 182 205 172" stroke="#5D4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="148" cy="165" rx="11" ry="7" fill="#FFAB91" opacity="0.45"/>
+  <ellipse cx="222" cy="165" rx="11" ry="7" fill="#FFAB91" opacity="0.45"/>
+  <!-- Right paw - thumbs up -->
+  <ellipse cx="260" cy="190" rx="18" ry="22" fill="#F5C67A" transform="rotate(-10, 260, 190)"/>
+  <ellipse cx="252" cy="170" rx="6" ry="12" fill="#F5C67A" transform="rotate(15, 252, 170)"/>
+  <!-- Left paw -->
+  <ellipse cx="130" cy="220" rx="16" ry="12" fill="#F5C67A"/>
+  <!-- Text -->
+  <text x="185" y="305" text-anchor="middle" font-family="'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif" font-weight="900" font-size="32" fill="#4CAF50">OK！</text>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 320" width="370" height="320">
+  <defs>
+    <radialGradient id="bg5" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF8E1"/><stop offset="100%" stop-color="#FFE0B2"/></radialGradient>
+  </defs>
+  <rect width="370" height="320" rx="20" fill="url(#bg5)"/>
+  <!-- Body - lying down -->
+  <ellipse cx="195" cy="225" rx="90" ry="40" fill="#F5C67A"/>
+  <!-- Head - resting on paws -->
+  <ellipse cx="165" cy="165" rx="68" ry="58" fill="#F5C67A"/>
+  <!-- Ears - relaxed -->
+  <path d="M108 130 L75 80 L128 115 Z" fill="#E8A94E"/>
+  <path d="M222 120 L260 75 L210 110 Z" fill="#E8A94E"/>
+  <path d="M112 127 L84 85 L130 113 Z" fill="#FFD699"/>
+  <path d="M218 118 L252 80 L212 108 Z" fill="#FFD699"/>
+  <!-- Face mask -->
+  <ellipse cx="165" cy="180" rx="42" ry="34" fill="#FFF5E0"/>
+  <!-- Eyes - tired half-closed -->
+  <path d="M138 162 L158 162" stroke="#5D4037" stroke-width="3" stroke-linecap="round"/>
+  <path d="M172 160 L192 160" stroke="#5D4037" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="148" cy="164" rx="7" ry="3" fill="#5D4037" opacity="0.6"/>
+  <ellipse cx="182" cy="162" rx="7" ry="3" fill="#5D4037" opacity="0.6"/>
+  <!-- Nose -->
+  <ellipse cx="165" cy="177" rx="6" ry="4" fill="#5D4037"/>
+  <!-- Mouth - small sigh -->
+  <path d="M157 185 Q165 190 173 185" stroke="#5D4037" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="132" cy="180" rx="10" ry="6" fill="#FFAB91" opacity="0.4"/>
+  <ellipse cx="198" cy="178" rx="10" ry="6" fill="#FFAB91" opacity="0.4"/>
+  <!-- Front paws stretched out -->
+  <ellipse cx="120" cy="220" rx="22" ry="10" fill="#F5C67A"/>
+  <ellipse cx="210" cy="218" rx="22" ry="10" fill="#F5C67A"/>
+  <!-- Sweat drop -->
+  <path d="M230 130 Q235 140 230 150" stroke="#64B5F6" stroke-width="2" fill="#E3F2FD" stroke-linecap="round"/>
+  <!-- Text -->
+  <text x="185" y="300" text-anchor="middle" font-family="'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif" font-weight="900" font-size="24" fill="#5D4037">おつかれさま</text>
+</svg>

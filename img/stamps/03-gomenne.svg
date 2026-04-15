@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 320" width="370" height="320">
+  <defs>
+    <radialGradient id="bg3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#F0F4FF"/><stop offset="100%" stop-color="#D6E4FF"/></radialGradient>
+  </defs>
+  <rect width="370" height="320" rx="20" fill="url(#bg3)"/>
+  <!-- Rain drops -->
+  <line x1="80" y1="30" x2="75" y2="55" stroke="#90CAF9" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+  <line x1="290" y1="40" x2="285" y2="65" stroke="#90CAF9" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <line x1="320" y1="20" x2="315" y2="45" stroke="#90CAF9" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <!-- Body -->
+  <ellipse cx="185" cy="235" rx="70" ry="50" fill="#F5C67A"/>
+  <!-- Head -->
+  <ellipse cx="185" cy="150" rx="72" ry="65" fill="#F5C67A"/>
+  <!-- Ears - droopy -->
+  <path d="M120 110 L80 130 L135 125 Z" fill="#E8A94E"/>
+  <path d="M250 110 L290 130 L235 125 Z" fill="#E8A94E"/>
+  <path d="M123 112 L90 128 L137 122 Z" fill="#FFD699"/>
+  <path d="M247 112 L280 128 L233 122 Z" fill="#FFD699"/>
+  <!-- Face mask -->
+  <ellipse cx="185" cy="168" rx="45" ry="38" fill="#FFF5E0"/>
+  <!-- Eyes - sad looking up -->
+  <ellipse cx="163" cy="142" rx="10" ry="12" fill="white"/>
+  <ellipse cx="207" cy="142" rx="10" ry="12" fill="white"/>
+  <circle cx="165" cy="140" r="6" fill="#5D4037"/>
+  <circle cx="209" cy="140" r="6" fill="#5D4037"/>
+  <circle cx="167" cy="138" r="2" fill="white"/>
+  <circle cx="211" cy="138" r="2" fill="white"/>
+  <!-- Tear -->
+  <path d="M175 148 Q178 160 175 170" stroke="#64B5F6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose -->
+  <ellipse cx="185" cy="160" rx="7" ry="5" fill="#5D4037"/>
+  <!-- Mouth - wavy sad -->
+  <path d="M172 175 Q178 170 185 175 Q192 180 198 175" stroke="#5D4037" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="148" cy="165" rx="10" ry="7" fill="#FFAB91" opacity="0.4"/>
+  <ellipse cx="222" cy="165" rx="10" ry="7" fill="#FFAB91" opacity="0.4"/>
+  <!-- Paws -->
+  <ellipse cx="145" cy="220" rx="16" ry="12" fill="#F5C67A"/>
+  <ellipse cx="225" cy="220" rx="16" ry="12" fill="#F5C67A"/>
+  <!-- Text -->
+  <text x="185" y="305" text-anchor="middle" font-family="'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif" font-weight="900" font-size="28" fill="#5D4037">ごめんね…</text>
+</svg>

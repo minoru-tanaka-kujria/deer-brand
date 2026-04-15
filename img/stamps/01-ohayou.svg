@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 320" width="370" height="320">
+  <defs>
+    <radialGradient id="bg1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF8E7"/><stop offset="100%" stop-color="#FFE8B0"/></radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="370" height="320" rx="20" fill="url(#bg1)"/>
+  <!-- Sun -->
+  <circle cx="290" cy="70" r="35" fill="#FFD54F" opacity="0.7"/>
+  <circle cx="290" cy="70" r="25" fill="#FFECB3"/>
+  <!-- Body -->
+  <ellipse cx="185" cy="235" rx="75" ry="55" fill="#F5C67A"/>
+  <!-- Head -->
+  <ellipse cx="185" cy="145" rx="72" ry="65" fill="#F5C67A"/>
+  <!-- Ears -->
+  <path d="M125 105 L100 50 L145 90 Z" fill="#E8A94E"/>
+  <path d="M245 105 L270 50 L225 90 Z" fill="#E8A94E"/>
+  <path d="M128 100 L110 60 L148 88 Z" fill="#FFD699"/>
+  <path d="M242 100 L260 60 L222 88 Z" fill="#FFD699"/>
+  <!-- Face mask -->
+  <ellipse cx="185" cy="165" rx="45" ry="38" fill="#FFF5E0"/>
+  <!-- Eyes - happy squint -->
+  <path d="M155 138 Q165 128 175 138" stroke="#5D4037" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M195 138 Q205 128 215 138" stroke="#5D4037" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Sparkle eyes -->
+  <circle cx="158" cy="133" r="2" fill="#FFD54F"/>
+  <circle cx="212" cy="133" r="2" fill="#FFD54F"/>
+  <!-- Nose -->
+  <ellipse cx="185" cy="157" rx="8" ry="6" fill="#5D4037"/>
+  <!-- Mouth - big smile -->
+  <path d="M170 165 Q185 180 200 165" stroke="#5D4037" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="148" cy="158" rx="12" ry="8" fill="#FFAB91" opacity="0.5"/>
+  <ellipse cx="222" cy="158" rx="12" ry="8" fill="#FFAB91" opacity="0.5"/>
+  <!-- Paws waving -->
+  <ellipse cx="130" cy="210" rx="18" ry="14" fill="#F5C67A" transform="rotate(-20, 130, 210)"/>
+  <ellipse cx="240" cy="210" rx="18" ry="14" fill="#F5C67A" transform="rotate(20, 240, 210)"/>
+  <!-- Tail -->
+  <path d="M260 230 Q290 200 280 170" stroke="#E8A94E" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <!-- Text -->
+  <text x="185" y="305" text-anchor="middle" font-family="'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif" font-weight="900" font-size="28" fill="#5D4037">おはよう！</text>
+</svg>

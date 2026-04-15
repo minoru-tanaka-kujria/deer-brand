@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 320" width="370" height="320">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF0F0"/><stop offset="100%" stop-color="#FFD6D6"/></radialGradient>
+  </defs>
+  <rect width="370" height="320" rx="20" fill="url(#bg2)"/>
+  <!-- Hearts -->
+  <text x="60" y="55" font-size="22" opacity="0.6">&#x2764;</text>
+  <text x="300" y="75" font-size="16" opacity="0.4">&#x2764;</text>
+  <text x="90" y="90" font-size="14" opacity="0.3">&#x2764;</text>
+  <!-- Body - bowing -->
+  <ellipse cx="185" cy="225" rx="70" ry="50" fill="#F5C67A"/>
+  <!-- Head - tilted forward (bowing) -->
+  <ellipse cx="185" cy="155" rx="72" ry="62" fill="#F5C67A" transform="rotate(15, 185, 155)"/>
+  <!-- Ears -->
+  <path d="M120 115 L90 55 L140 95 Z" fill="#E8A94E" transform="rotate(10, 120, 115)"/>
+  <path d="M245 100 L275 45 L225 85 Z" fill="#E8A94E" transform="rotate(10, 245, 100)"/>
+  <path d="M123 110 L100 62 L143 93 Z" fill="#FFD699" transform="rotate(10, 123, 110)"/>
+  <path d="M242 98 L265 52 L228 85 Z" fill="#FFD699" transform="rotate(10, 242, 98)"/>
+  <!-- Face mask -->
+  <ellipse cx="190" cy="172" rx="42" ry="35" fill="#FFF5E0" transform="rotate(15, 190, 172)"/>
+  <!-- Eyes - closed happy -->
+  <path d="M162 152 Q172 142 182 152" stroke="#5D4037" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M200 145 Q210 135 220 145" stroke="#5D4037" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Nose -->
+  <ellipse cx="192" cy="164" rx="7" ry="5" fill="#5D4037"/>
+  <!-- Mouth -->
+  <path d="M180 172 Q192 182 204 172" stroke="#5D4037" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Blush -->
+  <ellipse cx="155" cy="168" rx="11" ry="7" fill="#FFAB91" opacity="0.5"/>
+  <ellipse cx="225" cy="160" rx="11" ry="7" fill="#FFAB91" opacity="0.5"/>
+  <!-- Paws together -->
+  <ellipse cx="155" cy="215" rx="16" ry="12" fill="#F5C67A"/>
+  <ellipse cx="215" cy="215" rx="16" ry="12" fill="#F5C67A"/>
+  <!-- Text -->
+  <text x="185" y="305" text-anchor="middle" font-family="'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif" font-weight="900" font-size="28" fill="#5D4037">ありがとう</text>
+</svg>
