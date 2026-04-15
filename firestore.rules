@@ -44,5 +44,14 @@ service cloud.firestore {
       allow read: if request.auth != null && (request.auth.uid == resource.data.uid || request.auth.uid == resource.data.userId);
       allow write: if false;
     }
+
+    // レビュー: 誰でも投稿可（ログイン不要）。approved=false強制・rating範囲チェック。読み書き更新は Admin SDK のみ
+    match /reviews/{reviewId} {
+      allow create: if request.resource.data.approved == false
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow read, update, delete: if false;
+    }
   }
 }
