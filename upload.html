@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="heic-native-decode-first-120s" />
+    <meta name="deer-build" content="heic-native-decode-svg-icons" />
     <script>
-      window.deerBuild = "heic-native-decode-first-120s";
+      window.deerBuild = "heic-native-decode-svg-icons";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -7035,14 +7035,25 @@
         input.click();
       }
 
+      // アイコン SVG（絵文字を使わず Deer ブランドトーンで統一）
+      const ICON_CAMERA_SVG = `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;display:block;margin:0 auto 0.6rem;"><rect x="4" y="14" width="40" height="28" rx="4" stroke="#C4A265" stroke-width="1.6" fill="rgba(196,162,101,0.08)"/><path d="M16 14 L18 9 L30 9 L32 14" stroke="#C4A265" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="28" r="8" stroke="#C4A265" stroke-width="1.6"/><circle cx="24" cy="28" r="4" stroke="#C4836A" stroke-width="1"/><circle cx="37" cy="19" r="1.5" fill="#C4A265"/><circle cx="21.5" cy="25.5" r="1" fill="#C4A265" opacity="0.55"/></svg>`;
+      const ICON_WARN_SVG = `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;display:block;margin:0 auto 0.6rem;"><path d="M24 7 L42 40 L6 40 Z" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="rgba(192,57,43,0.07)"/><line x1="24" y1="18" x2="24" y2="30" stroke="#c0392b" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="35" r="1.6" fill="#c0392b"/></svg>`;
+      const ICON_SPINNER_SVG = `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;display:block;margin:0 auto 0.6rem;animation:deer-spin 1.2s linear infinite"><circle cx="24" cy="24" r="18" stroke="#C4A265" stroke-width="2.5" stroke-opacity="0.25"/><path d="M24 6 A 18 18 0 0 1 42 24" stroke="#C4A265" stroke-width="2.5" stroke-linecap="round"/></svg><style>@keyframes deer-spin{to{transform:rotate(1turn)}}</style>`;
+
       // placeholder に一時メッセージを出すヘルパ（ユーザー体感で「反応してる」と分かる）
       function setUploadPlaceholderText(idx, text, opts = {}) {
         const placeholder = document.getElementById("uploadPlaceholder" + idx);
         if (!placeholder) return;
         placeholder.style.display = "block";
         const color = opts.error ? "#c0392b" : "var(--text-mid)";
+        const iconSvg = opts.error
+          ? ICON_WARN_SVG
+          : opts.spinner
+            ? ICON_SPINNER_SVG
+            : ICON_CAMERA_SVG;
         placeholder.innerHTML = `
           <div style="padding:1.5rem 1rem; text-align:center; color:${color};">
+            ${iconSvg}
             <p style="font-size:0.95rem; font-weight:600; margin-bottom:0.35rem;">${text}</p>
             ${opts.sub ? `<p style="font-size:0.78rem; color:var(--text-mid);">${opts.sub}</p>` : ""}
           </div>`;
@@ -7051,8 +7062,9 @@
       async function handlePhotoFile(file, idx) {
         // 重要: ユーザーが見ている画面状態を「処理中」に必ず即更新する
         // これがないと HEIC 変換などで数秒 UI が無反応に見え「バグ」と誤認される
-        setUploadPlaceholderText(idx, "📷 写真を読み込んでいます...", {
+        setUploadPlaceholderText(idx, "写真を読み込んでいます...", {
           sub: "少しお待ちください",
+          spinner: true,
         });
 
         // HEIC/HEIF検出（type または拡張子で判定）
@@ -7062,8 +7074,9 @@
           /\.(heic|heif)$/i.test(file.name);
 
         if (isHeic) {
-          setUploadPlaceholderText(idx, "📷 iPhone写真 (HEIC) を変換中...", {
+          setUploadPlaceholderText(idx, "iPhone写真 (HEIC) を変換中...", {
             sub: "通常5〜30秒、大きなファイルで最大2分かかる場合があります",
+            spinner: true,
           });
           try {
             let convBlob = null;
@@ -7108,8 +7121,9 @@
 
             // ── 2) ネイティブ失敗時は heic2any（120秒タイムアウト）
             if (!convBlob) {
-              setUploadPlaceholderText(idx, "📷 HEIC をライブラリで変換中...", {
+              setUploadPlaceholderText(idx, "HEIC をライブラリで変換中...", {
                 sub: "大きな写真は最大2分かかる場合があります",
+                spinner: true,
               });
               if (typeof heic2any === "undefined") {
                 await new Promise((resolve, reject) => {
@@ -7146,7 +7160,7 @@
               e.message === "heic_timeout"
                 ? `HEIC変換がタイムアウトしました。${howto}`
                 : `HEIC変換に失敗しました。${howto}`;
-            setUploadPlaceholderText(idx, "⚠️ HEIC変換エラー", {
+            setUploadPlaceholderText(idx, "HEIC変換エラー", {
               sub: msg,
               error: true,
             });
@@ -7167,7 +7181,7 @@
         if (!allowedTypes.includes(file.type)) {
           const msg =
             "対応形式は JPEG・PNG・WebP・GIF・HEIC のみです。別のファイルを選んでください。";
-          setUploadPlaceholderText(idx, "⚠️ 対応外の形式", {
+          setUploadPlaceholderText(idx, "対応外の形式", {
             sub: msg,
             error: true,
           });
@@ -7181,7 +7195,7 @@
         if (file.size > maxSize) {
           const mb = (file.size / 1024 / 1024).toFixed(1);
           const msg = `ファイルサイズが ${mb} MB です。25 MB 以下の画像を選んでください。`;
-          setUploadPlaceholderText(idx, "⚠️ サイズ超過", {
+          setUploadPlaceholderText(idx, "サイズ超過", {
             sub: msg,
             error: true,
           });
@@ -7196,7 +7210,7 @@
           console.error("[handlePhotoFile] FileReader error", reader.error);
           const msg =
             "写真の読み込みに失敗しました。別の写真で再試行してください。";
-          setUploadPlaceholderText(idx, "⚠️ 読み込みエラー", {
+          setUploadPlaceholderText(idx, "読み込みエラー", {
             sub: msg,
             error: true,
           });
