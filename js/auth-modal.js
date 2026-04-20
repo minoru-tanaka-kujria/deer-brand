@@ -294,46 +294,67 @@
     },
 
     // ------ Google ------
+    // signInWithPopup 専用。signInWithRedirect は custom.deer.gift と
+    // deer-brand.firebaseapp.com の cross-origin 環境で localStorage/IndexedDB が
+    // 分断され、ログイン完了後に認証情報が消失する不具合が確認されたため廃止。
+    // popup 方式なら Firebase handler を別窓で開き、postMessage で親に結果を返すため
+    // cross-origin でも認証情報が正しく親オリジンに保存される。
     loginGoogle() {
       this.clearError();
       if (!window._deerFirebaseAuth) {
-        alert("Firebase設定が必要です。auth-config.jsを確認してください。");
+        this.showError(
+          "認証の初期化中です。数秒待ってから再度お試しください。",
+        );
         return;
       }
-      // ★ 先読み済みモジュールを使う（awaitなし → ユーザジェスチャー保持 → popupブロックされない）
-      if (_firebaseAuthModule) {
-        const { signInWithPopup, GoogleAuthProvider } = _firebaseAuthModule;
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(window._deerFirebaseAuth, provider)
-          .then((result) => {
-            this.closeModal();
-            this._onLoginSuccess(result.user);
-          })
-          .catch((e) => {
-            // popupブロック時はredirectにフォールバック
-            if (
-              e.code === "auth/popup-blocked" ||
-              e.code === "auth/popup-closed-by-user"
-            ) {
-              const { signInWithRedirect } = _firebaseAuthModule;
-              signInWithRedirect(window._deerFirebaseAuth, provider);
-            } else {
-              this.showError("Googleログインに失敗しました: " + e.message);
-            }
-          });
-      } else {
-        // モジュール未ロード時はredirect（フォールバック）
+      if (!_firebaseAuthModule) {
+        // ユーザージェスチャー中に await すると popup がブロックされるため、
+        // まず即座に about:blank の popup を開いて握っておき、後からURL差し替え
+        const popupRef = window.open(
+          "about:blank",
+          "_blank",
+          "width=480,height=700",
+        );
         import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(
           (mod) => {
             _firebaseAuthModule = mod;
-            const { signInWithRedirect, GoogleAuthProvider } = mod;
-            signInWithRedirect(
-              window._deerFirebaseAuth,
-              new GoogleAuthProvider(),
-            );
+            // ここでは popup が使えないので close して signInWithPopup に委任
+            try {
+              popupRef && popupRef.close();
+            } catch (_) {}
+            this._doGooglePopup();
           },
         );
+        return;
       }
+      this._doGooglePopup();
+    },
+    _doGooglePopup() {
+      const { signInWithPopup, GoogleAuthProvider } = _firebaseAuthModule;
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(window._deerFirebaseAuth, provider)
+        .then((result) => {
+          this.closeModal();
+          this._onLoginSuccess(result.user);
+        })
+        .catch((e) => {
+          if (
+            e.code === "auth/popup-blocked" ||
+            e.code === "auth/cancelled-popup-request"
+          ) {
+            this.showError(
+              "ポップアップがブロックされました。ブラウザのアドレスバー右側のアイコンから許可してください。",
+            );
+          } else if (e.code === "auth/popup-closed-by-user") {
+            this.showError("ログインがキャンセルされました。");
+          } else if (e.code === "auth/unauthorized-domain") {
+            this.showError(
+              "このドメインは Firebase に許可されていません。管理者に連絡してください。",
+            );
+          } else {
+            this.showError("Googleログインに失敗しました: " + e.message);
+          }
+        });
     },
 
     // ------ Apple ------

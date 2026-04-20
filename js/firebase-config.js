@@ -8,23 +8,9 @@
  * ★ Firebase ConsoleでWebアプリを登録後、以下の値を貼り付けてください
  * https://console.firebase.google.com → プロジェクト設定 → マイアプリ
  */
-// authDomain はカスタムドメイン (custom.deer.gift) に合わせる。
-// これで Firebase Auth の signInWithRedirect / signInWithPopup が same-origin で
-// 実行され、IndexedDB / localStorage の認証情報がドメイン間で消失しない。
-// 技術的前提:
-//   - vercel.json で /__/auth/* と /__/firebase/* を deer-brand.firebaseapp.com に
-//     proxy することで、Firebase が期待する handler が custom.deer.gift 上で
-//     同一オリジンに見える。
-//   - Firebase Console → Authentication → Settings → Authorized domains に
-//     custom.deer.gift を登録しておくこと。
-const IS_LIVE_HOST =
-  typeof window !== "undefined" &&
-  (window.location.hostname === "custom.deer.gift" ||
-    window.location.hostname === "www.custom.deer.gift");
-
 export const FIREBASE_CONFIG = {
   apiKey: "AIzaSyC2ugHcF6W3hihDbgGy_JduRKyhCoVPAs8",
-  authDomain: IS_LIVE_HOST ? "custom.deer.gift" : "deer-brand.firebaseapp.com",
+  authDomain: "deer-brand.firebaseapp.com",
   projectId: "deer-brand",
   storageBucket: "deer-brand.firebasestorage.app",
   messagingSenderId: "478066729532",

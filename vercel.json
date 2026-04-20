@@ -9,17 +9,7 @@
     "api/stripe-setup-intent.js": { "maxDuration": 15 },
     "api/get-user.js": { "maxDuration": 15 }
   },
-  "rewrites": [
-    { "source": "/stamp", "destination": "/stamp/index.html" },
-    {
-      "source": "/__/auth/:path*",
-      "destination": "https://deer-brand.firebaseapp.com/__/auth/:path*"
-    },
-    {
-      "source": "/__/firebase/:path*",
-      "destination": "https://deer-brand.firebaseapp.com/__/firebase/:path*"
-    }
-  ],
+  "rewrites": [{ "source": "/stamp", "destination": "/stamp/index.html" }],
   "headers": [
     {
       "source": "/(.*)",
