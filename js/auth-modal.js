@@ -51,30 +51,32 @@
             Googleでログイン
           </button>
 
-          <!-- Apple -->
-          <button onclick="DeerAuth.loginApple()" style="
+          <!-- Apple (Coming soon: ドメイン設定完了まで無効) -->
+          <button disabled aria-disabled="true" title="Coming soon" style="
             display:flex; align-items:center; justify-content:center; gap:0.8rem;
             width:100%; padding:0.85rem; margin-bottom:0.7rem;
             border:1.5px solid #e8dfd5; border-radius:10px;
-            background:#000; cursor:pointer; font-size:0.85rem;
+            background:#bbb; cursor:not-allowed; font-size:0.85rem;
             font-family:'Zen Maru Gothic',sans-serif; color:#fff;
-            transition:opacity 0.2s;
-          " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+            opacity:0.55; position:relative;
+          ">
             <svg width="16" height="16" viewBox="0 0 814 1000" fill="#fff"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-161.1-39.5c-73.8 0-98.8 40.5-166.8 40.5s-107.6-58.6-155.5-127.4C46 432.7 45.1 266.5 218.3 166.2c54.5-31.9 116-48 177.7-48 72.6 0 142.2 29.3 192.3 29.3 48.3 0 124.1-30.6 183.9-28.6z"/></svg>
             Appleでログイン
+            <span style="font-size:0.68rem; background:#fff; color:#555; padding:0.1rem 0.45rem; border-radius:6px; margin-left:0.4rem;">Coming soon</span>
           </button>
 
-          <!-- LINE -->
-          <button onclick="DeerAuth.loginLine()" style="
+          <!-- LINE (Coming soon: Channel設定完了まで無効) -->
+          <button disabled aria-disabled="true" title="Coming soon" style="
             display:flex; align-items:center; justify-content:center; gap:0.8rem;
             width:100%; padding:0.85rem; margin-bottom:1.2rem;
             border:1.5px solid transparent; border-radius:10px;
-            background:#06C755; cursor:pointer; font-size:0.85rem;
+            background:#9bd6aa; cursor:not-allowed; font-size:0.85rem;
             font-family:'Zen Maru Gothic',sans-serif; color:#fff;
-            transition:opacity 0.2s;
-          " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+            opacity:0.6; position:relative;
+          ">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.105.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
             LINEでログイン
+            <span style="font-size:0.68rem; background:#fff; color:#555; padding:0.1rem 0.45rem; border-radius:6px; margin-left:0.4rem;">Coming soon</span>
           </button>
 
           <!-- 区切り線 -->
