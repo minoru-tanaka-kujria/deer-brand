@@ -21,14 +21,15 @@ const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// iOS Safari ITP対策: IndexedDB→localStorageに切り替え
-// ITPはcross-origin IndexedDBをブロックするが、same-origin localStorageはブロックしない
-// プライベートブラウジング等でlocalStorageが制限される場合もあるためtry/catchで保護
-try {
-  await setPersistence(auth, browserLocalPersistence);
-} catch (e) {
+// ★ 重要: top-level await を使わない。
+// 過去、await setPersistence(...) が特定ブラウザ環境（IndexedDB が制限される
+// 状況等）で resolve も reject もせずハングし、モジュール全体の evaluation が
+// 止まって window._deerFirebaseAuth が永久にセットされない不具合が発生した。
+// setPersistence は failure 時でも Firebase 側の default persistence で動作するため
+// 起動クリティカルではない。await せず fire-and-forget にする。
+setPersistence(auth, browserLocalPersistence).catch((e) => {
   console.warn("[DeerAuth] setPersistence failed, using default:", e.message);
-}
+});
 
 // auth-modal.js / upload.html が参照するグローバル変数をセット
 window._deerFirebaseAuth = auth;
