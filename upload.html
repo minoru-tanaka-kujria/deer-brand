@@ -38,12 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta
-      name="deer-build"
-      content="2029955-petcount-removed-auth-immediate-fail"
-    />
+    <meta name="deer-build" content="heic-fix-25mb-upload-feedback" />
     <script>
-      window.deerBuild = "2029955-petcount-removed-auth-immediate-fail";
+      window.deerBuild = "heic-fix-25mb-upload-feedback";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -7038,7 +7035,26 @@
         input.click();
       }
 
+      // placeholder に一時メッセージを出すヘルパ（ユーザー体感で「反応してる」と分かる）
+      function setUploadPlaceholderText(idx, text, opts = {}) {
+        const placeholder = document.getElementById("uploadPlaceholder" + idx);
+        if (!placeholder) return;
+        placeholder.style.display = "block";
+        const color = opts.error ? "#c0392b" : "var(--text-mid)";
+        placeholder.innerHTML = `
+          <div style="padding:1.5rem 1rem; text-align:center; color:${color};">
+            <p style="font-size:0.95rem; font-weight:600; margin-bottom:0.35rem;">${text}</p>
+            ${opts.sub ? `<p style="font-size:0.78rem; color:var(--text-mid);">${opts.sub}</p>` : ""}
+          </div>`;
+      }
+
       async function handlePhotoFile(file, idx) {
+        // 重要: ユーザーが見ている画面状態を「処理中」に必ず即更新する
+        // これがないと HEIC 変換などで数秒 UI が無反応に見え「バグ」と誤認される
+        setUploadPlaceholderText(idx, "📷 写真を読み込んでいます...", {
+          sub: "少しお待ちください",
+        });
+
         // HEIC/HEIF検出（type または拡張子で判定）
         const isHeic =
           file.type === "image/heic" ||
@@ -7046,7 +7062,9 @@
           /\.(heic|heif)$/i.test(file.name);
 
         if (isHeic) {
-          showToast("📷 HEICファイルを変換中...", "info");
+          setUploadPlaceholderText(idx, "📷 iPhone写真 (HEIC) を変換中...", {
+            sub: "30 秒ほどかかる場合があります",
+          });
           try {
             // heic2any を動的ロード（HEICファイルを開いた時だけ）
             if (typeof heic2any === "undefined") {
@@ -7059,29 +7077,39 @@
                 document.head.appendChild(s);
               });
             }
-            const converted = await heic2any({
-              blob: file,
-              toType: "image/jpeg",
-              quality: 0.92,
-            });
-            const blob = Array.isArray(converted) ? converted[0] : converted;
+            // 60秒タイムアウトを明示的に設ける
+            const converted = await Promise.race([
+              heic2any({ blob: file, toType: "image/jpeg", quality: 0.92 }),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("heic_timeout")), 60_000),
+              ),
+            ]);
+            const convBlob = Array.isArray(converted)
+              ? converted[0]
+              : converted;
             file = new File(
-              [blob],
+              [convBlob],
               file.name.replace(/\.(heic|heif)$/i, ".jpg"),
               { type: "image/jpeg" },
             );
           } catch (e) {
-            showToast(
-              "HEIC変換に失敗しました。JPEGまたはPNGに変換してから再試行してください。",
-              "error",
-            );
+            console.error("[handlePhotoFile] HEIC変換失敗:", e);
+            const msg =
+              e.message === "heic_timeout"
+                ? "HEIC変換がタイムアウトしました。写真アプリで JPEG に書き出してから再試行してください。"
+                : "HEIC変換に失敗しました。写真アプリで JPEG に書き出してから再試行してください。";
+            setUploadPlaceholderText(idx, "⚠️ 変換エラー", {
+              sub: msg,
+              error: true,
+            });
+            showToast(msg, "error");
             const input = document.getElementById("fileInput");
             if (input) input.value = "";
             return;
           }
         }
 
-        // ファイル形式・サイズバリデーション
+        // ファイル形式バリデーション
         const allowedTypes = [
           "image/jpeg",
           "image/png",
@@ -7089,26 +7117,43 @@
           "image/gif",
         ];
         if (!allowedTypes.includes(file.type)) {
-          showToast(
-            "対応形式はJPEG・PNG・WebP・GIF・HEICのみです。別のファイルを選んでください。",
-            "error",
-          );
+          const msg =
+            "対応形式は JPEG・PNG・WebP・GIF・HEIC のみです。別のファイルを選んでください。";
+          setUploadPlaceholderText(idx, "⚠️ 対応外の形式", {
+            sub: msg,
+            error: true,
+          });
+          showToast(msg, "error");
           const input = document.getElementById("fileInput");
           if (input) input.value = "";
           return;
         }
-        const maxSize = 10 * 1024 * 1024;
+        // サイズ上限: iPhone最新機種のHEICは 12-25MB なので 25MB まで許容
+        const maxSize = 25 * 1024 * 1024;
         if (file.size > maxSize) {
-          showToast(
-            "ファイルサイズが10MBを超えています。10MB以下の画像を選んでください。",
-            "error",
-          );
+          const mb = (file.size / 1024 / 1024).toFixed(1);
+          const msg = `ファイルサイズが ${mb} MB です。25 MB 以下の画像を選んでください。`;
+          setUploadPlaceholderText(idx, "⚠️ サイズ超過", {
+            sub: msg,
+            error: true,
+          });
+          showToast(msg, "error");
           const input = document.getElementById("fileInput");
           if (input) input.value = "";
           return;
         }
         petPhotos[idx] = { file: file, dataUrl: null };
         const reader = new FileReader();
+        reader.onerror = () => {
+          console.error("[handlePhotoFile] FileReader error", reader.error);
+          const msg =
+            "写真の読み込みに失敗しました。別の写真で再試行してください。";
+          setUploadPlaceholderText(idx, "⚠️ 読み込みエラー", {
+            sub: msg,
+            error: true,
+          });
+          showToast(msg, "error");
+        };
         reader.onload = (ev) => {
           petPhotos[idx].dataUrl = ev.target.result;
           const preview = document.getElementById("photoPreview" + idx);
