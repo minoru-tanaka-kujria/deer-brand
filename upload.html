@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="heic-fix-25mb-upload-feedback" />
+    <meta name="deer-build" content="heic-native-decode-first-120s" />
     <script>
-      window.deerBuild = "heic-fix-25mb-upload-feedback";
+      window.deerBuild = "heic-native-decode-first-120s";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -7063,30 +7063,76 @@
 
         if (isHeic) {
           setUploadPlaceholderText(idx, "📷 iPhone写真 (HEIC) を変換中...", {
-            sub: "30 秒ほどかかる場合があります",
+            sub: "通常5〜30秒、大きなファイルで最大2分かかる場合があります",
           });
           try {
-            // heic2any を動的ロード（HEICファイルを開いた時だけ）
-            if (typeof heic2any === "undefined") {
-              await new Promise((resolve, reject) => {
-                const s = document.createElement("script");
-                s.src =
-                  "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
-                s.onload = resolve;
-                s.onerror = reject;
-                document.head.appendChild(s);
-              });
+            let convBlob = null;
+
+            // ── 1) ネイティブ img decoder で試行（Safari / Chrome 112+ で動くことあり）
+            //    成功すれば heic2any より圧倒的に速い（数百 ms）
+            try {
+              const objectUrl = URL.createObjectURL(file);
+              const img = await Promise.race([
+                new Promise((resolve, reject) => {
+                  const i = new Image();
+                  i.onload = () => resolve(i);
+                  i.onerror = () => reject(new Error("native_decode_error"));
+                  i.src = objectUrl;
+                }),
+                new Promise((_, r) =>
+                  setTimeout(() => r(new Error("native_decode_timeout")), 8000),
+                ),
+              ]);
+              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                canvas.getContext("2d").drawImage(img, 0, 0);
+                URL.revokeObjectURL(objectUrl);
+                convBlob = await new Promise((r) =>
+                  canvas.toBlob(r, "image/jpeg", 0.92),
+                );
+                if (convBlob && convBlob.size > 0) {
+                  console.log(
+                    "[HEIC] native decode success",
+                    `(${(convBlob.size / 1024).toFixed(0)} KB)`,
+                  );
+                }
+              }
+            } catch (nativeErr) {
+              console.log(
+                "[HEIC] native decode not available, falling back to heic2any:",
+                nativeErr.message,
+              );
             }
-            // 60秒タイムアウトを明示的に設ける
-            const converted = await Promise.race([
-              heic2any({ blob: file, toType: "image/jpeg", quality: 0.92 }),
-              new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("heic_timeout")), 60_000),
-              ),
-            ]);
-            const convBlob = Array.isArray(converted)
-              ? converted[0]
-              : converted;
+
+            // ── 2) ネイティブ失敗時は heic2any（120秒タイムアウト）
+            if (!convBlob) {
+              setUploadPlaceholderText(idx, "📷 HEIC をライブラリで変換中...", {
+                sub: "大きな写真は最大2分かかる場合があります",
+              });
+              if (typeof heic2any === "undefined") {
+                await new Promise((resolve, reject) => {
+                  const s = document.createElement("script");
+                  s.src =
+                    "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+                  s.onload = resolve;
+                  s.onerror = reject;
+                  document.head.appendChild(s);
+                });
+              }
+              const converted = await Promise.race([
+                heic2any({ blob: file, toType: "image/jpeg", quality: 0.92 }),
+                new Promise((_, r) =>
+                  setTimeout(() => r(new Error("heic_timeout")), 120_000),
+                ),
+              ]);
+              convBlob = Array.isArray(converted) ? converted[0] : converted;
+            }
+
+            if (!convBlob || convBlob.size === 0) {
+              throw new Error("heic_empty_output");
+            }
             file = new File(
               [convBlob],
               file.name.replace(/\.(heic|heif)$/i, ".jpg"),
@@ -7094,11 +7140,13 @@
             );
           } catch (e) {
             console.error("[handlePhotoFile] HEIC変換失敗:", e);
+            const howto =
+              "iPhone の『設定 → カメラ → フォーマット → 互換性優先』に変更して撮り直すか、写真アプリで JPEG に書き出してアップロードしてください。";
             const msg =
               e.message === "heic_timeout"
-                ? "HEIC変換がタイムアウトしました。写真アプリで JPEG に書き出してから再試行してください。"
-                : "HEIC変換に失敗しました。写真アプリで JPEG に書き出してから再試行してください。";
-            setUploadPlaceholderText(idx, "⚠️ 変換エラー", {
+                ? `HEIC変換がタイムアウトしました。${howto}`
+                : `HEIC変換に失敗しました。${howto}`;
+            setUploadPlaceholderText(idx, "⚠️ HEIC変換エラー", {
               sub: msg,
               error: true,
             });
