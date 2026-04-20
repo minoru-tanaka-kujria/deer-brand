@@ -112,6 +112,18 @@ export async function sendOrderConfirmationEmail(db, order, orderId) {
       : order.email;
   if (!apiKey || !toEmail) return;
 
+  // 冪等性: 既にメール送信済みならスキップ（Webhook と create-order から二重送信防止）
+  if (order.confirmationEmailSentAt) {
+    console.log("[post-payment] email skip: already sent", orderId);
+    return;
+  }
+
+  // アート画像が確定していない場合はスキップ（Webhook先行時は create-order 側で再送）
+  if (!order.artImageUrl) {
+    console.log("[post-payment] email defer: no artImageUrl yet", orderId);
+    return;
+  }
+
   // クーポン発行（冪等）
   const stampCode = await issueStampCoupon(db, order, orderId);
   const repeatCode = await issueRepeatCoupon(db, order, orderId);
@@ -197,8 +209,20 @@ ${repeatSection}
       },
       body: JSON.stringify(body),
     });
-    if (!res.ok) console.warn("[post-payment] email send failed:", res.status);
-    else console.log("[post-payment] confirmation email sent to", toEmail);
+    if (!res.ok) {
+      console.warn("[post-payment] email send failed:", res.status);
+    } else {
+      console.log("[post-payment] confirmation email sent to", toEmail);
+      // 冪等フラグを保存（二重送信防止）
+      try {
+        await db
+          .collection("orders")
+          .doc(orderId)
+          .update({ confirmationEmailSentAt: new Date() });
+      } catch (markErr) {
+        console.warn("[post-payment] mark email sent failed:", markErr.message);
+      }
+    }
   } catch (e) {
     console.warn("[post-payment] email error:", e.message);
   }

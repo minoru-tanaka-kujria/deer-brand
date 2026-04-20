@@ -34,25 +34,55 @@ function canAdvanceStatus(currentStatus, nextStatus) {
   );
 }
 
+// 価格に関わるフィールドは必ず reservedOrder（Stripe Intent作成時に検証済み）を採用し、
+// クライアント改竄による金額差異を遮断する。表示系の productName/placementName/colorName
+// のみ body から補完可能とする。
 function normalizeCheckoutItem(body, fallbackItem) {
   const source = fallbackItem ?? {};
   return {
-    item: body?.item ?? body?.product ?? source.item,
+    // 価格決定フィールド（body を信用しない、reservedOrder 固定）
+    item: source.item ?? body?.item ?? body?.product,
+    placementId: source.placementId ?? body?.placementId ?? body?.placement,
+    colorId: source.colorId ?? body?.colorId ?? body?.color ?? null,
+    size: source.size ?? body?.size ?? null,
+    petCount: Number(source.petCount ?? body?.petCount ?? 1),
+    style: source.style ?? body?.style ?? body?.styleId ?? null,
+    // 表示系（body 優先で補完可）
     productName: body?.productName ?? source.productName ?? null,
-    placementId: body?.placementId ?? source.placementId ?? body?.placement,
     placementName:
-      body?.placementName ?? source.placementName ?? body?.placement ?? null,
-    colorId: body?.colorId ?? source.colorId ?? body?.color ?? null,
-    colorName: body?.colorName ?? source.colorName ?? body?.color ?? null,
-    size: body?.size ?? source.size ?? null,
-    petCount: Number(body?.petCount ?? source.petCount ?? 1),
+      source.placementName ?? body?.placementName ?? body?.placement ?? null,
+    colorName: source.colorName ?? body?.colorName ?? body?.color ?? null,
     petNames: Array.isArray(body?.petNames)
-      ? body.petNames.filter((name) => typeof name === "string" && name.trim())
+      ? body.petNames
+          .filter((name) => typeof name === "string" && name.trim())
+          .slice(0, 10)
       : Array.isArray(source.petNames)
         ? source.petNames
         : [],
-    style: body?.style ?? body?.styleId ?? source.style ?? null,
   };
+}
+
+// アート画像URLの検証: HTTPSかつ許可ドメインのみ受理（SSRF・悪意URL対策）
+const ALLOWED_ART_HOSTS = new Set([
+  "custom.deer.gift",
+  "deer.gift",
+  "firebasestorage.googleapis.com",
+  "replicate.delivery",
+  "pbxt.replicate.delivery",
+  "tjzk.replicate.delivery",
+  "storage.googleapis.com",
+]);
+function sanitizeArtImageUrl(url) {
+  if (typeof url !== "string") return null;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return null;
+    if (!ALLOWED_ART_HOSTS.has(u.hostname)) return null;
+    // Replicate サブドメインを許可（*.replicate.delivery）
+    return url;
+  } catch (_e) {
+    return null;
+  }
 }
 
 function sanitizeShipping(shipping) {
@@ -215,9 +245,9 @@ export default async function handler(req, res) {
           petCount: item.petCount,
           petNames: item.petNames,
           artImageUrl:
-            typeof artImageUrl === "string" && artImageUrl.startsWith("http")
-              ? artImageUrl
-              : (reservedOrder.artImageUrl ?? null),
+            sanitizeArtImageUrl(artImageUrl) ??
+            reservedOrder.artImageUrl ??
+            null,
           total: expectedAmount,
           amount: expectedAmount,
           paymentIntentId,
@@ -291,22 +321,22 @@ export default async function handler(req, res) {
       }
     }
 
-    // BUG2修正: total=0注文はStripe Webhookが発火しないため、ここで後処理を直接実行する。
-    // （paymentIntentId === null の場合 = 決済スキップルート）
-    if (!paymentIntentId) {
-      const finalOrderSnap = await db
-        .collection("orders")
-        .doc(result.orderId)
-        .get();
-      const finalOrder = finalOrderSnap.data();
-      if (finalOrder) {
-        sendOrderConfirmationEmail(db, finalOrder, result.orderId).catch((e) =>
-          console.warn("[create-order] email error (free order):", e),
-        );
-        triggerPrintfulOrder(db, finalOrder, result.orderId).catch((e) =>
-          console.warn("[create-order] printful error (free order):", e),
-        );
-      }
+    // 後処理（メール・Printful発注）を必ず実行する。
+    // Webhook先行時は artImageUrl 未設定で両方スキップされるが、
+    // ここで artImageUrl 含む完全な状態から再実行することで確実に処理される。
+    // 冪等性は各関数内で保証（confirmationEmailSentAt / printfulOrderId チェック）。
+    const finalOrderSnap = await db
+      .collection("orders")
+      .doc(result.orderId)
+      .get();
+    const finalOrder = finalOrderSnap.data();
+    if (finalOrder) {
+      sendOrderConfirmationEmail(db, finalOrder, result.orderId).catch((e) =>
+        console.warn("[create-order] email error:", e),
+      );
+      triggerPrintfulOrder(db, finalOrder, result.orderId).catch((e) =>
+        console.warn("[create-order] printful error:", e),
+      );
     }
 
     return res.status(201).json(result);

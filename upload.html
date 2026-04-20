@@ -5882,6 +5882,10 @@
           selectedSize: state.selectedSize,
           petCount: state.petCount,
           pets: state.pets,
+          // ギフト注文情報（ログイン往復でも保持）
+          isGift: !!state.isGift,
+          giftMessage: state.giftMessage || "",
+          ordererInfo: state.ordererInfo || null,
         };
         try {
           sessionStorage.setItem(SESSION_KEY, JSON.stringify(draft));
@@ -5906,6 +5910,12 @@
             state.optionPrice = PET_COUNT_PRICES[draft.petCount] || 0;
           }
           if (Array.isArray(draft.pets)) state.pets = draft.pets;
+          // ギフト情報を復元
+          if (typeof draft.isGift === "boolean") state.isGift = draft.isGift;
+          if (typeof draft.giftMessage === "string")
+            state.giftMessage = draft.giftMessage;
+          if (draft.ordererInfo && typeof draft.ordererInfo === "object")
+            state.ordererInfo = draft.ordererInfo;
           sessionStorage.removeItem(SESSION_KEY);
         } catch (e) {
           /* ignore */
@@ -6421,6 +6431,17 @@
         if (card) card.classList.add("selected");
 
         state.selectedStyleId = styleId;
+        // GA4 select_item: スタイル選択はコンバージョンファネルの起点
+        try {
+          if (typeof gtag === "function") {
+            gtag("event", "select_item", {
+              item_list_name: "art_styles",
+              items: [{ item_id: styleId, item_name: styleId }],
+            });
+          }
+        } catch (_e) {
+          /* ignore */
+        }
         buildItemSelect(styleId);
         goTo("item-select");
       }
@@ -7746,6 +7767,26 @@
       document
         .getElementById("btnPreviewNext")
         .addEventListener("click", () => {
+          // GA4 begin_checkout イベント（広告最適化のため、配送先へ進む=購入意思表示）
+          try {
+            if (typeof gtag === "function") {
+              gtag("event", "begin_checkout", {
+                value: state.totalPrice || 0,
+                currency: "JPY",
+                items: [
+                  {
+                    item_id: state.selectedItem || "unknown",
+                    item_name:
+                      state.selectedItemName || state.selectedItem || "",
+                    price: state.totalPrice || 0,
+                    quantity: 1,
+                  },
+                ],
+              });
+            }
+          } catch (_e) {
+            /* ignore */
+          }
           // #13: Step6（配送先）に進む前にログイン確認
           if (!isLoggedIn()) {
             showLoginModal(() => goTo("shipping"));
@@ -7796,9 +7837,21 @@
                     if (errEl) errEl.textContent = "";
                     if (el) el.style.borderColor = "";
                   });
+                } else {
+                  // 郵便番号が見つからない → 手入力を促す
+                  const zipErr = document.getElementById("zip-error");
+                  if (zipErr)
+                    zipErr.textContent =
+                      "住所が自動取得できませんでした。手動で入力してください";
                 }
               })
-              .catch(() => {});
+              .catch((_e) => {
+                // ネットワーク失敗時も手入力フォールバック
+                const zipErr = document.getElementById("zip-error");
+                if (zipErr)
+                  zipErr.textContent =
+                    "住所自動取得に失敗しました。手動で入力してください";
+              });
           }
         });
       })();
@@ -7977,17 +8030,30 @@
         const fullName = escapeHtml(
           document.getElementById("fullName")?.value || "",
         );
+        const zip = escapeHtml(document.getElementById("zip")?.value || "");
         const prefecture = escapeHtml(
           document.getElementById("prefecture")?.value || "",
         );
         const address1 = escapeHtml(
           document.getElementById("address1")?.value || "",
         );
+        const address2 = escapeHtml(
+          document.getElementById("address2")?.value || "",
+        );
+        const phone = escapeHtml(document.getElementById("phone")?.value || "");
+        const email = escapeHtml(document.getElementById("email")?.value || "");
 
         html += `<h3 style="margin-top:1.5rem">お届け先</h3>`;
         html += `<div class="confirm-row"><span class="label">お名前</span><span class="value">${fullName}</span></div>`;
-        html += `<div class="confirm-row"><span class="label">住所</span><span class="value">${prefecture} ${address1}</span></div>`;
-        html += `<div class="confirm-row"><span class="label">お支払い</span><span class="value">${payLabels[state.paymentMethod]}</span></div>`;
+        if (zip)
+          html += `<div class="confirm-row"><span class="label">郵便番号</span><span class="value">〒${zip}</span></div>`;
+        html += `<div class="confirm-row"><span class="label">住所</span><span class="value">${prefecture}${address1}${address2 ? " " + address2 : ""}</span></div>`;
+        if (phone)
+          html += `<div class="confirm-row"><span class="label">電話番号</span><span class="value">${phone}</span></div>`;
+        if (email)
+          html += `<div class="confirm-row"><span class="label">メール</span><span class="value">${email}</span></div>`;
+        const payLabel = payLabels[state.paymentMethod] || "クレジットカード";
+        html += `<div class="confirm-row"><span class="label">お支払い</span><span class="value">${escapeHtml(payLabel)}</span></div>`;
 
         html += `<h3 style="margin-top:1.5rem">料金</h3>`;
         html += `<div class="confirm-row"><span class="label">商品価格</span><span class="value">&yen;${(product.base || 0).toLocaleString()}</span></div>`;
@@ -8289,7 +8355,38 @@
           throw e;
         }
 
-        document.getElementById("orderId").textContent = serverOrderId;
+        document.getElementById("orderId").textContent =
+          serverOrderId || reservedOrderId || "—";
+
+        // GA4 purchase コンバージョンイベント発火（広告最適化・CV計測の要）
+        try {
+          if (typeof gtag === "function") {
+            const gaItem = {
+              item_id: state.selectedItem || "unknown",
+              item_name: state.selectedItemName || state.selectedItem || "",
+              item_variant:
+                [
+                  state.selectedStyle,
+                  state.selectedPlacement,
+                  state.selectedColor,
+                ]
+                  .filter(Boolean)
+                  .join("-") || "default",
+              price: finalAmount || 0,
+              quantity: 1,
+            };
+            gtag("event", "purchase", {
+              transaction_id: serverOrderId || reservedOrderId || "",
+              value: finalAmount || 0,
+              currency: "JPY",
+              coupon: state.couponCode || undefined,
+              items: [gaItem],
+            });
+          }
+        } catch (gaErr) {
+          console.warn("[completeOrder] GA4 purchase event failed:", gaErr);
+        }
+
         showStep("complete");
         // リピート購入クーポン自動発行（P3-1）
         issueRepeatPurchaseCoupon(serverOrderId).catch((e) =>
@@ -8513,6 +8610,25 @@
           subtitle.textContent = isGift
             ? "注文者情報と贈り先を入力してください"
             : "商品のお届け先情報を入力してください";
+
+        // ギフトOFFに戻した場合、注文者情報とメッセージをクリア
+        // （再度ONにした時に前回の入力が残らないように）
+        if (!isGift) {
+          const fields = [
+            "ordererName",
+            "ordererEmail",
+            "ordererPhone",
+            "giftMessage",
+          ];
+          fields.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+          });
+          state.giftMessage = "";
+          state.ordererInfo = null;
+          const gc = document.getElementById("giftMsgCount");
+          if (gc) gc.textContent = "0";
+        }
       }
       // ギフトメッセージ文字数カウント
       document.addEventListener("DOMContentLoaded", function () {
