@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="heic-native-decode-svg-icons" />
+    <meta name="deer-build" content="heic-3-layer-fallback" />
     <script>
-      window.deerBuild = "heic-native-decode-svg-icons";
+      window.deerBuild = "heic-3-layer-fallback";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -7119,10 +7119,45 @@
               );
             }
 
-            // ── 2) ネイティブ失敗時は heic2any（120秒タイムアウト）
+            // ── 2) heic-to（メンテされている新ライブラリ）で試行
             if (!convBlob) {
               setUploadPlaceholderText(idx, "HEIC をライブラリで変換中...", {
-                sub: "大きな写真は最大2分かかる場合があります",
+                sub: "新ライブラリで変換試行中...",
+                spinner: true,
+              });
+              try {
+                const heicToMod = await import(
+                  /* @vite-ignore */ "https://cdn.jsdelivr.net/npm/heic-to@1.1.13/+esm"
+                );
+                const conv = await Promise.race([
+                  heicToMod.heicTo({
+                    blob: file,
+                    type: "image/jpeg",
+                    quality: 0.92,
+                  }),
+                  new Promise((_, r) =>
+                    setTimeout(() => r(new Error("heicTo_timeout")), 90_000),
+                  ),
+                ]);
+                if (conv && conv.size > 0) {
+                  convBlob = conv;
+                  console.log(
+                    "[HEIC] heic-to success",
+                    `(${(conv.size / 1024).toFixed(0)} KB)`,
+                  );
+                }
+              } catch (heicToErr) {
+                console.log(
+                  "[HEIC] heic-to failed, falling back to heic2any:",
+                  heicToErr.message,
+                );
+              }
+            }
+
+            // ── 3) heic2any 最終フォールバック（120秒タイムアウト）
+            if (!convBlob) {
+              setUploadPlaceholderText(idx, "HEIC 最終変換試行中...", {
+                sub: "旧ライブラリで変換中（最大2分）",
                 spinner: true,
               });
               if (typeof heic2any === "undefined") {
@@ -7138,7 +7173,7 @@
               const converted = await Promise.race([
                 heic2any({ blob: file, toType: "image/jpeg", quality: 0.92 }),
                 new Promise((_, r) =>
-                  setTimeout(() => r(new Error("heic_timeout")), 120_000),
+                  setTimeout(() => r(new Error("heic2any_timeout")), 120_000),
                 ),
               ]);
               convBlob = Array.isArray(converted) ? converted[0] : converted;
@@ -7154,12 +7189,24 @@
             );
           } catch (e) {
             console.error("[handlePhotoFile] HEIC変換失敗:", e);
+            // デバッグ情報を残す（ユーザーから問い合わせがあった時の調査用）
+            window._deerLastHeicError = {
+              timestamp: new Date().toISOString(),
+              message: e.message,
+              stack: e.stack,
+              fileName: file?.name,
+              fileSize: file?.size,
+              fileType: file?.type,
+              userAgent: navigator.userAgent,
+            };
+            console.error(
+              "[handlePhotoFile] デバッグ情報 (window._deerLastHeicError):",
+              window._deerLastHeicError,
+            );
             const howto =
               "iPhone の『設定 → カメラ → フォーマット → 互換性優先』に変更して撮り直すか、写真アプリで JPEG に書き出してアップロードしてください。";
-            const msg =
-              e.message === "heic_timeout"
-                ? `HEIC変換がタイムアウトしました。${howto}`
-                : `HEIC変換に失敗しました。${howto}`;
+            const techMsg = `[${e.message}] ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`;
+            const msg = `HEIC変換失敗: ${techMsg}\n${howto}`;
             setUploadPlaceholderText(idx, "HEIC変換エラー", {
               sub: msg,
               error: true,
