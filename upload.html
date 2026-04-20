@@ -7585,6 +7585,9 @@
             headers: rembgHeaders,
             body: JSON.stringify({ photoDataUrl: resizedDataUrl }),
           });
+          if (rembgRes.status === 401 || rembgRes.status === 403) {
+            throw new Error("AUTH_REQUIRED");
+          }
           if (!rembgRes.ok) throw new Error("rembg_start_failed");
           const { predictionId: rembgId, error: rembgErr } =
             await rembgRes.json();
@@ -7615,6 +7618,9 @@
               petCount: state.petCount,
             }),
           });
+          if (artRes.status === 401 || artRes.status === 403) {
+            throw new Error("AUTH_REQUIRED");
+          }
           if (!artRes.ok) throw new Error("generation_start_failed");
           const { predictionId, error: apiErr } = await artRes.json();
           if (apiErr || !predictionId)
@@ -9482,6 +9488,10 @@
                 petCount: state.petCount,
               }),
             });
+            // 認証エラーは retry しても成功しないので即座に中断
+            if (artRes.status === 401 || artRes.status === 403) {
+              throw new Error("AUTH_REQUIRED");
+            }
             if (artRes.ok) {
               const { predictionId: pid, error: apiErr } = await artRes.json();
               if (!apiErr && pid) {
@@ -9509,10 +9519,17 @@
         } catch (err) {
           console.error("Style generation failed:", err.message);
           styleCardStates[styleId] = { status: "error", url: null };
-          showToast(
-            "生成に失敗しました。「再試行」ボタンで再度お試しください。",
-            "error",
-          );
+          if (err && err.message === "AUTH_REQUIRED") {
+            showToast("ログインが必要です。ログインしてください。", "error");
+            if (typeof window.DeerAuth?.openModal === "function") {
+              window.DeerAuth.openModal();
+            }
+          } else {
+            showToast(
+              "生成に失敗しました。「再試行」ボタンで再度お試しください。",
+              "error",
+            );
+          }
         }
         renderStyleCards();
       }
