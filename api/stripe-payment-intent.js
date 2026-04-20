@@ -154,9 +154,13 @@ export default async function handler(req, res) {
         code: couponCode,
         subtotal,
       });
-    const igDiscount = resolveIgDiscount({
+    // IG割引トークン: ここで consume=true にして jti を Firestore に記録
+    // （並列リクエストによる二重適用をトランザクションで防止）
+    const igDiscount = await resolveIgDiscount({
       token: igDiscountToken,
       uid: authUser.uid,
+      db,
+      consume: true,
     });
     const amount = calculateTotal({
       item: normalizedItem.item,

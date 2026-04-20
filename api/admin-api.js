@@ -11,7 +11,7 @@
  *   "create-printful-order" → Printful発注  (params: orderId, artImageUrl)
  */
 
-import { createHash, createHmac } from "crypto";
+import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp } from "./_lib/auth.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
@@ -299,6 +299,26 @@ async function actionUpdateStatus(db, body) {
 // ---------------------------------------------------------------------------
 // アクション: Printful 発注
 // ---------------------------------------------------------------------------
+const ALLOWED_ART_HOSTS = new Set([
+  "custom.deer.gift",
+  "deer.gift",
+  "firebasestorage.googleapis.com",
+  "replicate.delivery",
+  "pbxt.replicate.delivery",
+  "tjzk.replicate.delivery",
+  "storage.googleapis.com",
+]);
+function validateArtUrl(url) {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return false;
+    if (!ALLOWED_ART_HOSTS.has(u.hostname)) return false;
+    return true;
+  } catch (_e) {
+    return false;
+  }
+}
+
 async function actionCreatePrintfulOrder(db, body) {
   const orderId = sanitizeStr(body.orderId);
   const artImageUrl = sanitizeStr(body.artImageUrl);
@@ -306,6 +326,13 @@ async function actionCreatePrintfulOrder(db, body) {
     throw Object.assign(new Error("orderId は必須です"), { status: 400 });
   if (!artImageUrl)
     throw Object.assign(new Error("artImageUrl は必須です"), { status: 400 });
+  if (!validateArtUrl(artImageUrl))
+    throw Object.assign(
+      new Error(
+        "artImageUrl は https で deer.gift / Firebase Storage / Replicate ドメインのみ受理可能です",
+      ),
+      { status: 400 },
+    );
 
   const printfulApiKey = process.env.PRINTFUL_API_KEY;
   if (!printfulApiKey)
@@ -429,12 +456,22 @@ export default async function handler(req, res) {
     });
   }
 
-  // ── ② 管理者キー検証 ───────────────────────────────────────────────────
+  // ── ② 管理者キー検証（タイミング攻撃耐性 timingSafeEqual）─────────────
   const adminSecretKey = process.env.ADMIN_SECRET_KEY;
-  if (
-    !adminSecretKey ||
-    (body.adminKey ?? "").trim() !== adminSecretKey.trim()
-  ) {
+  const providedKey = (body.adminKey ?? "").trim();
+  const expectedKey = adminSecretKey ? adminSecretKey.trim() : "";
+  const keyMatches = (() => {
+    if (!expectedKey) return false;
+    const a = Buffer.from(providedKey);
+    const b = Buffer.from(expectedKey);
+    if (a.length !== b.length) return false;
+    try {
+      return timingSafeEqual(a, b);
+    } catch (_e) {
+      return false;
+    }
+  })();
+  if (!keyMatches) {
     const f = await recordFailure(db, req);
     const remaining = Math.max(0, MAX_FAILS - f.newCount);
     const msg = f.locked
@@ -443,9 +480,18 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: msg });
   }
 
-  // ── ③ TOTP 検証（ADMIN_TOTP_SECRET が設定されている場合のみ） ──────────
+  // ── ③ TOTP 検証（secure-by-default: 未設定時は管理APIを全面ロック）─────
   const totpSecret = process.env.ADMIN_TOTP_SECRET;
-  if (totpSecret) {
+  if (!totpSecret) {
+    console.error(
+      "[admin-api] ADMIN_TOTP_SECRET 未設定のため管理APIを拒否します",
+    );
+    return res.status(503).json({
+      error:
+        "管理APIは2要素認証が必須です。環境変数 ADMIN_TOTP_SECRET を設定してください。",
+    });
+  }
+  {
     const code = sanitizeStr(String(body.totpCode || ""));
     if (!code) {
       // コード未入力 → 失敗カウントせずTOTP入力を促すだけ

@@ -196,10 +196,22 @@ export default async function handler(req, res) {
       .json({ error: "リクエストが多すぎます。時間をおいてお試しください" });
   }
 
-  // ── GET: ポーリング ──────────────────────────────────────────
+  // ── GET: ポーリング（所有権検証）─────────────────────────────
   if (req.method === "GET") {
     const { id } = req.query;
-    if (!id) return res.status(400).json({ error: "不正なリクエストです" });
+    if (!id || typeof id !== "string")
+      return res.status(400).json({ error: "不正なリクエストです" });
+
+    // 他人の生成結果を覗き見できないよう、予測ID → uid 紐付けを検証
+    try {
+      const db = getFirestore(getAdminApp());
+      const ownerSnap = await db.collection("artPredictions").doc(id).get();
+      if (ownerSnap.exists && ownerSnap.data().uid !== authUser.uid) {
+        return res.status(403).json({ error: "FORBIDDEN" });
+      }
+    } catch (authErr) {
+      console.warn("[generate-art] ownership check error:", authErr.message);
+    }
 
     try {
       const result = await pollPrediction({ token, id });
@@ -221,7 +233,27 @@ export default async function handler(req, res) {
       }
     }
 
-    const { photoDataUrl, styleId, customPrompt, mode, petCount } = body;
+    const { photoDataUrl, styleId, mode, petCount } = body;
+    // customPrompt のサニタイズ（プロンプトインジェクション対策）
+    // 100文字まで・改行/バッククォート/制御文字を除去・英数・記号・ひらがな・カタカナ・漢字のみ
+    const rawCustomPrompt =
+      typeof body.customPrompt === "string" ? body.customPrompt : "";
+    const customPrompt = rawCustomPrompt
+      .replace(/[`$\\{}[\]<>]/g, "") // バッククォート・テンプレート・ブラケット除去
+      .replace(/[\r\n\t\0]/g, " ") // 改行・タブ・NULL → 空白
+      .replace(/\s+/g, " ") // 連続空白を1つに
+      .trim()
+      .slice(0, 100);
+
+    // photoDataUrl のサイズ上限（8MB）
+    if (photoDataUrl && typeof photoDataUrl === "string") {
+      // base64 は元データの約1.33倍。8MB元 → base64約10.7MB → 文字列長 11.2M
+      if (photoDataUrl.length > 12_000_000) {
+        return res.status(413).json({
+          error: "画像サイズが大きすぎます（8MB以下にしてください）",
+        });
+      }
+    }
 
     // ── LINEスタンプモード ──────────────────────────────────
     if (mode === "stamp") {
@@ -242,6 +274,24 @@ export default async function handler(req, res) {
             safety_tolerance: 6,
           },
         });
+        // 所有者を記録
+        try {
+          const db = getFirestore(getAdminApp());
+          await db
+            .collection("artPredictions")
+            .doc(id)
+            .set({
+              uid: authUser.uid,
+              mode: "stamp",
+              expression: expression || null,
+              createdAt: new Date(),
+            });
+        } catch (markErr) {
+          console.warn(
+            "[generate-art/stamp] prediction owner mark failed:",
+            markErr.message,
+          );
+        }
         return res.json({ predictionId: id });
       } catch (error) {
         console.error("[generate-art/stamp] Replicate error:", error);
@@ -384,6 +434,24 @@ export default async function handler(req, res) {
           safety_tolerance: 6,
         },
       });
+      // 所有者を記録（GETポーリング時の検証用）
+      try {
+        const db = getFirestore(getAdminApp());
+        await db
+          .collection("artPredictions")
+          .doc(id)
+          .set({
+            uid: authUser.uid,
+            mode: "style",
+            styleId: styleId || null,
+            createdAt: new Date(),
+          });
+      } catch (markErr) {
+        console.warn(
+          "[generate-art] prediction owner mark failed:",
+          markErr.message,
+        );
+      }
       return res.json({ predictionId: id });
     } catch (error) {
       console.error("[generate-art] Replicate error:", error);
