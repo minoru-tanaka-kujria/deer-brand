@@ -369,37 +369,49 @@
       // ボタンにローディング表示
       const btn = document.querySelector('button[onclick*="loginApple"]');
       const origText = btn ? btn.innerHTML : "";
-      if (btn) btn.innerHTML = "⏳ Apple認証ページへ移動中...";
-      // Apple Sign Inはredirect方式（popupはiOS Safariで動作しない）
-      const doAppleRedirect = (mod) => {
-        const { signInWithRedirect, OAuthProvider } = mod;
+      if (btn) btn.innerHTML = "⏳ Apple認証中...";
+      // signInWithPopup 方式に統一。cross-origin の localStorage 分断問題を
+      // 回避するため signInWithRedirect は使わない。
+      // iOS Safari で popup がブロックされたら明示的なエラー表示。
+      const doApplePopup = (mod) => {
+        const { signInWithPopup, OAuthProvider } = mod;
         const provider = new OAuthProvider("apple.com");
         provider.addScope("email");
         provider.addScope("name");
-        signInWithRedirect(window._deerFirebaseAuth, provider).catch((e) => {
-          if (btn) btn.innerHTML = origText;
-          const msgs = {
-            "auth/operation-not-allowed":
-              "Apple Sign Inが有効化されていません。Googleでのログインをお試しください。",
-            "auth/invalid-oauth-client-id":
-              "Apple認証の設定に問題があります。Googleでのログインをお試しください。",
-            "auth/cancelled-popup-request": null, // 無視
-          };
-          const msg = msgs[e.code];
-          if (msg) this.showError(msg);
-          else
-            this.showError(
-              "Appleログインに失敗しました。Googleでのログインをお試しください。",
-            );
-        });
+        signInWithPopup(window._deerFirebaseAuth, provider)
+          .then((result) => {
+            this.closeModal();
+            this._onLoginSuccess(result.user);
+          })
+          .catch((e) => {
+            if (btn) btn.innerHTML = origText;
+            const msgs = {
+              "auth/operation-not-allowed":
+                "Apple Sign Inが有効化されていません。Googleでのログインをお試しください。",
+              "auth/invalid-oauth-client-id":
+                "Apple認証の設定に問題があります。Googleでのログインをお試しください。",
+              "auth/popup-blocked":
+                "ポップアップがブロックされました。ブラウザでポップアップを許可するか、Googleログインをお試しください。",
+              "auth/popup-closed-by-user": "ログインがキャンセルされました。",
+              "auth/cancelled-popup-request": null, // 無視
+              "auth/unauthorized-domain":
+                "このドメインは Firebase に許可されていません。管理者に連絡してください。",
+            };
+            const msg = msgs[e.code];
+            if (msg) this.showError(msg);
+            else if (e.code !== "auth/cancelled-popup-request")
+              this.showError(
+                "Appleログインに失敗しました。Googleでのログインをお試しください。",
+              );
+          });
       };
       if (_firebaseAuthModule) {
-        doAppleRedirect(_firebaseAuthModule);
+        doApplePopup(_firebaseAuthModule);
       } else {
         import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js")
           .then((mod) => {
             _firebaseAuthModule = mod;
-            doAppleRedirect(mod);
+            doApplePopup(mod);
           })
           .catch(() => {
             if (btn) btn.innerHTML = origText;
