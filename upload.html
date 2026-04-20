@@ -1808,7 +1808,6 @@
           <img
             class="nav-account-avatar"
             id="navUserAvatar"
-            src=""
             alt=""
             style="
               width: 22px;
@@ -7028,7 +7027,7 @@
               <p class="upload-text">クリックまたはドラッグ＆ドロップで写真を追加</p>
               <p class="upload-hint">JPG / PNG / HEIC 対応（最大 10MB）${showSingleZoneHint ? "・全頭まとめて1枚でOK" : ""}</p>
             </div>
-            <img class="preview-img" id="photoPreview0" style="${hasImg ? "" : "display:none"}" src="${hasImg ? petPhotos[0].dataUrl : ""}" alt="プレビュー"/>
+            <img class="preview-img" id="photoPreview0" style="${hasImg ? "" : "display:none"}" ${hasImg ? `src="${petPhotos[0].dataUrl}"` : ""} alt="プレビュー"/>
           </div>`;
 
         setupDragDrop(0);
@@ -7699,16 +7698,25 @@
             },
           );
         } catch (err) {
-          console.warn("Art generation failed:", err.message);
-          artImageUrl = state.photoDataUrl;
-          if (err.message === "timeout") {
-            showToast(
-              "生成に時間がかかりました。元の写真を表示します",
-              "warning",
-            );
-          } else {
-            showToast("アート生成をスキップし、元の写真を使用します", "info");
+          console.error("Art generation failed:", err);
+          // ── エラー表示 ────────────────────────────────────────
+          // 元写真フォールバックは廃止: 元写真を商品にそのまま印刷すると
+          // 「AIで生成したのに普通の写真」問題になる。エラー画面で再試行を促す。
+          document.getElementById("mockupLoader").style.display = "none";
+          document.getElementById("artResultArea").style.display = "none";
+          state.generatedArtUrl = null;
+          state.rawArtUrl = null;
+          state.finalArtUrl = null;
+          const errArea = document.getElementById("artErrorArea");
+          const msgEl = errArea.querySelector("p");
+          if (msgEl) {
+            msgEl.textContent =
+              err.message === "timeout"
+                ? "生成に時間がかかりました。もう一度お試しください"
+                : "アートの生成に失敗しました。もう一度お試しください";
           }
+          errArea.style.display = "block";
+          return;
         }
 
         // ── 結果表示 ──────────────────────────────────────────────
@@ -8257,6 +8265,49 @@
           address1: document.getElementById("address1")?.value?.trim() || "",
           address2: document.getElementById("address2")?.value?.trim() || "",
         };
+
+        // ── 先祖返り防止ガード ─────────────────────────────────────
+        // AI生成したアート画像以外が商品に印刷されるのを防ぐ最終関所。
+        // 過去、AI生成失敗時に state.finalArtUrl = state.photoDataUrl に
+        // サイレントフォールバックし、生写真が商品に印刷される事故が発生した。
+        // 判定基準: AI 生成完了後の URL は Replicate / Firestore 上の https URL。
+        // 一方、アップロード直後の元写真は data:image/... スキーム。
+        // data: スキームが finalArtUrl に残っているなら AI 生成が走っていない証拠。
+        // また、photoDataUrl と完全一致するケースも生写真代入パターンとして弾く。
+        // マイアート再注文経路（art.url は https）は data:/一致のいずれにも該当しない。
+        if (!state.finalArtUrl) {
+          showToast(
+            "アート画像が見つかりません。最初からやり直してください。",
+            "error",
+          );
+          throw new Error("REGRESSION_GUARD: finalArtUrl is empty");
+        }
+        if (
+          typeof state.finalArtUrl === "string" &&
+          state.finalArtUrl.startsWith("data:")
+        ) {
+          console.error(
+            "[REGRESSION_GUARD] finalArtUrl is data: URL — AI generation skipped",
+          );
+          showToast(
+            "AI生成がまだ完了していません。スタイルを選び直してください。",
+            "error",
+          );
+          throw new Error(
+            "REGRESSION_GUARD: finalArtUrl is a data: URL (raw photo)",
+          );
+        }
+        if (state.photoDataUrl && state.finalArtUrl === state.photoDataUrl) {
+          console.error(
+            "[REGRESSION_GUARD] finalArtUrl === photoDataUrl",
+            "— raw photo would be printed on product",
+          );
+          showToast(
+            "AI生成画像に問題があります。スタイルを選び直してください。",
+            "error",
+          );
+          throw new Error("REGRESSION_GUARD: finalArtUrl === photoDataUrl");
+        }
 
         // 注文をAPIに保存し、サーバー生成のorderIdを取得
         dlog("ORDER", "注文保存開始", { userId, paymentIntentId, total });
@@ -9115,7 +9166,14 @@
           )
             state.selectedStyleUrl = draft.selectedStyleUrl;
           if (draft.selectedBgId) state.selectedBgId = draft.selectedBgId;
-          if (draft.finalArtUrl) state.finalArtUrl = draft.finalArtUrl;
+          // 先祖返り防止: data:URL（=元写真）や photoDataUrl と同じ URL は復元しない
+          if (
+            draft.finalArtUrl &&
+            !draft.finalArtUrl.startsWith("data:") &&
+            draft.finalArtUrl !== draft.photoDataUrl
+          ) {
+            state.finalArtUrl = draft.finalArtUrl;
+          }
           if (draft.artText) state.artText = draft.artText;
           if (draft.artFontFamily) state.artFontFamily = draft.artFontFamily;
           if (typeof draft.artBold === "boolean") state.artBold = draft.artBold;
@@ -9567,18 +9625,21 @@
             state.selectedStyleUrl = cs.url;
             dlog("ART", "selectStyleDirect — 生成成功", { styleId });
           } else {
-            // 生成失敗 → 元写真で続行（エラー通知付き）
-            state.finalArtUrl = state.photoDataUrl || null;
-            dlog("ART", "selectStyleDirect — 生成失敗、元写真で続行", {
+            // 生成失敗 → 元写真へのフォールバックは廃止（商品に生写真が印刷される重大バグ回避）
+            dlog("ART", "selectStyleDirect — 生成失敗", {
               styleId,
               status: cs?.status,
             });
-            showToast("AI生成に失敗しました。元の写真で続行します。", "error");
+            showToast(
+              "AI生成に失敗しました。もう一度お試しください。",
+              "error",
+            );
+            return;
           }
         } catch (e) {
-          state.finalArtUrl = state.photoDataUrl || null;
           dlog("ART", "selectStyleDirect — 例外", { error: e.message });
-          showToast("AI生成に失敗しました。元の写真で続行します。", "error");
+          showToast("AI生成に失敗しました。もう一度お試しください。", "error");
+          return;
         }
 
         const styleDef = STYLES.find((s) => s.id === styleId);
@@ -9906,19 +9967,33 @@
         const cs = bgCardStates[bgId];
         if (!cs) return;
         state.selectedBgId = bgId;
-        if (bgId === "none") {
-          state.finalArtUrl = state.selectedStyleUrl || state.photoDataUrl;
-        } else {
-          state.finalArtUrl =
-            cs.url || state.selectedStyleUrl || state.photoDataUrl;
+        // 元写真へのフォールバックは廃止: AI生成済みのアート画像のみ採用する
+        const artUrl =
+          bgId === "none"
+            ? state.selectedStyleUrl
+            : cs.url || state.selectedStyleUrl;
+        if (!artUrl) {
+          showToast(
+            "アート画像がまだ生成されていません。スタイルを選び直してください。",
+            "error",
+          );
+          return;
         }
+        state.finalArtUrl = artUrl;
         goTo("text-order");
         buildTextOrderStep();
       }
 
       function skipBgAndProceed() {
+        if (!state.selectedStyleUrl) {
+          showToast(
+            "アート画像がまだ生成されていません。スタイルを選び直してください。",
+            "error",
+          );
+          return;
+        }
         state.selectedBgId = "none";
-        state.finalArtUrl = state.selectedStyleUrl || state.photoDataUrl;
+        state.finalArtUrl = state.selectedStyleUrl;
         goTo("text-order");
         buildTextOrderStep();
       }

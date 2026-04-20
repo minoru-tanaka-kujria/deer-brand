@@ -18,6 +18,18 @@ echo "  コミット: $COMMIT ($(git log -1 --format='%s' HEAD))"
 echo "  サイト:   $SITE"
 echo "============================================================"
 
+# ─── 先祖返り防止チェック（フロントに生写真が印刷されるバグを検知）──
+if [ -x "$(dirname "$0")/regression-check.sh" ]; then
+  if ! bash "$(dirname "$0")/regression-check.sh"; then
+    echo ""
+    echo "❌ 先祖返りパターンが検出されたためデプロイ確認を中断します"
+    echo "   修正せずにデプロイすると生写真が商品に印刷される事故が発生します"
+    exit 1
+  fi
+  echo ""
+fi
+
+
 CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || true)
 echo "  変更ファイル: $(echo $CHANGED | tr '\n' ' ')"
 echo ""
