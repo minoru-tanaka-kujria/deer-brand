@@ -7642,12 +7642,21 @@
           state.finalArtUrl = null;
           const errArea = document.getElementById("artErrorArea");
           const msgEl = errArea.querySelector("p");
-          if (msgEl) {
-            msgEl.textContent =
-              err.message === "timeout"
-                ? "生成に時間がかかりました。もう一度お試しください"
-                : "アートの生成に失敗しました。もう一度お試しください";
+          // 認証エラーはログイン誘導メッセージ
+          let msgText;
+          if (err.message === "AUTH_REQUIRED") {
+            msgText =
+              "ログインが必要です。ログインしてから再試行してください。";
+            // 即ログインモーダルを出す
+            if (typeof window.DeerAuth?.openModal === "function") {
+              window.DeerAuth.openModal();
+            }
+          } else if (err.message === "timeout") {
+            msgText = "生成に時間がかかりました。もう一度お試しください";
+          } else {
+            msgText = "アートの生成に失敗しました。もう一度お試しください";
           }
+          if (msgEl) msgEl.textContent = msgText;
           errArea.style.display = "block";
           return;
         }
@@ -9953,10 +9962,16 @@
               const r = await fetch(`${endpoint}?id=${id}`, {
                 headers: freshHeaders,
               });
+              // 401/403: 認証切れ・権限エラーは即座に中断（3分待たせない）
+              if (r.status === 401 || r.status === 403) {
+                clearInterval(timer);
+                reject(new Error("AUTH_REQUIRED"));
+                return;
+              }
               if (!r.ok) {
                 polls++;
                 return;
-              } // HTTPエラーはカウントして継続
+              } // その他 HTTP エラーはカウントして継続
               const d = await r.json();
               networkErrors = 0; // 成功したらリセット
               if (d.status === "succeeded") {
@@ -9977,9 +9992,15 @@
                 }
               }
             } catch (e) {
-              // ネットワークエラー: 3回連続でも続行、それ以上はカウントに含める
+              // AUTH_REQUIRED (未ログイン) は retry しても絶対に成功しないので即中断
+              if (e && e.message === "AUTH_REQUIRED") {
+                clearInterval(timer);
+                reject(e);
+                return;
+              }
+              // その他ネットワーク瞬断は 3 回まで無視。それ以上はカウント対象。
               networkErrors++;
-              if (networkErrors <= 3) return; // ネットワーク瞬断は無視
+              if (networkErrors <= 3) return;
               polls++;
             }
           }, POLL_INTERVAL);
