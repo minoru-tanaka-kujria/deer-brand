@@ -2312,60 +2312,23 @@
           あなたの愛犬の写真をアップロードしてください。AIがアートに変換します
         </p>
 
-        <!-- 1. 頭数選択 -->
-        <div class="pet-count-section">
-          <p class="section-label">写真に写っているペットの頭数</p>
-          <p
-            style="
-              font-size: 0.72rem;
-              color: var(--text-mid);
-              margin-bottom: 0.8rem;
-            "
-          >
-            ※
-            複数頭いる場合は1枚の写真をそのままアップロードしてOKです。全員まとめてアートに変換します。
-          </p>
-          <div class="pet-count-grid" id="petCountGrid">
-            <div
-              class="pet-count-card selected"
-              data-count="1"
-              onclick="selectPetCount(1)"
-            >
-              <div class="count-num">1</div>
-              <div class="count-label">頭</div>
-              <div class="count-price">追加料金なし</div>
-            </div>
-            <div
-              class="pet-count-card"
-              data-count="2"
-              onclick="selectPetCount(2)"
-            >
-              <div class="count-num">2</div>
-              <div class="count-label">頭</div>
-              <div class="count-price">+&yen;1,000</div>
-            </div>
-            <div
-              class="pet-count-card"
-              data-count="3"
-              onclick="selectPetCount(3)"
-            >
-              <div class="count-num">3</div>
-              <div class="count-label">頭</div>
-              <div class="count-price">+&yen;1,500</div>
-            </div>
-            <div
-              class="pet-count-card"
-              data-count="4"
-              onclick="selectPetCount(4)"
-            >
-              <div class="count-num">4</div>
-              <div class="count-label">頭</div>
-              <div class="count-price">+&yen;2,000</div>
-            </div>
-          </div>
-        </div>
+        <!-- 頭数選択は撤廃（頭数によらず定額） -->
+        <p
+          style="
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            margin: 0 0 1rem;
+            padding: 0.75rem 1rem;
+            background: #fdf7ef;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+          "
+        >
+          ※
+          複数頭いる場合は1枚の写真に全員を収めてアップロードしてください。追加料金なしで全員まとめてアートに変換します。
+        </p>
 
-        <!-- 2. 写真アップロードエリア（頭数分） -->
+        <!-- 写真アップロードエリア -->
         <div class="upload-zones-container" id="uploadZonesContainer">
           <!-- built by JS -->
         </div>
@@ -5571,7 +5534,7 @@
         tegaki: "'Yomogi', cursive",
         cursive: "'Dancing Script', cursive",
       };
-      const PET_COUNT_PRICES = { 1: 0, 2: 1000, 3: 1500, 4: 2000 };
+      // PET_COUNT_PRICES は撤廃（頭数追加料金なし）。state.petCount は常に 1 固定。
 
       let state = {
         currentStep: "lookbook",
@@ -5904,11 +5867,12 @@
             state.selectedPlacement = draft.selectedPlacement;
           if (draft.selectedColor) state.selectedColor = draft.selectedColor;
           if (draft.selectedSize) state.selectedSize = draft.selectedSize;
-          if (draft.petCount) {
-            state.petCount = draft.petCount;
-            state.optionPrice = PET_COUNT_PRICES[draft.petCount] || 0;
+          // 頭数オプション撤廃: 旧ドラフトの petCount は無視し常に 1
+          state.petCount = 1;
+          state.optionPrice = 0;
+          if (Array.isArray(draft.pets) && draft.pets.length > 0) {
+            state.pets = [draft.pets[0]];
           }
-          if (Array.isArray(draft.pets)) state.pets = draft.pets;
           // ギフト情報を復元
           if (typeof draft.isGift === "boolean") state.isGift = draft.isGift;
           if (typeof draft.giftMessage === "string")
@@ -7011,25 +6975,17 @@
       function buildUploadZones() {
         const container = document.getElementById("uploadZonesContainer");
         container.innerHTML = "";
-        // 複数頭でも1枚の写真にまとめて写ってる場合はゾーン1つでOK
-        // ユーザーが「全員まとめて1枚で」か「別々に」選べるようにする
-        const showSingleZoneHint = state.petCount > 1;
+        // 頭数撤廃: ゾーンは常に 1 つ。複数頭は 1 枚の写真にまとめて撮影してもらう。
         const hasImg = petPhotos[0] && petPhotos[0].dataUrl;
-
-        if (showSingleZoneHint) {
-          container.innerHTML += `<p style="font-size:0.75rem;color:var(--c-brand);font-weight:600;margin-bottom:0.5rem">📷 ${state.petCount}頭まとめて1枚の写真でOK！</p>`;
-        }
-
-        container.innerHTML += `
+        container.innerHTML = `
           <div class="upload-zone${hasImg ? " has-image" : ""}" id="uploadZone0" onclick="triggerUpload(0)">
             <div class="upload-placeholder" id="uploadPlaceholder0" style="${hasImg ? "display:none" : ""}">
               <div class="upload-icon">${UPLOAD_ZONE_SVG}</div>
               <p class="upload-text">クリックまたはドラッグ＆ドロップで写真を追加</p>
-              <p class="upload-hint">JPG / PNG / HEIC 対応（最大 10MB）${showSingleZoneHint ? "・全頭まとめて1枚でOK" : ""}</p>
+              <p class="upload-hint">JPG / PNG / HEIC 対応（最大 10MB）</p>
             </div>
             <img class="preview-img" id="photoPreview0" style="${hasImg ? "" : "display:none"}" ${hasImg ? `src="${petPhotos[0].dataUrl}"` : ""} alt="プレビュー"/>
           </div>`;
-
         setupDragDrop(0);
       }
 
@@ -7059,30 +7015,7 @@
         });
       }
 
-      function selectPetCount(count) {
-        state.petCount = count;
-        state.optionPrice = PET_COUNT_PRICES[count];
-        // Update card selection
-        document
-          .querySelectorAll("#petCountGrid .pet-count-card")
-          .forEach((c) => {
-            c.classList.toggle("selected", parseInt(c.dataset.count) === count);
-          });
-        // Resize pets array
-        while (state.pets.length < count) {
-          state.pets.push({ name: "", font: "gothic", nameX: 50, nameY: 90 });
-        }
-        state.pets.length = count;
-        // Resize petPhotos
-        while (petPhotos.length < count) {
-          petPhotos.push({ file: null, dataUrl: null });
-        }
-        petPhotos.length = count;
-        // Rebuild dynamic UI
-        buildUploadZones();
-        buildPetNameFields();
-        checkPhotoReady();
-      }
+      // 頭数選択 UI は撤廃済み。state.petCount は常に 1、state.pets は単一要素で運用。
 
       function triggerUpload(idx) {
         const input = document.getElementById("fileInput");
@@ -7212,20 +7145,20 @@
         updatePositionPreview();
       }
 
-      // --- Name input fields ---
+      // --- Name input field ---
+      // 頭数撤廃に伴いフィールドは常に 1 つ。複数頭いる場合は任意で「ポチ & タマ」のように 1 行で入力。
       function buildPetNameFields() {
         const container = document.getElementById("petNameFields");
         container.innerHTML = "";
-        for (let i = 0; i < state.petCount; i++) {
-          const label =
-            state.petCount > 1 ? `${i + 1}頭目の名前` : "ペットの名前";
-          const val = state.pets[i] ? state.pets[i].name : "";
-          container.innerHTML += `
-            <div class="pet-name-group">
-              <label>${label}</label>
-              <input type="text" maxlength="11" placeholder="ペットの名前（任意）" value="${val}" oninput="updatePetName(${i}, this.value)"/>
-            </div>`;
+        if (!state.pets[0]) {
+          state.pets[0] = { name: "", font: "gothic", nameX: 50, nameY: 90 };
         }
+        const val = state.pets[0].name || "";
+        container.innerHTML = `
+          <div class="pet-name-group">
+            <label>ペットの名前</label>
+            <input type="text" maxlength="20" placeholder="複数頭の場合は「ポチ＆タマ」のように入力（任意）" value="${val}" oninput="updatePetName(0, this.value)"/>
+          </div>`;
       }
 
       function updatePetName(idx, value) {
@@ -7760,8 +7693,6 @@
           html += `<div class="row"><span>カラー</span><span>${colorObj.name}</span></div>`;
         if (state.selectedSize)
           html += `<div class="row"><span>サイズ</span><span>${state.selectedSize}</span></div>`;
-        if (state.petCount > 1)
-          html += `<div class="row"><span>頭数</span><span>${state.petCount}頭 (+¥${state.optionPrice.toLocaleString()})</span></div>`;
         html += `<div class="row total"><span>合計（税込）</span><span>¥${total.toLocaleString()}</span></div>`;
 
         document.getElementById("previewSummary").innerHTML = html;
@@ -8025,9 +7956,6 @@
         if (state.selectedSize) {
           html += `<div class="confirm-row"><span class="label">サイズ</span><span class="value">${escapeHtml(state.selectedSize)}</span></div>`;
         }
-        if (state.petCount > 1) {
-          html += `<div class="confirm-row"><span class="label">ペット頭数</span><span class="value">${state.petCount}頭</span></div>`;
-        }
         if (state.showName) {
           const petNames = state.pets.map((p) => p.name).filter(Boolean);
           if (petNames.length > 0) {
@@ -8067,9 +7995,6 @@
         html += `<div class="confirm-row"><span class="label">商品価格</span><span class="value">&yen;${(product.base || 0).toLocaleString()}</span></div>`;
         if (placementPrice > 0) {
           html += `<div class="confirm-row"><span class="label">配置オプション</span><span class="value">+&yen;${placementPrice.toLocaleString()}</span></div>`;
-        }
-        if (state.optionPrice > 0) {
-          html += `<div class="confirm-row"><span class="label">複数頭オプション（${state.petCount}頭）</span><span class="value">+&yen;${state.optionPrice.toLocaleString()}</span></div>`;
         }
         html += `<div class="confirm-row"><span class="label">送料</span><span class="value">無料</span></div>`;
         if (igDiscount > 0) {
@@ -9152,11 +9077,12 @@
             state.selectedPlacement = draft.selectedPlacement;
           if (draft.selectedColor) state.selectedColor = draft.selectedColor;
           if (draft.selectedSize) state.selectedSize = draft.selectedSize;
-          if (draft.petCount) {
-            state.petCount = draft.petCount;
-            state.optionPrice = PET_COUNT_PRICES[draft.petCount] || 0;
+          // 頭数オプション撤廃: 旧ドラフトの petCount は無視し常に 1
+          state.petCount = 1;
+          state.optionPrice = 0;
+          if (Array.isArray(draft.pets) && draft.pets.length > 0) {
+            state.pets = [draft.pets[0]];
           }
-          if (Array.isArray(draft.pets)) state.pets = draft.pets;
           if (draft.selectedStyleId)
             state.selectedStyleId = draft.selectedStyleId;
           // data:URLはドラフト復元しない（元写真であり生成済みアートではない）
