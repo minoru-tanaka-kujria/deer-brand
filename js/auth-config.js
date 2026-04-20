@@ -11,7 +11,11 @@ import {
   setPersistence,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { FIREBASE_CONFIG, LINE_CHANNEL_ID, STRIPE_PUBLISHABLE_KEY } from "./firebase-config.js";
+import {
+  FIREBASE_CONFIG,
+  LINE_CHANNEL_ID,
+  STRIPE_PUBLISHABLE_KEY,
+} from "./firebase-config.js";
 
 const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
@@ -31,6 +35,11 @@ window._deerFirebaseAuth = auth;
 window._deerFirebaseDb = db;
 window._deerLineClientId = LINE_CHANNEL_ID;
 window._deerStripeKey = STRIPE_PUBLISHABLE_KEY;
+// 初期化完了フラグ & イベント発火（auth-modal.js がボタン有効化に使う）
+window._deerAuthReady = true;
+try {
+  window.dispatchEvent(new Event("deer-auth-ready"));
+} catch (_) {}
 
 // ログイン状態をグローバルに反映
 onAuthStateChanged(auth, (user) => {
