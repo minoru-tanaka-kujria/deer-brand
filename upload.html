@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="review-v10-reuse-progress" />
+    <meta name="deer-build" content="order-detail-modal-v1" />
     <script>
-      window.deerBuild = "review-v10-reuse-progress";
+      window.deerBuild = "order-detail-modal-v1";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -8445,6 +8445,16 @@
                   petNames: (state.pets || [])
                     .map((p) => p.name)
                     .filter(Boolean),
+                  // 注文詳細表示・再注文用の追加メタ
+                  styleId: state.selectedStyleId || state.selectedStyle || "",
+                  styleName:
+                    STYLE_NAMES[state.selectedStyleId] ||
+                    STYLE_NAMES[state.selectedStyle] ||
+                    "",
+                  frameId: state.selectedFrame || "none",
+                  bgId: state.selectedBgId || "none",
+                  artText: state.artText || "",
+                  artFontFamily: state.artFontFamily || "",
                 },
               ],
               shipping: {
@@ -8770,45 +8780,41 @@
           }
         }
 
-        // ログインユーザーに住所保存確認ダイアログを表示
+        // ログインユーザーなら住所を自動保存（account.html の注記通り「注文時に自動保存」）
+        // モーダルは廃止。重複アドレスはスキップし、最大5件まで保持。
         const currentUser = window._currentUser;
         if (currentUser && shippingAddress && shippingAddress.address1) {
-          const modal = document.getElementById("saveAddressModal");
-          if (modal) {
-            modal.style.display = "flex";
-            document.getElementById("saveAddressYes").onclick = async () => {
-              modal.style.display = "none";
-              try {
-                const { getFirestore, doc, getDoc, setDoc } =
-                  await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-                const db = window._deerFirebaseDb;
-                const userRef = doc(db, "users", currentUser.uid);
-                const snap = await getDoc(userRef);
-                const existing = snap.exists()
-                  ? snap.data().savedAddresses || []
-                  : [];
-                const isDup = existing.some(
-                  (a) =>
-                    a.zip === shippingAddress.zip &&
-                    a.address1 === shippingAddress.address1,
+          (async () => {
+            try {
+              const { doc, getDoc, setDoc } =
+                await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+              const db = window._deerFirebaseDb;
+              if (!db) return;
+              const userRef = doc(db, "users", currentUser.uid);
+              const snap = await getDoc(userRef);
+              const existing = snap.exists()
+                ? snap.data().savedAddresses || []
+                : [];
+              const isDup = existing.some(
+                (a) =>
+                  a.zip === shippingAddress.zip &&
+                  a.address1 === shippingAddress.address1,
+              );
+              if (!isDup) {
+                const newAddresses = [shippingAddress, ...existing].slice(0, 5);
+                await setDoc(
+                  userRef,
+                  { savedAddresses: newAddresses },
+                  { merge: true },
                 );
-                if (!isDup) {
-                  const newAddresses = [shippingAddress, ...existing].slice(
-                    0,
-                    5,
-                  );
-                  await setDoc(
-                    userRef,
-                    { savedAddresses: newAddresses },
-                    { merge: true },
-                  );
-                }
-                showToast("住所を保存しました", "success");
-              } catch (e) {
-                console.warn("住所保存失敗:", e.message);
+                console.log("[address] 自動保存完了");
+              } else {
+                console.log("[address] 既に登録済み、スキップ");
               }
-            };
-          }
+            } catch (e) {
+              console.warn("[address] 自動保存失敗:", e.message);
+            }
+          })();
         }
       }
 

@@ -577,6 +577,65 @@
       >
     </nav>
 
+    <!-- 注文詳細モーダル -->
+    <div
+      id="orderDetailModal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          background: #fff;
+          border-radius: 14px;
+          max-width: 480px;
+          width: 100%;
+          padding: 1.5rem 1.25rem;
+          max-height: 90vh;
+          overflow-y: auto;
+          position: relative;
+        "
+      >
+        <button
+          id="orderDetailClose"
+          aria-label="閉じる"
+          style="
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--text-light, #888);
+            line-height: 1;
+          "
+        >
+          ×
+        </button>
+        <h3
+          style="
+            margin: 0 0 0.8rem;
+            font-size: 1rem;
+            color: var(--charcoal, #3e2c23);
+          "
+        >
+          注文詳細
+        </h3>
+        <div id="orderDetailContent"></div>
+      </div>
+    </div>
+
     <div class="page" id="pageContent">
       <!-- ローディング中 -->
       <div class="loading-screen" id="loadingScreen">
@@ -877,7 +936,7 @@
                   ? `<p class="empty-state">まだ注文がありません。<br><a href="upload" style="color:var(--terracotta)">はじめての注文をする →</a></p>`
                   : orders
                       .slice(0, 5)
-                      .map((o) => {
+                      .map((o, idx) => {
                         const statusLabel =
                           o.status === "preparing"
                             ? "制作中"
@@ -888,16 +947,30 @@
                                 : o.status === "pending"
                                   ? "受付中"
                                   : escHtml(o.status || "処理中");
+                        const item0 = (o.items && o.items[0]) || {};
                         const productName =
-                          o.productName || o.product || "商品";
+                          item0.productName ||
+                          o.productName ||
+                          o.product ||
+                          "商品";
+                        const colorLabel =
+                          item0.colorName || item0.colorId || o.color || "";
+                        const styleLabel =
+                          item0.styleName || item0.styleId || o.style || "";
+                        // 一覧カードをクリッカブルに。詳細は window.showOrderDetail(idx)
                         return `
-                  <div class="order-item">
+                  <div class="order-item" style="cursor:pointer" onclick="window.showOrderDetail(${idx})">
                     <div class="order-header">
-                      <div class="order-id">${escHtml(o.orderId)}</div>
+                      <div class="order-id" style="font-size:0.75rem">${escHtml(o.orderId || "")}</div>
                       <span class="order-status ${escHtml(o.status || "pending")}">${statusLabel}</span>
                     </div>
-                    <div class="order-product">${escHtml(productName)}</div>
-                    <div class="order-detail">${escHtml(o.style || "")}${o.style && o.color ? " / " : ""}${escHtml(o.color || "")}</div>
+                    <div style="display:flex;gap:0.75rem;margin-top:0.4rem;align-items:center">
+                      ${o.artImageUrl ? `<img src="${escHtml(o.artImageUrl)}" alt="アート" loading="lazy" decoding="async" style="width:56px;height:56px;border-radius:6px;object-fit:cover;border:1px solid var(--border);flex-shrink:0">` : ""}
+                      <div style="flex:1;min-width:0">
+                        <div class="order-product">${escHtml(productName)}</div>
+                        <div class="order-detail">${escHtml(styleLabel)}${styleLabel && colorLabel ? " / " : ""}${escHtml(colorLabel)}</div>
+                      </div>
+                    </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.4rem">
                       <div style="font-size:0.7rem;color:var(--text-light)">${(() => {
                         try {
@@ -919,6 +992,7 @@
                       })()}</div>
                       <div class="order-price" style="margin-top:0">¥${Number(o.total || 0).toLocaleString()}</div>
                     </div>
+                    <div style="margin-top:0.35rem;font-size:0.68rem;color:var(--terracotta);text-align:right">詳細を見る →</div>
                   </div>`;
                       })
                       .join("")
@@ -931,6 +1005,110 @@
             <button class="logout-btn" id="logoutBtn">ログアウト</button>
           </div>
         `;
+
+        // 注文詳細モーダル: クリッカブルな一覧から呼ばれる
+        window._orderList = orders;
+        window.showOrderDetail = function (idx) {
+          const o = window._orderList[idx];
+          if (!o) return;
+          const item0 = (o.items && o.items[0]) || {};
+          const productName =
+            item0.productName || o.productName || o.product || "商品";
+          const placementName = item0.placementName || item0.placementId || "";
+          const colorName = item0.colorName || item0.colorId || o.color || "";
+          const styleName = item0.styleName || item0.styleId || o.style || "";
+          const size = item0.size || o.size || "";
+          const petNames = Array.isArray(item0.petNames)
+            ? item0.petNames.filter(Boolean).join("、")
+            : "";
+          const frameId = item0.frameId || "";
+          const artText = item0.artText || "";
+          const rows = [
+            ["商品", productName],
+            ["スタイル", styleName],
+            [
+              productName.includes("スマホケース")
+                ? "仕上げ"
+                : productName.includes("ポスター")
+                  ? "フレーム色"
+                  : "カラー",
+              colorName,
+            ],
+            ["配置", placementName],
+            ["サイズ", size],
+            ["デコレーション", frameId && frameId !== "none" ? frameId : ""],
+            ["ペット名", petNames],
+            ["アート内テキスト", artText],
+          ].filter(([, v]) => v);
+          const safe = (s) => escHtml(String(s ?? ""));
+          const modal = document.getElementById("orderDetailModal");
+          const content = document.getElementById("orderDetailContent");
+          content.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;margin-bottom:1rem">
+              ${o.artImageUrl ? `<img src="${safe(o.artImageUrl)}" alt="アート" style="width:100%;max-width:320px;aspect-ratio:1/1;object-fit:cover;border-radius:10px;border:1px solid var(--border)">` : '<div style="color:var(--text-light);font-size:0.85rem">アート画像なし</div>'}
+              <div style="font-size:0.75rem;color:var(--text-light)">注文番号: ${safe(o.orderId || "")}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:0.5rem 1rem;font-size:0.85rem;padding:0.5rem 0">
+              ${rows.map(([k, v]) => `<div style="color:var(--text-light)">${safe(k)}</div><div>${safe(v)}</div>`).join("")}
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:1rem">
+              <button id="btnOrderReuseSame" style="padding:0.75rem;border:1px solid var(--terracotta);background:var(--terracotta);color:#fff;border-radius:8px;cursor:pointer;font-size:0.85rem">同じものを再注文</button>
+              <button id="btnOrderReuseArt" style="padding:0.75rem;border:1px solid var(--terracotta);background:#fff;color:var(--terracotta);border-radius:8px;cursor:pointer;font-size:0.85rem">このアートで別商品</button>
+            </div>
+          `;
+          modal.style.display = "flex";
+
+          // 同じものを再注文: item, placement, color, size をクエリで渡し、アートは sessionStorage で
+          document.getElementById("btnOrderReuseSame").onclick = () => {
+            try {
+              if (o.artImageUrl) {
+                sessionStorage.setItem(
+                  "deer_reuse_art",
+                  JSON.stringify({
+                    artUrl: o.artImageUrl,
+                    petNames: item0.petNames || [],
+                  }),
+                );
+              }
+            } catch (_) {}
+            const u = new URL("upload", window.location.origin);
+            if (item0.item) u.searchParams.set("item", item0.item);
+            if (item0.placementId)
+              u.searchParams.set("placement", item0.placementId);
+            if (item0.colorId) u.searchParams.set("color", item0.colorId);
+            if (item0.size) u.searchParams.set("size", item0.size);
+            if (o.artImageUrl) u.searchParams.set("reuse", "1");
+            window.location.href = u.toString();
+          };
+          // このアートで別商品: reuse=1 で item 指定せず item-select へ
+          document.getElementById("btnOrderReuseArt").onclick = () => {
+            try {
+              if (o.artImageUrl) {
+                sessionStorage.setItem(
+                  "deer_reuse_art",
+                  JSON.stringify({
+                    artUrl: o.artImageUrl,
+                    petNames: item0.petNames || [],
+                  }),
+                );
+              }
+            } catch (_) {}
+            window.location.href = "upload?reuse=1";
+          };
+        };
+        // モーダル外クリックで閉じる
+        const _orderModal = document.getElementById("orderDetailModal");
+        if (_orderModal) {
+          _orderModal.onclick = (e) => {
+            if (e.target === _orderModal) _orderModal.style.display = "none";
+          };
+        }
+        const _orderModalClose = document.getElementById("orderDetailClose");
+        if (_orderModalClose) {
+          _orderModalClose.onclick = () => {
+            _orderModal.style.display = "none";
+          };
+        }
 
         const displayNameEl = document.getElementById("accountDisplayName");
         if (displayNameEl) {

@@ -46,9 +46,11 @@ service cloud.firestore {
     }
 
     // レビュー: 誰でも投稿可（ログイン不要）。approved=false強制・rating範囲チェック。読み書き更新は Admin SDK のみ
+    // NOTE: Web SDK は数値を常に double として送るため `is int` は false になる。
+    //       `is number` + 1..5 の範囲チェックで同等の保護を行う。
     match /reviews/{reviewId} {
       allow create: if request.resource.data.approved == false
-        && request.resource.data.rating is int
+        && request.resource.data.rating is number
         && request.resource.data.rating >= 1
         && request.resource.data.rating <= 5;
       allow read, update, delete: if false;

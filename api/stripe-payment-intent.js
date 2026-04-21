@@ -61,6 +61,13 @@ function normalizeCheckoutItem(rawItem) {
 
   const petCount = Number(rawItem?.petCount ?? 1);
 
+  // 注文詳細表示・再注文用の追加メタ (先頭 60 文字まで / 安全な型に絞る)
+  const safeStr = (v) =>
+    typeof v === "string"
+      ? v.slice(0, 60)
+      : typeof v === "number"
+        ? String(v)
+        : null;
   return {
     item: itemId,
     productName: product.name,
@@ -75,6 +82,12 @@ function normalizeCheckoutItem(rawItem) {
           (name) => typeof name === "string" && name.trim(),
         )
       : [],
+    styleId: safeStr(rawItem?.styleId),
+    styleName: safeStr(rawItem?.styleName),
+    frameId: safeStr(rawItem?.frameId) || "none",
+    bgId: safeStr(rawItem?.bgId) || "none",
+    artText: safeStr(rawItem?.artText) || "",
+    artFontFamily: safeStr(rawItem?.artFontFamily) || "",
   };
 }
 
