@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="csp-replicate-apex" />
+    <meta name="deer-build" content="setfinalart-recursion-fix" />
     <script>
-      window.deerBuild = "csp-replicate-apex";
+      window.deerBuild = "setfinalart-recursion-fix";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -10508,7 +10508,7 @@
       // preview表示は data URL があればそれを優先 → CORS 失敗や URL 期限切れを完全回避
       // 元の URL は state.finalArtUrl に残し、注文APIへはそちらを送る（body sizeコンパクト維持）
       function setFinalArt(url) {
-        setFinalArt(url);
+        state.finalArtUrl = url;
         if (!url) {
           state.finalArtDataUrl = null;
           return;
