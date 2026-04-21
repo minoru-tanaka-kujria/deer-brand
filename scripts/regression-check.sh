@@ -75,4 +75,51 @@ if [ "$NG_FOUND" -eq 0 ]; then
   echo "✅ 先祖返りパターンは検出されませんでした"
 fi
 
+# ── JS Syntax チェック（HTML 内のインラインスクリプトも対象）──────────────
+# 過去、sed/python regex で showToast 等の括弧数を誤って変更して
+# 「画面が真っ白になる」事故が発生したため CI で防ぐ。
+echo ""
+echo "🔍 JS syntax check..."
+SYNTAX_NG=0
+
+# 独立 JS ファイル
+for jsfile in $(find js -name "*.js" 2>/dev/null); do
+  if ! node --check "$jsfile" 2>/dev/null; then
+    echo "❌ JS syntax error: $jsfile"
+    node --check "$jsfile" 2>&1 | head -5
+    SYNTAX_NG=1
+  fi
+done
+
+# HTML 内の <script> セクション抽出して syntax check
+for html in upload.html index.html account.html admin.html product-detail.html placement-detail.html art-styles.html memorial/index.html stamp/index.html; do
+  [ -f "$html" ] || continue
+  # type="module" や src=""のscript は除外、インラインのみ
+  python3 - "$html" <<'PYEOF' > /tmp/syntax_check_inline.js 2>/dev/null
+import sys, re
+p = sys.argv[1]
+with open(p) as f: txt = f.read()
+# src 属性なし & type="text/javascript" or なし のインラインscript のみ抽出
+scripts = re.findall(r'<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>', txt, re.DOTALL)
+for i, s in enumerate(scripts):
+    # JSON-LD は type="application/ld+json" なので除外 (pattern では無理なのでよく判定)
+    if s.strip().startswith('{'):
+        continue  # LD-JSON っぽい
+    print(f"/* --- chunk {i} --- */")
+    print(s)
+PYEOF
+  if [ ! -s /tmp/syntax_check_inline.js ]; then continue; fi
+  if ! node --check /tmp/syntax_check_inline.js 2>/dev/null; then
+    echo "❌ JS syntax error in $html:"
+    node --check /tmp/syntax_check_inline.js 2>&1 | head -5
+    SYNTAX_NG=1
+  fi
+done
+
+if [ "$SYNTAX_NG" -eq 0 ]; then
+  echo "✅ JS syntax OK (全スクリプト)"
+else
+  NG_FOUND=1
+fi
+
 exit "$NG_FOUND"
