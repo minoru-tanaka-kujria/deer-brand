@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="heic-success-client-only" />
+    <meta name="deer-build" content="sentry-error-telemetry" />
     <script>
-      window.deerBuild = "heic-success-client-only";
+      window.deerBuild = "sentry-error-telemetry";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -57,35 +57,8 @@
     />
     <script src="js/auth-modal.js?v=popup2026" defer></script>
     <script type="module" src="js/auth-config.js?v=popup2026"></script>
-    <!-- Sentry エラーモニタリング（P3-4）: DSN は config API から取得して動的ロード -->
-    <script>
-      (function () {
-        fetch("/api/get-user?type=config")
-          .then(function (r) {
-            return r.ok ? r.json() : null;
-          })
-          .then(function (cfg) {
-            if (!cfg || !cfg.sentryDsn) return;
-            var s = document.createElement("script");
-            s.src = "https://browser.sentry-cdn.com/7.114.0/bundle.min.js";
-            s.crossOrigin = "anonymous";
-            s.onload = function () {
-              if (window.Sentry) {
-                Sentry.init({
-                  dsn: cfg.sentryDsn,
-                  tracesSampleRate: 0.1,
-                  environment:
-                    location.hostname === "custom.deer.gift"
-                      ? "production"
-                      : "development",
-                });
-              }
-            };
-            document.head.appendChild(s);
-          })
-          .catch(function () {});
-      })();
-    </script>
+    <!-- Sentry エラーモニタリング共通初期化 (DSN 未設定時は window._deerErrors に蓄積) -->
+    <script src="js/sentry-init.js?v=1" defer></script>
     <!-- Stripe: 支払いステップに到達したときだけロード（レンダーブロッキング回避） -->
     <!-- heic2any: async 事前ロードで初期化を早める（2026-04-14 の bcd8487 で
          「動的ロード化してレンダリング高速化」としたが、HEICアップロード時に
