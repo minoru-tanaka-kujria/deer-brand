@@ -38,9 +38,46 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="reuse-art-quota-hardened" />
+    <meta name="deer-build" content="auto-stale-reload" />
     <script>
-      window.deerBuild = "reuse-art-quota-hardened";
+      window.deerBuild = "auto-stale-reload";
+      // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
+      // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
+      (function () {
+        async function checkStaleBuild() {
+          try {
+            const res = await fetch(location.pathname, {
+              cache: "no-store",
+              credentials: "same-origin",
+            });
+            if (!res.ok) return;
+            const txt = await res.text();
+            const m = txt.match(/window\.deerBuild\s*=\s*"([^"]+)"/);
+            if (m && m[1] && m[1] !== window.deerBuild) {
+              console.warn(
+                "[deerBuild] stale build detected:",
+                window.deerBuild,
+                "→",
+                m[1],
+                "— reloading",
+              );
+              // ユーザー操作中の不意のリロードを避けるため、入力フィールドに
+              // フォーカスが無いときだけ自動リロード
+              const active = document.activeElement;
+              const isEditing =
+                active &&
+                (active.tagName === "INPUT" ||
+                  active.tagName === "TEXTAREA" ||
+                  active.isContentEditable);
+              if (!isEditing) location.reload();
+            }
+          } catch (_) {
+            /* noop */
+          }
+        }
+        setTimeout(checkStaleBuild, 30 * 1000); // 初回 30 秒後
+        setInterval(checkStaleBuild, 5 * 60 * 1000); // 以後 5 分ごと
+      })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
