@@ -12,24 +12,6 @@
   "rewrites": [{ "source": "/stamp", "destination": "/stamp/index.html" }],
   "headers": [
     {
-      "source": "/(.*\\.(png|jpg|jpeg|gif|webp|svg|avif|ico|woff|woff2|ttf|otf|css))",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/js/(.*\\.js)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, must-revalidate"
-        }
-      ]
-    },
-    {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
@@ -50,10 +32,6 @@
         {
           "key": "Cross-Origin-Opener-Policy",
           "value": "unsafe-none"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate, max-age=0"
         },
         {
           "key": "Content-Security-Policy",
