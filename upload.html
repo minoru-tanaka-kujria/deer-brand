@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="reuse-flow-item-select" />
+    <meta name="deer-build" content="case-finish-swatch" />
     <script>
-      window.deerBuild = "reuse-flow-item-select";
+      window.deerBuild = "case-finish-swatch";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -1995,8 +1995,10 @@
 
       <!-- ========== STEP 3: COLOR ========== -->
       <section class="step-section" id="step-color">
-        <h2 class="step-title">カラーを選ぶ</h2>
-        <p class="step-subtitle">商品のカラーを選んでください</p>
+        <h2 class="step-title" id="colorStepTitle">カラーを選ぶ</h2>
+        <p class="step-subtitle" id="colorStepSubtitle">
+          商品のカラーを選んでください
+        </p>
 
         <div class="option-group">
           <div class="color-options" id="colorOptions">
@@ -6693,16 +6695,43 @@
       // ============================================================
       function buildColors(product) {
         const container = document.getElementById("colorOptions");
+        // スマホケースは「色違い」ではなく「仕上げ違い」(glossy / matte) のため、
+        // タイトル・サブタイトル・スワッチ表現を切り替える。
+        const isCase = state.selectedItem === "case";
+        const titleEl = document.getElementById("colorStepTitle");
+        const subEl = document.getElementById("colorStepSubtitle");
+        if (titleEl)
+          titleEl.textContent = isCase ? "仕上げを選ぶ" : "カラーを選ぶ";
+        if (subEl)
+          subEl.textContent = isCase
+            ? "光沢感のある「グロス」か、落ち着いた質感の「マット」を選べます"
+            : "商品のカラーを選んでください";
+
         container.innerHTML = product.colors
-          .map(
-            (c, i) => `
+          .map((c, i) => {
+            if (isCase) {
+              // グロス: 光沢グラデーション / マット: フラットな淡色 (どちらも透明ケースだが質感表現)
+              const isGloss = c.id === "glossy";
+              const bg = isGloss
+                ? "linear-gradient(135deg,#f5f5f7 0%,#d8d8dc 45%,#ffffff 55%,#c5c5cc 100%)"
+                : "#ededeb";
+              const border = isGloss ? "#c0c0c5" : "#c7c4be";
+              return `
+          <div class="color-swatch${c.id === state.selectedColor ? " selected" : ""}"
+               style="background:${bg};border:1.5px solid ${border};box-shadow:${isGloss ? "inset 0 2px 4px rgba(255,255,255,0.7),0 1px 3px rgba(0,0,0,0.08)" : "inset 0 1px 2px rgba(0,0,0,0.04)"}"
+               onclick="selectColor('${c.id}', ${i})"
+               id="clr-${i}">
+            <span class="color-name" style="color:#3e2c23">${c.name}</span>
+          </div>`;
+            }
+            return `
           <div class="color-swatch${c.id === state.selectedColor ? " selected" : ""}"
                style="background:${c.hex}"
                onclick="selectColor('${c.id}', ${i})"
                id="clr-${i}">
             <span class="color-name">${c.name}</span>
-          </div>`,
-          )
+          </div>`;
+          })
           .join("");
 
         // Auto-select from lookbook
@@ -6715,11 +6744,21 @@
           }
         }
 
-        // Update next button text
+        // Update next button text — 次に何のステップが来るかに応じて変える
         const product2 = PRODUCTS[state.selectedItem];
-        document.getElementById("btnColorNext").textContent = product2.hasSize
-          ? "次へ — サイズ選択"
-          : "次へ — 写真アップロード";
+        const hasArtAlready =
+          state.finalArtUrl &&
+          typeof state.finalArtUrl === "string" &&
+          !state.finalArtUrl.startsWith("data:");
+        let nextBtnText;
+        if (product2.hasSize || product2.hasModel) {
+          nextBtnText = "次へ — サイズ選択";
+        } else if (hasArtAlready) {
+          nextBtnText = "次へ — 名前入力";
+        } else {
+          nextBtnText = "次へ — 写真アップロード";
+        }
+        document.getElementById("btnColorNext").textContent = nextBtnText;
       }
 
       function selectColor(colorId, idx) {
