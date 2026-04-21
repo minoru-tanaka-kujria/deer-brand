@@ -83,6 +83,32 @@
   setInterval(mergeConsoleIntoErrors, 4000);
   window.addEventListener("beforeunload", mergeConsoleIntoErrors);
 
+  // コード内から直接エラーを投げ込むための公開ヘルパ（DSN 有無に関わらず使える）
+  //   window.__deerReportError("tag_name", { ...details })
+  //   → Sentry があれば captureMessage、無ければ _deerErrors に push
+  window.__deerReportError = function (tag, details) {
+    try {
+      if (window.Sentry && typeof window.Sentry.captureMessage === "function") {
+        window.Sentry.captureMessage(tag, {
+          level: "error",
+          extra: Object.assign({}, details || {}, collectDeerContext()),
+        });
+        return;
+      }
+      if (!window._deerErrors) window._deerErrors = [];
+      window._deerErrors.push({
+        t: Date.now(),
+        type: "manual",
+        tag: tag,
+        message:
+          (details && details.message) ||
+          (typeof details === "string" ? details : tag),
+        details: details || null,
+        ctx: collectDeerContext(),
+      });
+    } catch (_) {}
+  };
+
   fetch("/api/get-user?type=config")
     .then(function (r) {
       return r.ok ? r.json() : null;

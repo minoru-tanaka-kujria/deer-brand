@@ -40,7 +40,7 @@
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
     <meta name="deer-build" content="csp-replicate-connect" />
     <script>
-      window.deerBuild = "csp-replicate-connect";
+      window.deerBuild = "poll-succeeded-grace";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -9731,18 +9731,45 @@
 
           styleCardStates[styleId] = { status: "done", url: artUrl };
         } catch (err) {
-          console.error("Style generation failed:", err.message);
+          const errMsg = err && err.message ? err.message : String(err);
+          console.error("[generateStyleCard] 失敗", {
+            styleId,
+            message: errMsg,
+            stack: err && err.stack,
+          });
           styleCardStates[styleId] = { status: "error", url: null };
+          // Firestore テレメトリへ送信（admin ログ画面で確認可能に）
+          try {
+            if (typeof window.__deerReportError === "function") {
+              window.__deerReportError("generate_art_failed", {
+                styleId,
+                message: errMsg,
+                stack:
+                  err && err.stack ? String(err.stack).slice(0, 1000) : null,
+                build: window.deerBuild,
+              });
+            }
+          } catch (_) {}
           if (err && err.message === "AUTH_REQUIRED") {
             showToast("ログインが必要です。ログインしてください。", "error");
             if (typeof window.DeerAuth?.openModal === "function") {
               window.DeerAuth.openModal();
             }
           } else {
-            showToast(
-              "生成に失敗しました。「再試行」ボタンで再度お試しください。",
-              "error",
-            );
+            // エラー種別ごとにユーザーへ分かりやすいメッセージ
+            let userMsg =
+              "生成に失敗しました。「再試行」ボタンで再度お試しください。";
+            if (errMsg === "timeout") {
+              userMsg =
+                "AI生成がタイムアウトしました。もう一度お試しください。";
+            } else if (errMsg === "succeeded_no_output") {
+              userMsg =
+                "生成結果の取得に失敗しました。もう一度お試しください。";
+            } else if (errMsg.includes("rate") || errMsg.includes("多すぎ")) {
+              userMsg =
+                "リクエストが多すぎます。1分ほど待ってからお試しください。";
+            }
+            showToast(userMsg, "error");
           }
         }
         renderStyleCards();
@@ -10181,6 +10208,10 @@
         const POLL_INTERVAL = 3000;
         let polls = 0;
         let networkErrors = 0;
+        // Replicate が succeeded を返しつつ outputUrl を一瞬 null で返す事があるため
+        // 即 reject せず数回だけ再ポーリングして output が埋まるのを待つ
+        let succeededNoOutputRetries = 0;
+        const SUCCEEDED_NO_OUTPUT_MAX = 5;
         return new Promise((resolve, reject) => {
           const timer = setInterval(async () => {
             if (polls > maxPolls) {
@@ -10206,11 +10237,18 @@
               const d = await r.json();
               networkErrors = 0; // 成功したらリセット
               if (d.status === "succeeded") {
-                clearInterval(timer);
                 if (d.outputUrl) {
+                  clearInterval(timer);
                   resolve(d.outputUrl);
                 } else {
-                  reject(new Error("succeeded_no_output"));
+                  // succeeded だが output がまだ伝播していない
+                  // 数回までは待つ（Replicate のレプリケーション遅延対策）
+                  succeededNoOutputRetries++;
+                  polls++;
+                  if (succeededNoOutputRetries > SUCCEEDED_NO_OUTPUT_MAX) {
+                    clearInterval(timer);
+                    reject(new Error("succeeded_no_output"));
+                  }
                 }
               } else if (d.status === "failed" || d.status === "canceled") {
                 clearInterval(timer);
