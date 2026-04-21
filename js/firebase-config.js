@@ -38,8 +38,15 @@ if (isLiveHostname && !STRIPE_PUBLISHABLE_KEY_LIVE) {
   );
 }
 
-export const STRIPE_PUBLISHABLE_KEY = isLiveHostname
-  ? STRIPE_PUBLISHABLE_KEY_LIVE || STRIPE_PUBLISHABLE_KEY_TEST
-  : STRIPE_PUBLISHABLE_KEY_TEST;
+// ⚠ 一時的に TEST mode に統一（サーバー側 STRIPE_SECRET_KEY も同アカウント TEST に合わせてある）
+// 本番決済 (LIVE mode) に切り替える際は、以下の FORCE_TEST を false に戻し、かつ
+// Vercel env STRIPE_SECRET_KEY を sk_live_51Qmtxa... に更新する必要がある。
+// 参照: 2026-04-21 の決済 404 調査で、サーバー側の別アカウント sk_test_51THFru と
+// クライアント側の pk_live_51Qmtxa が食い違って PaymentIntent が成立しなかった。
+const FORCE_TEST_MODE = true;
+export const STRIPE_PUBLISHABLE_KEY =
+  isLiveHostname && !FORCE_TEST_MODE
+    ? STRIPE_PUBLISHABLE_KEY_LIVE || STRIPE_PUBLISHABLE_KEY_TEST
+    : STRIPE_PUBLISHABLE_KEY_TEST;
 export const LINE_CHANNEL_ID = "2009690645";
 export const INSTAGRAM_ACCOUNT = "deer_dogfood";
