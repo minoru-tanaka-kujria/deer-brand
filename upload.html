@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="resend-email-quota-x-fix" />
+    <meta name="deer-build" content="reuse-art-quota-hardened" />
     <script>
-      window.deerBuild = "resend-email-quota-x-fix";
+      window.deerBuild = "reuse-art-quota-hardened";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -10887,30 +10887,38 @@
       }
       // 同じアートで別商品を注文
       function reuseArtForNewProduct() {
-        // アート URL (Replicate の https URL、数百 B) とペット名だけ保存。
-        // photoDataUrl (data: URL、数MB) を入れるとブラウザの sessionStorage quota (約5MB) を
-        // 即超過して QuotaExceededError になるため除外する。再注文時は state.finalArtUrl さえあれば
-        // 同じアートを使って別商品を選べる。元写真は再利用不要。
+        // sessionStorage quota (約 5MB) を確実に超えない形で保存する。
+        // 万一 finalArtUrl が data: URL だったら storage には入れず URL クエリ経路にする。
+        const artUrl = state.finalArtUrl || "";
+        const isDataUrl =
+          typeof artUrl === "string" && artUrl.startsWith("data:");
+        // URL クエリに直接 data: URL を乗せるのも不可能（URL 長制限超過）なのでその場合は
+        // やむなくアラートを出して元の URL でリスタートさせる
+        if (isDataUrl || artUrl.length > 2000) {
+          console.warn("[reuseArt] artUrl is data: or too long — falling back");
+          location.href = "upload.html?reuse=1";
+          return;
+        }
+        const payload = JSON.stringify({
+          artUrl,
+          petNames: state.petNames || [],
+        });
         try {
-          sessionStorage.setItem(
-            "deer_reuse_art",
-            JSON.stringify({
-              artUrl: state.finalArtUrl,
-              petNames: state.petNames || [],
-            }),
-          );
+          sessionStorage.setItem("deer_reuse_art", payload);
+          location.href = "upload.html?reuse=1";
+          return;
         } catch (e) {
+          // quota 超過・Safari の private mode 等で storage 使えない場合のフォールバック
           console.warn("[reuseArt] sessionStorage write failed:", e.message);
-          // フォールバック: URL クエリで artUrl を渡す（最大 URL 長制限ありだが Replicate URL は短い）
-          if (state.finalArtUrl) {
+          if (artUrl) {
             const u = new URL("upload.html", location.href);
             u.searchParams.set("reuse", "1");
-            u.searchParams.set("artUrl", state.finalArtUrl);
+            u.searchParams.set("artUrl", artUrl);
             location.href = u.toString();
             return;
           }
+          location.href = "upload.html?reuse=1";
         }
-        location.href = "upload.html?reuse=1";
       }
 
       // ============================================================
