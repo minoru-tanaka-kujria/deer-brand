@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="heic-3-layer-fallback" />
+    <meta name="deer-build" content="heic-server-api-5mb-limit" />
     <script>
-      window.deerBuild = "heic-3-layer-fallback";
+      window.deerBuild = "heic-server-api-5mb-limit";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -7075,49 +7075,119 @@
 
         if (isHeic) {
           setUploadPlaceholderText(idx, "iPhone写真 (HEIC) を変換中...", {
-            sub: "通常5〜30秒、大きなファイルで最大2分かかる場合があります",
+            sub: "5〜15秒で完了します",
             spinner: true,
           });
+          // 5MB 超えはサーバー/クライアント共に現実的に無理 → 明示エラー
+          if (file.size > 5 * 1024 * 1024) {
+            const mb = (file.size / 1024 / 1024).toFixed(1);
+            const howto =
+              "iPhone の『設定 → カメラ → フォーマット → 互換性優先』に変更して撮り直してください。既存写真は写真アプリで書き出し時に JPEG を選べます。";
+            const msg = `HEIC ${mb}MB は大きすぎて変換できません。${howto}`;
+            setUploadPlaceholderText(idx, "HEIC サイズ超過", {
+              sub: msg,
+              error: true,
+            });
+            showToast(msg, "error");
+            const input = document.getElementById("fileInput");
+            if (input) input.value = "";
+            return;
+          }
           try {
             let convBlob = null;
 
-            // ── 1) ネイティブ img decoder で試行（Safari / Chrome 112+ で動くことあり）
-            //    成功すれば heic2any より圧倒的に速い（数百 ms）
+            // ── 1) サーバー側 API で変換（最速・確実 / 5MB 以内）
             try {
-              const objectUrl = URL.createObjectURL(file);
-              const img = await Promise.race([
-                new Promise((resolve, reject) => {
-                  const i = new Image();
-                  i.onload = () => resolve(i);
-                  i.onerror = () => reject(new Error("native_decode_error"));
-                  i.src = objectUrl;
+              setUploadPlaceholderText(idx, "HEIC をサーバーで変換中...", {
+                sub: "5〜15 秒で完了します",
+                spinner: true,
+              });
+              const reader = new FileReader();
+              const dataUrl = await new Promise((resolve, reject) => {
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () =>
+                  reject(new Error("file_read_for_server"));
+                reader.readAsDataURL(file);
+              });
+              const serverRes = await Promise.race([
+                fetch("/api/heic-convert", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ photoDataUrl: dataUrl }),
                 }),
                 new Promise((_, r) =>
-                  setTimeout(() => r(new Error("native_decode_timeout")), 8000),
+                  setTimeout(() => r(new Error("server_heic_timeout")), 25_000),
                 ),
               ]);
-              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                const canvas = document.createElement("canvas");
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
-                canvas.getContext("2d").drawImage(img, 0, 0);
-                URL.revokeObjectURL(objectUrl);
-                convBlob = await new Promise((r) =>
-                  canvas.toBlob(r, "image/jpeg", 0.92),
-                );
-                if (convBlob && convBlob.size > 0) {
+              if (serverRes.ok) {
+                const { photoDataUrl: jpegDataUrl } = await serverRes.json();
+                if (jpegDataUrl && jpegDataUrl.startsWith("data:image/")) {
+                  const b64 = jpegDataUrl.split(",")[1];
+                  const bin = atob(b64);
+                  const arr = new Uint8Array(bin.length);
+                  for (let i = 0; i < bin.length; i++)
+                    arr[i] = bin.charCodeAt(i);
+                  convBlob = new Blob([arr], { type: "image/jpeg" });
                   console.log(
-                    "[HEIC] native decode success",
+                    "[HEIC] server convert success",
                     `(${(convBlob.size / 1024).toFixed(0)} KB)`,
                   );
                 }
+              } else {
+                const errJson = await serverRes.json().catch(() => ({}));
+                console.log(
+                  "[HEIC] server convert failed:",
+                  serverRes.status,
+                  errJson.error,
+                );
               }
-            } catch (nativeErr) {
+            } catch (serverErr) {
               console.log(
-                "[HEIC] native decode not available, falling back to heic2any:",
-                nativeErr.message,
+                "[HEIC] server convert error, falling back to client:",
+                serverErr.message,
               );
             }
+
+            // ── 2) ネイティブ img decoder（Safari は強い）
+            if (!convBlob)
+              try {
+                const objectUrl = URL.createObjectURL(file);
+                const img = await Promise.race([
+                  new Promise((resolve, reject) => {
+                    const i = new Image();
+                    i.onload = () => resolve(i);
+                    i.onerror = () => reject(new Error("native_decode_error"));
+                    i.src = objectUrl;
+                  }),
+                  new Promise((_, r) =>
+                    setTimeout(
+                      () => r(new Error("native_decode_timeout")),
+                      8000,
+                    ),
+                  ),
+                ]);
+                if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                  const canvas = document.createElement("canvas");
+                  canvas.width = img.naturalWidth;
+                  canvas.height = img.naturalHeight;
+                  canvas.getContext("2d").drawImage(img, 0, 0);
+                  URL.revokeObjectURL(objectUrl);
+                  convBlob = await new Promise((r) =>
+                    canvas.toBlob(r, "image/jpeg", 0.92),
+                  );
+                  if (convBlob && convBlob.size > 0) {
+                    console.log(
+                      "[HEIC] native decode success",
+                      `(${(convBlob.size / 1024).toFixed(0)} KB)`,
+                    );
+                  }
+                }
+              } catch (nativeErr) {
+                console.log(
+                  "[HEIC] native decode not available, falling back to heic2any:",
+                  nativeErr.message,
+                );
+              }
 
             // ── 2) heic-to（メンテされている新ライブラリ）で試行
             if (!convBlob) {
