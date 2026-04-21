@@ -12,7 +12,7 @@
  * レートリミット: IP ベース 30 req/min
  */
 
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp } from "./_lib/auth.js";
 import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
 
   try {
     await db.collection("errorReports").add({
-      reportedAt: FieldValue.serverTimestamp(),
+      reportedAt: new Date(),
       ip: getClientIp(req),
       userAgent: req.headers["user-agent"] || null,
       path: req.headers.referer || null,
