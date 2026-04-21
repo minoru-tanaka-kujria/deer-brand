@@ -3,6 +3,7 @@
   "functions": {
     "api/generate-art.js": { "maxDuration": 60 },
     "api/remove-bg.js": { "maxDuration": 60 },
+    "api/heic-convert.js": { "maxDuration": 30 },
     "api/stripe-payment-intent.js": { "maxDuration": 30 },
     "api/create-order.js": { "maxDuration": 30 },
     "api/stripe-webhook.js": { "maxDuration": 30 },

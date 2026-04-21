@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="heic-server-api-5mb-limit" />
+    <meta name="deer-build" content="heic-server-api-4mb-limit" />
     <script>
-      window.deerBuild = "heic-server-api-5mb-limit";
+      window.deerBuild = "heic-server-api-4mb-limit";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -7078,8 +7078,8 @@
             sub: "5〜15秒で完了します",
             spinner: true,
           });
-          // 5MB 超えはサーバー/クライアント共に現実的に無理 → 明示エラー
-          if (file.size > 5 * 1024 * 1024) {
+          // 4MB 超えは Vercel body 上限(4.5MB) を超えるため現実的に無理 → 明示エラー
+          if (file.size > 4 * 1024 * 1024) {
             const mb = (file.size / 1024 / 1024).toFixed(1);
             const howto =
               "iPhone の『設定 → カメラ → フォーマット → 互換性優先』に変更して撮り直してください。既存写真は写真アプリで書き出し時に JPEG を選べます。";

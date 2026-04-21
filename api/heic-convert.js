@@ -23,12 +23,9 @@ import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 const RATE_LIMIT = 20; // IPあたり 20 req/min
 const RATE_WINDOW_MS = 60 * 1000;
 
+// Vercel Serverless Function 設定（Next.js の api.bodyParser 構文は使えない）
+// HEIC は client 側で 4MB 以下に制限するため、Vercel 側はデフォルトで OK。
 export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "6mb", // base64 化で 4.5MB → 6MB 程度
-    },
-  },
   maxDuration: 30,
 };
 
@@ -78,10 +75,11 @@ export default async function handler(req, res) {
   } catch (e) {
     return res.status(400).json({ error: "base64 のデコードに失敗しました" });
   }
-  if (inputBuffer.length > 5 * 1024 * 1024) {
+  // Vercel Hobby plan の body 上限が 4.5MB のため、base64 前で 3MB程度が上限
+  if (inputBuffer.length > 4 * 1024 * 1024) {
     return res.status(413).json({
       error:
-        "HEIC ファイルが 5MB を超えています。iPhone 設定で『互換性優先』に変更してから撮影し直してください。",
+        "HEIC ファイルが 4MB を超えています。iPhone 設定で『互換性優先』に変更してから撮影し直してください。",
     });
   }
 
