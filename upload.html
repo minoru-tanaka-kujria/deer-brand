@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="art-canvas-cors-fallback" />
+    <meta name="deer-build" content="img-cache-lazy-loading" />
     <script>
-      window.deerBuild = "art-canvas-cors-fallback";
+      window.deerBuild = "img-cache-lazy-loading";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -6368,7 +6368,7 @@
           <div class="lookbook-card" onclick="selectLookbook('${s.id}')" id="lb-${s.id}">
             <div class="check-badge">&#10003;</div>
             <div style="aspect-ratio:1/1;overflow:hidden">
-              <img src="${s.sampleImg}" alt="${s.name}" loading="eager" style="width:100%;height:100%;object-fit:cover">
+              <img src="${s.sampleImg}" alt="${s.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">
             </div>
             <div class="lookbook-info">
               <div class="item-name">${s.name}</div>
