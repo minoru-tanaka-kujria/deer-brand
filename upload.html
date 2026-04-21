@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-select-in-text-order" />
+    <meta name="deer-build" content="log-noise-cleanup" />
     <script>
-      window.deerBuild = "frame-select-in-text-order";
+      window.deerBuild = "log-noise-cleanup";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -8866,55 +8866,13 @@
       //  リピート購入クーポン（P3-1）
       // ============================================================
       async function issueRepeatPurchaseCoupon(orderId) {
-        const uid = window._currentUser?.uid;
-        if (!uid) return;
-        try {
-          const { doc, getDoc, setDoc, arrayUnion } =
-            await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-          const db = window._deerFirebaseDb;
-          const code =
-            "REPEAT" + Math.random().toString(36).slice(2, 7).toUpperCase();
-          const expiry = new Date();
-          expiry.setDate(expiry.getDate() + 60); // 60日有効
-          // users コレクションに保存
-          await setDoc(
-            doc(db, "users", uid),
-            {
-              availableCoupons: arrayUnion({
-                code,
-                description: "リピート購入特典",
-                type: "fixed",
-                discount: 300,
-                expiresAt: expiry.toISOString(),
-              }),
-            },
-            { merge: true },
-          );
-          // coupons コレクションにも保存（validate-coupon で使えるように）
-          await setDoc(doc(db, "coupons", code), {
-            code,
-            type: "fixed",
-            discount: 300,
-            description: "リピート購入特典（前回ご購入ありがとうございます）",
-            isActive: true,
-            maxUses: 1,
-            usedCount: 0,
-            minAmount: 0,
-            expiresAt: expiry.toISOString(),
-            createdAt: new Date().toISOString(),
-            issuedTo: uid,
-            fromOrderId: orderId || "",
-          });
-          // 完了画面にクーポンコードを表示
-          const repeatCouponEl = document.getElementById("repeatCouponCode");
-          const repeatCouponSection = document.getElementById(
-            "repeatCouponSection",
-          );
-          if (repeatCouponEl) repeatCouponEl.textContent = code;
-          if (repeatCouponSection) repeatCouponSection.style.display = "block";
-        } catch (e) {
-          console.warn("[issueRepeatPurchaseCoupon] error:", e.message);
-        }
+        // クライアント側発行は廃止。
+        // coupons コレクションは Firestore rules で Admin SDK のみに限定されており、
+        // サーバー (api/_lib/post-payment.js の issueRepeatCoupon) が冪等に発行して
+        // 注文確認メールに含める形に統一済み。ここではクライアント側で何もしない。
+        // （以前は client で users と coupons に直接書き、後者が必ず permission error で
+        //   落ちてログを汚していた）
+        return;
       }
 
       // ============================================================
