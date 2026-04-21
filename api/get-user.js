@@ -144,6 +144,62 @@ export default async function handler(req, res) {
 </head><body><p>リダイレクト中...</p></body></html>`);
   }
 
+  // ?type=payment-methods — 認証トークンから uid を取得して保存済みカードを返す
+  // （uid を URL に載せずに済むので CORS/キャッシュ事故を避けられる）
+  if (type === "payment-methods") {
+    const authHeaderPM = req.headers.authorization ?? "";
+    const idTokenPM = authHeaderPM.startsWith("Bearer ")
+      ? authHeaderPM.slice(7)
+      : null;
+    if (!idTokenPM) {
+      return res.status(401).json({ error: "認証トークンがありません" });
+    }
+    try {
+      const app = getAdminApp();
+      const db = getFirestore(app);
+      let decodedPM;
+      try {
+        decodedPM = await getAuth(app).verifyIdToken(idTokenPM);
+      } catch (_) {
+        return res.status(401).json({ error: "認証トークンが無効です" });
+      }
+      const userSnap = await db.collection("users").doc(decodedPM.uid).get();
+      const stripeCustomerId = userSnap.exists
+        ? (userSnap.data().stripeCustomerId ?? null)
+        : null;
+      let paymentMethods = [];
+      if (_stripe && stripeCustomerId) {
+        try {
+          const pmList = await _stripe.paymentMethods.list({
+            customer: stripeCustomerId,
+            type: "card",
+          });
+          // クライアント (upload.html の loadSavedCards) が
+          // pm.card?.brand / pm.card?.last4 / pm.card?.exp_month / pm.card?.exp_year
+          // を参照する形になっているので、ネストした card オブジェクトで返す
+          paymentMethods = pmList.data.map((pm) => ({
+            id: pm.id,
+            card: {
+              brand: pm.card?.brand ?? null,
+              last4: pm.card?.last4 ?? null,
+              exp_month: pm.card?.exp_month ?? null,
+              exp_year: pm.card?.exp_year ?? null,
+            },
+          }));
+        } catch (stripeErr) {
+          console.error(
+            "[get-user payment-methods] Stripe 取得失敗:",
+            stripeErr.message,
+          );
+        }
+      }
+      return res.status(200).json({ paymentMethods });
+    } catch (err) {
+      console.error("[get-user payment-methods] 予期しないエラー:", err);
+      return res.status(500).json({ error: "支払い方法の取得に失敗しました" });
+    }
+  }
+
   if (!uid) {
     return res.status(400).json({ error: "uid クエリパラメータは必須です" });
   }
