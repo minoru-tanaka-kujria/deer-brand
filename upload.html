@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="log-noise-cleanup" />
+    <meta name="deer-build" content="frame-composite-dataurl" />
     <script>
-      window.deerBuild = "log-noise-cleanup";
+      window.deerBuild = "frame-composite-dataurl";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -5808,15 +5808,51 @@
         const frameOpt =
           FRAME_OPTIONS.find((f) => f.id === state.selectedFrame) ||
           FRAME_OPTIONS[0];
+        // 元のアート URL を確定。rawArtUrl 未初期化時は
+        // 「既に確定済みの data URL → https 原本 → 生成結果」の順で拾う。
+        // data URL があれば CORS に一切触れずに合成できるので最優先。
         const rawUrl =
-          state.rawArtUrl || state.generatedArtUrl || state.finalArtUrl;
+          state.rawArtUrl ||
+          state.rawArtDataUrl ||
+          state.finalArtDataUrl ||
+          state.generatedArtUrl ||
+          state.finalArtUrl;
         if (!rawUrl) return;
-        // 元画像を記録（フレーム切り替え時に再合成できるよう）
         if (!state.rawArtUrl) state.rawArtUrl = rawUrl;
+        // data URL 版も別途保存して、以降の frame 切り替えを CORS 非依存にする
+        if (!state.rawArtDataUrl && rawUrl.startsWith("data:")) {
+          state.rawArtDataUrl = rawUrl;
+        }
+
+        // frameOpt.type === "none" のときは setFinalArt(rawUrl) で素のアートに戻す
+        if (frameOpt.type === "none") {
+          const mockupImgNone = document.getElementById("mockupImg");
+          if (mockupImgNone) mockupImgNone.src = rawUrl;
+          setFinalArt(rawUrl);
+          if (
+            state.currentStep === "text-order" &&
+            typeof updateArtCanvas === "function"
+          ) {
+            updateArtCanvas();
+          }
+          return;
+        }
 
         const mockupImg = document.getElementById("mockupImg");
         try {
-          const compositeUrl = await compositeFrameOnArt(rawUrl, frameOpt);
+          // data URL を優先。https のみの場合は fetchAsDataUrlSafe で一度 data URL 化してから合成
+          let sourceUrl = rawUrl;
+          if (
+            !sourceUrl.startsWith("data:") &&
+            typeof fetchAsDataUrlSafe === "function"
+          ) {
+            const dataUrl = await fetchAsDataUrlSafe(sourceUrl);
+            if (dataUrl) {
+              sourceUrl = dataUrl;
+              if (!state.rawArtDataUrl) state.rawArtDataUrl = dataUrl;
+            }
+          }
+          const compositeUrl = await compositeFrameOnArt(sourceUrl, frameOpt);
           if (gen !== _applyFrameGen) return; // 後発の呼び出しが完了済みなら破棄
           if (mockupImg) mockupImg.src = compositeUrl;
           setFinalArt(compositeUrl);
