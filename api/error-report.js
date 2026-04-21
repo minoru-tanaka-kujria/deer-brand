@@ -22,9 +22,7 @@ const RATE_WINDOW_MS = 60 * 1000;
 const MAX_ERRORS_PER_REQUEST = 50;
 const MAX_MSG_LENGTH = 4000;
 
-export const config = {
-  maxDuration: 10,
-};
+// Vercel maxDuration は vercel.json の functions で設定する（config export は Vercel 非対応）
 
 function truncate(s, n) {
   if (typeof s !== "string") return s;
