@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-composite-dataurl" />
+    <meta name="deer-build" content="frame-alpha-regen" />
     <script>
-      window.deerBuild = "frame-composite-dataurl";
+      window.deerBuild = "frame-alpha-regen";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -5955,7 +5955,7 @@
         }
       }
 
-      function buildFrameOptions() {
+      async function buildFrameOptions() {
         // step-preview (旧) と step-text-order (現行) の両方に同じオプションを描画。
         // 旧 step-preview は getActiveSteps() で除外されているが DOM 自体は残っている。
         // プライマリは text-order 側の #frameOptionsGridTextOrder。
@@ -5977,11 +5977,27 @@
           if (g) g.innerHTML = html;
         });
 
-        const rawUrl =
-          state.rawArtUrl || state.generatedArtUrl || state.finalArtUrl;
-        if (rawUrl) {
-          FRAME_OPTIONS.forEach((f) => renderFrameThumb(f, rawUrl));
+        // アート URL を取得して、可能なら data URL 化してから renderFrameThumb に渡す。
+        // Image の crossOrigin ロードはブラウザキャッシュが CORS 無しレスポンスを
+        // 握っていると失敗するため、fetch()→blob→FileReader の data URL 経路で回避する。
+        let rawUrl =
+          state.rawArtDataUrl ||
+          state.finalArtDataUrl ||
+          state.rawArtUrl ||
+          state.generatedArtUrl ||
+          state.finalArtUrl;
+        if (!rawUrl) return;
+        if (
+          !rawUrl.startsWith("data:") &&
+          typeof fetchAsDataUrlSafe === "function"
+        ) {
+          const dataUrl = await fetchAsDataUrlSafe(rawUrl);
+          if (dataUrl) {
+            rawUrl = dataUrl;
+            if (!state.rawArtDataUrl) state.rawArtDataUrl = dataUrl;
+          }
         }
+        FRAME_OPTIONS.forEach((f) => renderFrameThumb(f, rawUrl));
       }
 
       // ============================================================
