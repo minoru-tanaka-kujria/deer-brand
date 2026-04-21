@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="lazy-loading-dynamic-imgs" />
+    <meta name="deer-build" content="art-url-auto-datafetch" />
     <script>
-      window.deerBuild = "lazy-loading-dynamic-imgs";
+      window.deerBuild = "art-url-auto-datafetch";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -2851,6 +2851,50 @@
               >
             </div>
           </div>
+        </div>
+
+        <!-- アート画像ロード失敗時のリトライ UI (canvas外) -->
+        <div
+          id="artReloadPanel"
+          style="
+            display: none;
+            margin: 0.6rem auto 1rem;
+            padding: 0.9rem 1rem;
+            max-width: 320px;
+            background: #fff3f0;
+            border: 1px solid #f5c2c2;
+            border-radius: 10px;
+            text-align: center;
+          "
+        >
+          <p
+            style="
+              font-size: 0.82rem;
+              color: #c0392b;
+              font-weight: 600;
+              margin-bottom: 0.5rem;
+            "
+          >
+            アート画像を読み込めませんでした
+          </p>
+          <p style="font-size: 0.72rem; color: #6b6460; margin-bottom: 0.7rem">
+            AI 生成の URL が期限切れの可能性があります
+          </p>
+          <button
+            onclick="retryFromTextOrder()"
+            style="
+              padding: 0.55rem 1.4rem;
+              background: var(--c-brand);
+              color: #fff;
+              border: none;
+              border-radius: 100px;
+              font-size: 0.82rem;
+              font-weight: 600;
+              cursor: pointer;
+            "
+          >
+            🔄 アートを再生成する
+          </button>
         </div>
 
         <!-- ① テキスト -->
@@ -5715,12 +5759,12 @@
           const compositeUrl = await compositeFrameOnArt(rawUrl, frameOpt);
           if (gen !== _applyFrameGen) return; // 後発の呼び出しが完了済みなら破棄
           if (mockupImg) mockupImg.src = compositeUrl;
-          state.finalArtUrl = compositeUrl;
+          setFinalArt(compositeUrl);
         } catch (e) {
           if (gen !== _applyFrameGen) return;
           console.warn("[frame] composite failed:", e);
           if (mockupImg) mockupImg.src = rawUrl;
-          state.finalArtUrl = rawUrl;
+          setFinalArt(rawUrl);
         }
       }
 
@@ -6241,7 +6285,7 @@
           // アートを state に設定し写真・生成ステップをスキップ
           state.generatedArtUrl = art.url;
           state.selectedStyleUrl = art.url;
-          state.finalArtUrl = art.url;
+          setFinalArt(art.url);
           state.selectedStyle = art.style || "";
           state.photoDataUrl = art.url;
           // スタイル選択済みとしてアイテム選択へ
@@ -7575,7 +7619,7 @@
                   await generateStyleCard(state.selectedStyleId);
                   const cs = styleCardStates[state.selectedStyleId];
                   if (cs && cs.status === "done" && cs.url) {
-                    state.finalArtUrl = cs.url;
+                    setFinalArt(cs.url);
                     state.selectedStyleUrl = cs.url;
                     dlog("ART", "AI生成成功", {
                       styleId: state.selectedStyleId,
@@ -7610,7 +7654,7 @@
                 btn.disabled = false;
                 btn.textContent = "次へ";
               } else {
-                state.finalArtUrl = state.selectedStyleUrl;
+                setFinalArt(state.selectedStyleUrl);
               }
               goTo("text-order");
               buildTextOrderStep();
@@ -7632,7 +7676,7 @@
                   const cs = styleCardStates[state.selectedStyleId];
                   if (cs && cs.status === "done" && cs.url) {
                     state.selectedStyleUrl = cs.url;
-                    state.finalArtUrl = cs.url;
+                    setFinalArt(cs.url);
                     dlog("ART", "needsBg=true: スタイル生成成功", {
                       styleId: state.selectedStyleId,
                     });
@@ -7663,7 +7707,7 @@
                   await generateStyleCard(match.id);
                   const cs = styleCardStates[match.id];
                   if (cs && cs.status === "done" && cs.url) {
-                    state.finalArtUrl = cs.url;
+                    setFinalArt(cs.url);
                     state.selectedStyleUrl = cs.url;
                   } else {
                     showToast(
@@ -7815,7 +7859,7 @@
           document.getElementById("artResultArea").style.display = "none";
           state.generatedArtUrl = null;
           state.rawArtUrl = null;
-          state.finalArtUrl = null;
+          setFinalArt(null);
           const errArea = document.getElementById("artErrorArea");
           const msgEl = errArea.querySelector("p");
           // 認証エラーはログイン誘導メッセージ
@@ -7842,7 +7886,7 @@
         document.getElementById("mockupImg").src = artImageUrl;
         state.generatedArtUrl = artImageUrl;
         state.rawArtUrl = artImageUrl; // フレーム合成の元画像を保存
-        state.finalArtUrl = artImageUrl;
+        setFinalArt(artImageUrl);
         state.selectedFrame = "none"; // 新しいアート生成ごとにリセット
 
         // サマリー構築
@@ -8378,7 +8422,7 @@
 
         // ── 先祖返り防止ガード ─────────────────────────────────────
         // AI生成したアート画像以外が商品に印刷されるのを防ぐ最終関所。
-        // 過去、AI生成失敗時に state.finalArtUrl = state.photoDataUrl に
+        // 過去、AI生成失敗時に setFinalArt(state.photoDataUrl に
         // サイレントフォールバックし、生写真が商品に印刷される事故が発生した。
         // 判定基準: AI 生成完了後の URL は Replicate / Firestore 上の https URL。
         // 一方、アップロード直後の元写真は data:image/... スキーム。
@@ -8389,7 +8433,7 @@
           showToast(
             "アート画像が見つかりません。最初からやり直してください。",
             "error",
-          );
+          ));
           throw new Error("REGRESSION_GUARD: finalArtUrl is empty");
         }
         if (
@@ -9283,7 +9327,7 @@
             !draft.finalArtUrl.startsWith("data:") &&
             draft.finalArtUrl !== draft.photoDataUrl
           ) {
-            state.finalArtUrl = draft.finalArtUrl;
+            setFinalArt(draft.finalArtUrl);
           }
           if (draft.artText) state.artText = draft.artText;
           if (draft.artFontFamily) state.artFontFamily = draft.artFontFamily;
@@ -9715,7 +9759,7 @@
         if (styleDef && !styleDef.needsBg) {
           // 背景不要スタイル → 名前入れへ直行
           state.selectedBgId = "none";
-          state.finalArtUrl = cs.url;
+          setFinalArt(cs.url);
           goTo("text-order");
           buildTextOrderStep();
         } else {
@@ -9743,7 +9787,7 @@
           await generateStyleCard(styleId);
           const cs = styleCardStates[styleId];
           if (cs && cs.status === "done" && cs.url) {
-            state.finalArtUrl = cs.url;
+            setFinalArt(cs.url);
             state.selectedStyleUrl = cs.url;
             dlog("ART", "selectStyleDirect — 生成成功", { styleId });
           } else {
@@ -9785,7 +9829,7 @@
           await generateStyleCard(styleId);
           const cs = styleCardStates[styleId];
           if (cs && cs.status === "done" && cs.url) {
-            state.finalArtUrl = cs.url;
+            setFinalArt(cs.url);
             state.selectedStyleUrl = cs.url;
             if (overlay) overlay.style.display = "none";
             updateArtCanvas();
@@ -10101,7 +10145,7 @@
           );
           return;
         }
-        state.finalArtUrl = artUrl;
+        setFinalArt(artUrl);
         goTo("text-order");
         buildTextOrderStep();
       }
@@ -10115,7 +10159,7 @@
           return;
         }
         state.selectedBgId = "none";
-        state.finalArtUrl = state.selectedStyleUrl;
+        setFinalArt(state.selectedStyleUrl);
         goTo("text-order");
         buildTextOrderStep();
       }
@@ -10402,6 +10446,53 @@
 
       let _artCanvasArtImg = null;
 
+      // 外部URLの画像を data URL に変換（CORS回避・URL期限切れ回避）
+      // 失敗時は null を返す（呼び出し側で fallback 可能）
+      async function fetchAsDataUrlSafe(url) {
+        if (!url || typeof url !== "string") return null;
+        if (url.startsWith("data:")) return url;
+        try {
+          const res = await fetch(url, { mode: "cors" });
+          if (!res.ok) return null;
+          const blob = await res.blob();
+          return await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result);
+            r.onerror = () => resolve(null);
+            r.readAsDataURL(blob);
+          });
+        } catch (_) {
+          return null;
+        }
+      }
+
+      // アート URL を state にセットし、同時に data URL 化をバックグラウンド実行
+      // preview表示は data URL があればそれを優先 → CORS 失敗や URL 期限切れを完全回避
+      // 元の URL は state.finalArtUrl に残し、注文APIへはそちらを送る（body sizeコンパクト維持）
+      function setFinalArt(url) {
+        setFinalArt(url);
+        if (!url) {
+          state.finalArtDataUrl = null;
+          return;
+        }
+        if (url.startsWith("data:")) {
+          state.finalArtDataUrl = url; // 既に data URL
+          return;
+        }
+        state.finalArtDataUrl = null; // 取得中はリセット
+        fetchAsDataUrlSafe(url).then((dataUrl) => {
+          if (dataUrl && state.finalArtUrl === url) {
+            state.finalArtDataUrl = dataUrl;
+            if (
+              state.currentStep === "text-order" &&
+              typeof updateArtCanvas === "function"
+            ) {
+              updateArtCanvas();
+            }
+          }
+        });
+      }
+
       function updateArtCanvas() {
         const canvas = document.getElementById("artPreviewCanvas");
         if (!canvas) return;
@@ -10417,7 +10508,8 @@
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, W, H);
 
-        const artUrl = state.finalArtUrl;
+        // preview は data URL 優先（CORS 回避 & 期限切れ回避）
+        const artUrl = state.finalArtDataUrl || state.finalArtUrl;
         if (!artUrl) {
           // No art yet - just show placeholder
           ctx.fillStyle = "#f0ebe3";
@@ -10501,6 +10593,9 @@
               const dh = img.naturalHeight * scale;
               ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
               drawText();
+              // ロード成功 → 再生成パネル隠す
+              const panel = document.getElementById("artReloadPanel");
+              if (panel) panel.style.display = "none";
             };
             img.onerror = () => {
               console.error("[updateArtCanvas] img load failed", {
@@ -10508,21 +10603,16 @@
                 artUrlPrefix: artUrl.slice(0, 60),
               });
               if (needsCors && useCrossOrigin) {
-                // CORS 失敗時は crossOrigin なしで再試行
                 console.warn("[updateArtCanvas] retrying without crossOrigin");
                 tryLoad(false);
                 return;
               }
-              ctx.fillStyle = "#f5ede3";
+              // 両方試行失敗 → canvas は淡色 + 再生成パネル表示
+              ctx.fillStyle = "#faf7f2";
               ctx.fillRect(0, 0, W, H);
-              ctx.fillStyle = "#c0392b";
-              ctx.font = "18px sans-serif";
-              ctx.textAlign = "center";
-              ctx.fillText("アート画像の読み込みに失敗", W / 2, H / 2 - 10);
-              ctx.fillStyle = "#666";
-              ctx.font = "14px sans-serif";
-              ctx.fillText("再生成ボタンをお試しください", W / 2, H / 2 + 20);
               drawText();
+              const panel = document.getElementById("artReloadPanel");
+              if (panel) panel.style.display = "block";
             };
             img.src = artUrl;
           };
