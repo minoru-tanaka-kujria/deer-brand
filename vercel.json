@@ -12,7 +12,6 @@
   "rewrites": [{ "source": "/stamp", "destination": "/stamp/index.html" }],
   "headers": [
     {
-      "comment": "画像・フォント・CSSは長期キャッシュ (ファイル名変更しない限り content-hash 代替で問題なし)",
       "source": "/(.*\\.(png|jpg|jpeg|gif|webp|svg|avif|ico|woff|woff2|ttf|otf|css))",
       "headers": [
         {
@@ -22,7 +21,6 @@
       ]
     },
     {
-      "comment": "JS はキャッシュバスト (?v=) に任せる。ETag validate で304応答",
       "source": "/js/(.*\\.js)",
       "headers": [
         {
