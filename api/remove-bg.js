@@ -35,27 +35,30 @@ export default async function handler(req, res) {
   }
 
   const db = getFirestore(getAdminApp());
-  try {
-    // UID・IP のレートリミットを並列チェック
-    await Promise.all([
-      consumeRateLimit(
-        db,
-        `remove_bg_uid_${authUser.uid}`,
-        RATE_LIMIT,
-        RATE_WINDOW_MS,
-      ),
-      consumeRateLimit(
-        db,
-        `remove_bg_ip_${getClientIp(req)}`,
-        RATE_LIMIT,
-        RATE_WINDOW_MS,
-      ),
-    ]);
-  } catch (error) {
-    console.error("[remove-bg] rate limit error:", error);
-    return res
-      .status(429)
-      .json({ error: "リクエストが多すぎます。時間をおいてお試しください" });
+  // レートリミットは POST (処理開始) にだけ適用する。
+  // GET (ポーリング) は 3 秒ごとに呼ばれるため消費対象から除外しないと即 429 で詰まる。
+  if (req.method === "POST") {
+    try {
+      await Promise.all([
+        consumeRateLimit(
+          db,
+          `remove_bg_uid_${authUser.uid}`,
+          RATE_LIMIT,
+          RATE_WINDOW_MS,
+        ),
+        consumeRateLimit(
+          db,
+          `remove_bg_ip_${getClientIp(req)}`,
+          RATE_LIMIT,
+          RATE_WINDOW_MS,
+        ),
+      ]);
+    } catch (error) {
+      console.error("[remove-bg] rate limit error:", error);
+      return res
+        .status(429)
+        .json({ error: "リクエストが多すぎます。時間をおいてお試しください" });
+    }
   }
 
   // GET: ポーリング

@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="payment-methods-api-fix" />
+    <meta name="deer-build" content="ratelimit-post-only" />
     <script>
-      window.deerBuild = "payment-methods-api-fix";
+      window.deerBuild = "ratelimit-post-only";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -10228,6 +10228,12 @@
               if (r.status === 401 || r.status === 403) {
                 clearInterval(timer);
                 reject(new Error("AUTH_REQUIRED"));
+                return;
+              }
+              // 429: レート制限 — ポーリングはカウント消費しないようサーバで修正済みだが、
+              // 一時的に 429 が来てもポーリングは継続（poll カウントだけ進める）
+              if (r.status === 429) {
+                polls++;
                 return;
               }
               if (!r.ok) {
