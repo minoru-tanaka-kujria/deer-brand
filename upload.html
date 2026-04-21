@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-alpha-regen" />
+    <meta name="deer-build" content="frame-inner-ratio-fit" />
     <script>
-      window.deerBuild = "frame-alpha-regen";
+      window.deerBuild = "frame-inner-ratio-fit";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -5756,6 +5756,19 @@
         });
       }
 
+      // 各フレーム/ワッペンの内側透明領域の大きさ (canvas に対する割合)。
+      // 実画像を走査して測定済みの値を元に、少し余裕を持たせた値を設定。
+      // frame 型: 内側矩形、wappen 型: 内側円の直径。
+      const FRAME_INNER_RATIO = {
+        "frame-gold": 0.44,
+        "frame-wood": 0.46,
+        "frame-antique": 0.48,
+        "wappen-laurel-navy": 0.52,
+        "wappen-laurel-gold": 0.56,
+        "wappen-rope-red": 0.5,
+        "wappen-zigzag-green": 0.58,
+      };
+
       async function compositeFrameOnArt(artUrl, frameOpt) {
         if (!artUrl || !frameOpt || frameOpt.type === "none") return artUrl;
         const SIZE = 600;
@@ -5769,34 +5782,39 @@
           throw new Error("invalid art image dimensions");
         }
 
+        // 共通マット (frame 外周やワッペン外) には淡いクリーム色を敷く
+        ctx.fillStyle = "#f5f0e8";
+        ctx.fillRect(0, 0, SIZE, SIZE);
+
+        const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.5;
+        const innerSize = SIZE * innerRatio;
+
         if (frameOpt.type === "wappen") {
-          // 円形クロップしてアートを描画
+          // ワッペン中央の円内にアートを配置。外周はクリーム色マット。
           ctx.save();
           ctx.beginPath();
-          ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+          ctx.arc(SIZE / 2, SIZE / 2, innerSize / 2, 0, Math.PI * 2);
           ctx.clip();
           const scale = Math.max(
-            SIZE / artImg.naturalWidth,
-            SIZE / artImg.naturalHeight,
+            innerSize / artImg.naturalWidth,
+            innerSize / artImg.naturalHeight,
           );
           const dw = artImg.naturalWidth * scale;
           const dh = artImg.naturalHeight * scale;
           ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
           ctx.restore();
         } else {
-          // フレーム: アートをcontain描画
-          ctx.fillStyle = "#f5f0e8";
-          ctx.fillRect(0, 0, SIZE, SIZE);
+          // フレーム: 内側矩形内に contain でアートを配置
           const scale = Math.min(
-            SIZE / artImg.naturalWidth,
-            SIZE / artImg.naturalHeight,
+            innerSize / artImg.naturalWidth,
+            innerSize / artImg.naturalHeight,
           );
           const dw = artImg.naturalWidth * scale;
           const dh = artImg.naturalHeight * scale;
           ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
         }
 
-        // フレーム/ワッペンPNGをオーバーレイ
+        // フレーム/ワッペンPNGをオーバーレイ (透明中央 + 不透明フレーム本体)
         const frameImg = await loadFrameImg(frameOpt.src);
         ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
 
@@ -5895,6 +5913,8 @@
           const artImg = await loadFrameImg(artUrl);
           if (!artImg.naturalWidth || !artImg.naturalHeight)
             throw new Error("zero dimensions");
+          const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.5;
+          const innerSize = SIZE * innerRatio;
           if (frameOpt.type === "none") {
             const scale = Math.min(
               SIZE / artImg.naturalWidth,
@@ -5906,13 +5926,15 @@
             ctx.fillRect(0, 0, SIZE, SIZE);
             ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
           } else if (frameOpt.type === "wappen") {
+            ctx.fillStyle = "#f5f0e8";
+            ctx.fillRect(0, 0, SIZE, SIZE);
             ctx.save();
             ctx.beginPath();
-            ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+            ctx.arc(SIZE / 2, SIZE / 2, innerSize / 2, 0, Math.PI * 2);
             ctx.clip();
             const scale = Math.max(
-              SIZE / artImg.naturalWidth,
-              SIZE / artImg.naturalHeight,
+              innerSize / artImg.naturalWidth,
+              innerSize / artImg.naturalHeight,
             );
             const dw = artImg.naturalWidth * scale;
             const dh = artImg.naturalHeight * scale;
@@ -5921,11 +5943,12 @@
             const frameImg = await loadFrameImg(frameOpt.src);
             ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
           } else {
+            // フレーム型: アートを内側矩形内に contain
             ctx.fillStyle = "#f5f0e8";
             ctx.fillRect(0, 0, SIZE, SIZE);
             const scale = Math.min(
-              SIZE / artImg.naturalWidth,
-              SIZE / artImg.naturalHeight,
+              innerSize / artImg.naturalWidth,
+              innerSize / artImg.naturalHeight,
             );
             const dw = artImg.naturalWidth * scale;
             const dh = artImg.naturalHeight * scale;
