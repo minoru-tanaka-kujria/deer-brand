@@ -9,3 +9,5 @@ package-lock.json
 .env.local
 .env*.local
 server.py
+.env.local
+.env.production
