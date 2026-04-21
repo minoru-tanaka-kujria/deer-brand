@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-fill-canvas" />
+    <meta name="deer-build" content="frame-art-cover" />
     <script>
-      window.deerBuild = "frame-fill-canvas";
+      window.deerBuild = "frame-art-cover";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -5790,25 +5790,31 @@
         const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.55;
         const innerSize = SIZE * innerRatio;
 
+        // innerSize より少し大きめ (10%) に描画して、枠の透明穴が小さい方向に
+        // 揺らいでもアートの白背景が露出しないようにする。はみ出たアートは
+        // 不透明な枠本体が後から overlay することで隠れる。
+        const COVER_BLEED = 1.1;
+        const coverSize = innerSize * COVER_BLEED;
+
         if (frameOpt.type === "wappen") {
-          // ワッペン中央の円内にアートを配置
+          // ワッペン中央の円内にアートを cover で配置 (短辺が円に合う最小スケール)
           ctx.save();
           ctx.beginPath();
-          ctx.arc(SIZE / 2, SIZE / 2, innerSize / 2, 0, Math.PI * 2);
+          ctx.arc(SIZE / 2, SIZE / 2, coverSize / 2, 0, Math.PI * 2);
           ctx.clip();
           const scale = Math.max(
-            innerSize / artImg.naturalWidth,
-            innerSize / artImg.naturalHeight,
+            coverSize / artImg.naturalWidth,
+            coverSize / artImg.naturalHeight,
           );
           const dw = artImg.naturalWidth * scale;
           const dh = artImg.naturalHeight * scale;
           ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
           ctx.restore();
         } else {
-          // フレーム: 内側矩形内に contain でアートを配置
-          const scale = Math.min(
-            innerSize / artImg.naturalWidth,
-            innerSize / artImg.naturalHeight,
+          // フレーム: 内側矩形を cover で覆う (短辺基準で拡大、長辺側が裁かれる)
+          const scale = Math.max(
+            coverSize / artImg.naturalWidth,
+            coverSize / artImg.naturalHeight,
           );
           const dw = artImg.naturalWidth * scale;
           const dh = artImg.naturalHeight * scale;
@@ -5915,7 +5921,7 @@
           if (!artImg.naturalWidth || !artImg.naturalHeight)
             throw new Error("zero dimensions");
           const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.5;
-          const innerSize = SIZE * innerRatio;
+          const coverSize = SIZE * innerRatio * 1.1; // 内側を完全に覆うため +10%
           if (frameOpt.type === "none") {
             const scale = Math.min(
               SIZE / artImg.naturalWidth,
@@ -5931,11 +5937,11 @@
             ctx.fillRect(0, 0, SIZE, SIZE);
             ctx.save();
             ctx.beginPath();
-            ctx.arc(SIZE / 2, SIZE / 2, innerSize / 2, 0, Math.PI * 2);
+            ctx.arc(SIZE / 2, SIZE / 2, coverSize / 2, 0, Math.PI * 2);
             ctx.clip();
             const scale = Math.max(
-              innerSize / artImg.naturalWidth,
-              innerSize / artImg.naturalHeight,
+              coverSize / artImg.naturalWidth,
+              coverSize / artImg.naturalHeight,
             );
             const dw = artImg.naturalWidth * scale;
             const dh = artImg.naturalHeight * scale;
@@ -5944,12 +5950,12 @@
             const frameImg = await loadFrameImg(frameOpt.src);
             ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
           } else {
-            // フレーム型: アートを内側矩形内に contain
+            // フレーム型: アートを内側矩形内に cover (白隙間ゼロ、はみ出しは枠が隠す)
             ctx.fillStyle = "#f5f0e8";
             ctx.fillRect(0, 0, SIZE, SIZE);
-            const scale = Math.min(
-              innerSize / artImg.naturalWidth,
-              innerSize / artImg.naturalHeight,
+            const scale = Math.max(
+              coverSize / artImg.naturalWidth,
+              coverSize / artImg.naturalHeight,
             );
             const dw = artImg.naturalWidth * scale;
             const dh = artImg.naturalHeight * scale;
