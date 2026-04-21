@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="order-detail-modal-v1" />
+    <meta name="deer-build" content="frame-select-in-text-order" />
     <script>
-      window.deerBuild = "order-detail-modal-v1";
+      window.deerBuild = "frame-select-in-text-order";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -2936,6 +2936,27 @@
           </button>
         </div>
 
+        <!-- ⓪ フレーム / ワッペン選択 (旧 step-preview から移設) -->
+        <div
+          class="frame-select-section"
+          id="frameSelectSectionTextOrder"
+          style="
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+          "
+        >
+          <p class="section-label">フレーム・ワッペンを選択</p>
+          <p class="frame-select-hint">
+            背景付きアートには額縁フレーム、円形に切り抜くワッペンもお選びいただけます
+          </p>
+          <div class="frame-options-grid" id="frameOptionsGridTextOrder">
+            <!-- built by JS -->
+          </div>
+        </div>
+
         <!-- ① テキスト -->
         <div
           style="
@@ -5805,6 +5826,13 @@
           if (mockupImg) mockupImg.src = rawUrl;
           setFinalArt(rawUrl);
         }
+        // text-order ステップの canvas プレビューを即座に更新
+        if (
+          state.currentStep === "text-order" &&
+          typeof updateArtCanvas === "function"
+        ) {
+          updateArtCanvas();
+        }
       }
 
       function selectFrame(frameId) {
@@ -5816,11 +5844,15 @@
       }
 
       async function renderFrameThumb(frameOpt, artUrl) {
-        const thumbCanvas = document.getElementById(
-          "frameThumb_" + frameOpt.id,
+        // 旧 step-preview と新 step-text-order の 2 箇所に同じキャンバスを配置したので
+        // data-frame-canvas-id で一括取得し、描画結果を片方ずつ反映する。
+        const canvases = document.querySelectorAll(
+          `canvas[data-frame-canvas-id="${frameOpt.id}"]`,
         );
-        if (!thumbCanvas) return;
+        if (!canvases.length) return;
         const SIZE = 56;
+        // 最初のキャンバスに描画してから、残りへ drawImage コピーでミラー
+        const thumbCanvas = canvases[0];
         const ctx = thumbCanvas.getContext("2d");
 
         try {
@@ -5879,23 +5911,35 @@
             ctx.fillRect(0, 0, SIZE, SIZE);
           }
         }
+        // 他のキャンバス (2 番目以降) にミラー描画
+        for (let i = 1; i < canvases.length; i++) {
+          const c2 = canvases[i].getContext("2d");
+          c2.clearRect(0, 0, SIZE, SIZE);
+          c2.drawImage(thumbCanvas, 0, 0);
+        }
       }
 
       function buildFrameOptions() {
-        const grid = document.getElementById("frameOptionsGrid");
-        if (!grid) return;
+        // step-preview (旧) と step-text-order (現行) の両方に同じオプションを描画。
+        // 旧 step-preview は getActiveSteps() で除外されているが DOM 自体は残っている。
+        // プライマリは text-order 側の #frameOptionsGridTextOrder。
+        const gridIds = ["frameOptionsGrid", "frameOptionsGridTextOrder"];
         const currentFrame = state.selectedFrame || "none";
-        grid.innerHTML = FRAME_OPTIONS.map(
-          (f) => `
+        const html = FRAME_OPTIONS.map(
+          (f, i) => `
           <div class="frame-option-card${f.id === currentFrame ? " selected" : ""}"
                data-frame-id="${f.id}"
                onclick="selectFrame('${f.id}')">
             <canvas class="frame-option-thumb-canvas"
-                    id="frameThumb_${f.id}"
+                    data-frame-canvas-id="${f.id}"
                     width="56" height="56"></canvas>
             <span class="frame-option-label">${f.label}</span>
           </div>`,
         ).join("");
+        gridIds.forEach((gid) => {
+          const g = document.getElementById(gid);
+          if (g) g.innerHTML = html;
+        });
 
         const rawUrl =
           state.rawArtUrl || state.generatedArtUrl || state.finalArtUrl;
