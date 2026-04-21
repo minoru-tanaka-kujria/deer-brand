@@ -85,6 +85,33 @@ function sanitizeArtImageUrl(url) {
   }
 }
 
+// data: URL を Firebase Storage にアップロードして https URL 化。
+// フレーム/ワッペン合成結果はブラウザ canvas で作られた data URL で届くため、
+// Printful 等が要求する public URL に変換する必要がある。
+async function resolveArtImageUrl(rawUrl, { uid, orderId }) {
+  if (typeof rawUrl !== "string") return null;
+  // まずは https として直接受理できるか
+  const directHttps = sanitizeArtImageUrl(rawUrl);
+  if (directHttps) return directHttps;
+  // data: URL なら Storage にアップロードして https 化
+  if (rawUrl.startsWith("data:")) {
+    try {
+      const { uploadDataUrlToStorage } = await import("./_lib/art-upload.js");
+      const uploaded = await uploadDataUrlToStorage(rawUrl, { uid, orderId });
+      if (uploaded) {
+        const sanitized = sanitizeArtImageUrl(uploaded);
+        if (sanitized) return sanitized;
+      }
+    } catch (e) {
+      console.warn(
+        "[create-order] data URL upload failed:",
+        e && e.message ? e.message : e,
+      );
+    }
+  }
+  return null;
+}
+
 function sanitizeShipping(shipping) {
   if (!shipping || typeof shipping !== "object") return null;
   return {
@@ -167,6 +194,13 @@ export default async function handler(req, res) {
     const orderRef = db.collection("orders").doc(orderId);
     const userRef = db.collection("users").doc(authUser.uid);
 
+    // data: URL の場合は Firebase Storage にアップロードして https 化してから
+    // transaction に入る。トランザクション内で非同期 upload を走らせると競合する。
+    const resolvedArtImageUrl = await resolveArtImageUrl(artImageUrl, {
+      uid: authUser.uid,
+      orderId,
+    });
+
     const result = await db.runTransaction(async (tx) => {
       const orderSnap = await tx.get(orderRef);
       if (!orderSnap.exists) {
@@ -244,10 +278,7 @@ export default async function handler(req, res) {
           size: item.size,
           petCount: item.petCount,
           petNames: item.petNames,
-          artImageUrl:
-            sanitizeArtImageUrl(artImageUrl) ??
-            reservedOrder.artImageUrl ??
-            null,
+          artImageUrl: resolvedArtImageUrl ?? reservedOrder.artImageUrl ?? null,
           total: expectedAmount,
           amount: expectedAmount,
           paymentIntentId,

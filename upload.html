@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-art-cover" />
+    <meta name="deer-build" content="frame-composite-storage-upload" />
     <script>
-      window.deerBuild = "frame-art-cover";
+      window.deerBuild = "frame-composite-storage-upload";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -8723,16 +8723,33 @@
           typeof state.finalArtUrl === "string" &&
           state.finalArtUrl.startsWith("data:")
         ) {
-          console.error(
-            "[REGRESSION_GUARD] finalArtUrl is data: URL — AI generation skipped",
-          );
-          showToast(
-            "AI生成がまだ完了していません。スタイルを選び直してください。",
-            "error",
-          );
-          throw new Error(
-            "REGRESSION_GUARD: finalArtUrl is a data: URL (raw photo)",
-          );
+          // data: URL でも、元の AI 生成が成功していれば「フレーム合成結果」として正当。
+          // generatedArtUrl / rawArtUrl が https で存在する = AI 生成済みの証拠。
+          // どちらも無い or data: なら AI 生成が走っていない生写真として弾く。
+          const hasAiGeneration =
+            (state.generatedArtUrl &&
+              typeof state.generatedArtUrl === "string" &&
+              !state.generatedArtUrl.startsWith("data:")) ||
+            (state.rawArtUrl &&
+              typeof state.rawArtUrl === "string" &&
+              !state.rawArtUrl.startsWith("data:"));
+          if (!hasAiGeneration) {
+            console.error(
+              "[REGRESSION_GUARD] finalArtUrl is data: URL — AI generation skipped",
+            );
+            showToast(
+              "AI生成がまだ完了していません。スタイルを選び直してください。",
+              "error",
+            );
+            throw new Error(
+              "REGRESSION_GUARD: finalArtUrl is a data: URL (raw photo)",
+            );
+          }
+          // AI 生成済みかつ data: URL はフレーム合成結果として許可
+          dlog("ORDER", "data: URL 許可 (フレーム合成済み)", {
+            genHttp: state.generatedArtUrl?.slice(0, 60),
+            dataLen: state.finalArtUrl.length,
+          });
         }
         if (state.photoDataUrl && state.finalArtUrl === state.photoDataUrl) {
           console.error(
