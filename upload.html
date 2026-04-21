@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="auto-stale-reload" />
+    <meta name="deer-build" content="reuse-flow-item-select" />
     <script>
-      window.deerBuild = "auto-stale-reload";
+      window.deerBuild = "reuse-flow-item-select";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -6369,6 +6369,46 @@
           return;
         }
 
+        // reuse=1: 注文完了画面の「別の商品にも載せる」から遷移してきた経路。
+        // sessionStorage か URL クエリから artUrl を取り出してアイテム選択画面へ直行する。
+        // （写真アップロード・スタイル選択はスキップ。同じアートで別商品を買うためのフロー）
+        if (params.get("reuse") === "1") {
+          let reuseArtUrl = params.get("artUrl") || "";
+          let reusePetNames = [];
+          try {
+            const raw = sessionStorage.getItem("deer_reuse_art");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (!reuseArtUrl && parsed?.artUrl) reuseArtUrl = parsed.artUrl;
+              if (Array.isArray(parsed?.petNames))
+                reusePetNames = parsed.petNames;
+              // 一度読んだら消してしまう（後続リロードでゾンビ化させない）
+              sessionStorage.removeItem("deer_reuse_art");
+            }
+          } catch (_) {}
+          if (reuseArtUrl && !reuseArtUrl.startsWith("data:")) {
+            state.generatedArtUrl = reuseArtUrl;
+            state.selectedStyleUrl = reuseArtUrl;
+            setFinalArt(reuseArtUrl);
+            state.photoDataUrl = reuseArtUrl; // 写真ステップをスキップ判定用
+            if (reusePetNames.length) state.petNames = reusePetNames;
+            state.fromStylePage = true;
+            // スタイルは前回のものが残っていれば使う（UI 表示用）
+            buildItemSelect(state.selectedStyle || "");
+            showStep("item-select");
+            buildProgress();
+            showToast(
+              "アートを読み込みました。次は商品を選んでください。",
+              "success",
+            );
+            return;
+          }
+          // artUrl が取れなかった場合はフォールバックでルックブックへ
+          console.warn("[reuse] artUrl missing — falling back to lookbook");
+          showStep("lookbook");
+          return;
+        }
+
         if (style && !item) {
           // Coming from art-styles: show item selection step
           state.selectedStyle = style;
@@ -6500,7 +6540,7 @@
               goTo("size");
             } else {
               state.selectedColor = product.colors[0].id;
-              goTo("photo");
+              nextStepAfterSelection();
             }
           } else {
             goTo("placement");
@@ -6602,7 +6642,7 @@
               goTo("size");
             } else {
               state.selectedColor = product.colors[0].id;
-              goTo("photo");
+              nextStepAfterSelection();
             }
           } else {
             goTo("placement");
@@ -6693,13 +6733,27 @@
         btn.click();
       }
 
+      // reuse フロー等で既に art が確定しているなら photo ステップを飛ばす
+      function nextStepAfterSelection() {
+        const hasArt =
+          state.finalArtUrl &&
+          typeof state.finalArtUrl === "string" &&
+          !state.finalArtUrl.startsWith("data:");
+        if (hasArt) {
+          buildTextOrderStep();
+          goTo("text-order");
+          return;
+        }
+        goTo("photo");
+      }
+
       document.getElementById("btnColorNext").addEventListener("click", () => {
         const product = PRODUCTS[state.selectedItem];
         if (product.hasSize || product.hasModel) {
           buildSizes();
           goTo("size");
         } else {
-          goTo("photo");
+          nextStepAfterSelection();
         }
       });
 
@@ -7028,7 +7082,24 @@
       }
 
       document.getElementById("btnSizeNext").addEventListener("click", () => {
-        // #13: Step5（写真アップロード）に進む前にログイン確認
+        // #13: Step5（写真アップロード）に進む前にログイン確認。
+        // ただし reuse フロー等で既にアートが確定していれば写真ステップをスキップ。
+        const hasArt =
+          state.finalArtUrl &&
+          typeof state.finalArtUrl === "string" &&
+          !state.finalArtUrl.startsWith("data:");
+        if (hasArt) {
+          if (!isLoggedIn()) {
+            showLoginModal(() => {
+              buildTextOrderStep();
+              goTo("text-order");
+            });
+            return;
+          }
+          buildTextOrderStep();
+          goTo("text-order");
+          return;
+        }
         if (!isLoggedIn()) {
           showLoginModal(() => goTo("photo"));
           return;
