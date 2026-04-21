@@ -251,6 +251,32 @@ function buildRecipient(addr = {}) {
 // ---------------------------------------------------------------------------
 // アクション: 注文一覧取得
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// アクション: エラーレポート一覧取得（js/sentry-init.js が書き込んだ実機エラー）
+// ---------------------------------------------------------------------------
+async function actionGetErrorReports(db, body) {
+  const limit = Math.min(Math.max(Number(body.limit) || 50, 1), 200);
+  const snap = await db
+    .collection("errorReports")
+    .orderBy("reportedAt", "desc")
+    .limit(limit)
+    .get();
+  const reports = snap.docs.map((doc) => {
+    const d = doc.data();
+    return {
+      id: doc.id,
+      reportedAt:
+        d.reportedAt?.toDate?.()?.toISOString() ?? d.reportedAt ?? null,
+      ip: d.ip ?? null,
+      userAgent: d.userAgent ?? null,
+      referer: d.referer ?? null,
+      count: d.count ?? 0,
+      errors: d.errors ?? [],
+    };
+  });
+  return { reports, fetched: reports.length };
+}
+
 async function actionGetOrders(db, body) {
   const { limit = 50, status } = body;
   let query = db
@@ -522,6 +548,8 @@ export default async function handler(req, res) {
       result = await actionUpdateStatus(db, body);
     } else if (action === "create-printful-order") {
       result = await actionCreatePrintfulOrder(db, body);
+    } else if (action === "get-error-reports") {
+      result = await actionGetErrorReports(db, body);
     } else {
       return res.status(400).json({ error: `不明な action: ${action}` });
     }

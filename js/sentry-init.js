@@ -35,6 +35,54 @@
     return ctx;
   }
 
+  // ── console.* をインターセプトして軽量ログも収集（errorReports に送信）
+  //    コンソールにも元通り出力する（元の関数を呼び出す）
+  //    同一メッセージの連投は間引く（1秒以内に同じ内容が来たら stack のみ1件残す）
+  var _consoleBuffer = [];
+  var _lastConsoleMsg = { text: "", t: 0 };
+  var CONSOLE_METHODS = ["log", "info", "warn", "error", "debug"];
+  CONSOLE_METHODS.forEach(function (m) {
+    var orig = console[m];
+    if (!orig) return;
+    console[m] = function () {
+      var args = Array.prototype.slice.call(arguments);
+      try {
+        var text = args
+          .map(function (a) {
+            if (typeof a === "string") return a;
+            try {
+              return JSON.stringify(a).slice(0, 500);
+            } catch (_) {
+              return String(a);
+            }
+          })
+          .join(" ")
+          .slice(0, 2000);
+        var now = Date.now();
+        if (text === _lastConsoleMsg.text && now - _lastConsoleMsg.t < 1000) {
+          // 1秒以内の重複は省略
+        } else {
+          _lastConsoleMsg = { text: text, t: now };
+          _consoleBuffer.push({ t: now, type: "console_" + m, message: text });
+          if (_consoleBuffer.length > 300) _consoleBuffer.shift();
+        }
+      } catch (_) {}
+      return orig.apply(console, args);
+    };
+  });
+  // _consoleBuffer を window._deerErrors に定期マージ
+  function mergeConsoleIntoErrors() {
+    if (!window._deerErrors || _consoleBuffer.length === 0) return;
+    // ctx を最新状態で付与
+    var drained = _consoleBuffer.splice(0, _consoleBuffer.length);
+    drained.forEach(function (e) {
+      e.ctx = collectDeerContext();
+      window._deerErrors.push(e);
+    });
+  }
+  setInterval(mergeConsoleIntoErrors, 4000);
+  window.addEventListener("beforeunload", mergeConsoleIntoErrors);
+
   fetch("/api/get-user?type=config")
     .then(function (r) {
       return r.ok ? r.json() : null;

@@ -616,6 +616,55 @@
           <button class="refresh-btn" id="refresh-btn" onclick="loadOrders()">
             更新
           </button>
+          <button
+            class="refresh-btn"
+            onclick="toggleErrorLogSection()"
+            style="margin-left: 0.5rem; background: #c0392b"
+          >
+            🐛 エラーログ表示
+          </button>
+        </div>
+
+        <!-- エラーログセクション（初期非表示） -->
+        <div
+          id="error-log-section"
+          style="
+            display: none;
+            margin-bottom: 1.2rem;
+            padding: 1rem;
+            background: #fff7f7;
+            border: 1px solid #f5c2c2;
+            border-radius: 8px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.8rem;
+            "
+          >
+            <h3 style="margin: 0; font-size: 1rem; color: #c0392b">
+              🐛 ユーザー実機エラーログ（最新50件）
+            </h3>
+            <button class="refresh-btn" onclick="loadErrorReports()">
+              再読込
+            </button>
+            <span
+              id="error-log-info"
+              style="font-size: 0.85rem; color: #666"
+            ></span>
+          </div>
+          <div
+            id="error-log-list"
+            style="
+              max-height: 520px;
+              overflow: auto;
+              font-family: ui-monospace, SFMono-Regular, monospace;
+              font-size: 0.78rem;
+            "
+          ></div>
         </div>
 
         <!-- テーブル -->
@@ -768,6 +817,108 @@
           refreshBtn.disabled = false;
           refreshBtn.textContent = "更新";
         }
+      }
+
+      // --- エラーログ表示切替 ---
+      function toggleErrorLogSection() {
+        const sec = document.getElementById("error-log-section");
+        if (sec.style.display === "none") {
+          sec.style.display = "block";
+          loadErrorReports();
+        } else {
+          sec.style.display = "none";
+        }
+      }
+
+      // --- エラーログ読み込み ---
+      async function loadErrorReports() {
+        const info = document.getElementById("error-log-info");
+        const list = document.getElementById("error-log-list");
+        info.textContent = "読み込み中...";
+        list.innerHTML = "";
+        try {
+          const res = await fetch("/api/admin-api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "get-error-reports",
+              adminKey,
+              limit: 50,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "エラー");
+          const reports = data.reports || [];
+          info.textContent = `${reports.length}件取得`;
+          if (reports.length === 0) {
+            list.innerHTML =
+              '<p style="color:#888; padding:1rem;">エラー報告はありません</p>';
+            return;
+          }
+          list.innerHTML = reports
+            .map((r) => {
+              const t = r.reportedAt
+                ? new Date(r.reportedAt).toLocaleString("ja-JP")
+                : "?";
+              const ua = (r.userAgent || "").slice(0, 80);
+              const ref = r.referer || "";
+              const errors = (r.errors || [])
+                .map((e) => {
+                  const mt = new Date(e.t || 0).toLocaleTimeString("ja-JP");
+                  const typeColor =
+                    e.type === "csp"
+                      ? "#e67e22"
+                      : e.type?.startsWith("console_warn")
+                        ? "#f39c12"
+                        : e.type?.startsWith("console_error")
+                          ? "#c0392b"
+                          : e.type === "rejection"
+                            ? "#8e44ad"
+                            : e.type === "error"
+                              ? "#c0392b"
+                              : "#555";
+                  return `
+                  <div style="margin:0.3rem 0; padding:0.4rem; background:#fff; border-left:3px solid ${typeColor};">
+                    <span style="color:${typeColor}; font-weight:600;">${e.type || "error"}</span>
+                    <span style="color:#999; margin-left:0.5rem;">${mt}</span>
+                    <div style="margin-top:0.2rem; white-space:pre-wrap; word-break:break-all;">${escapeHtml(e.message || "")}</div>
+                    ${e.source ? `<div style="color:#666;">src: ${escapeHtml(e.source)}:${e.line || "?"}:${e.col || "?"}</div>` : ""}
+                    ${e.violatedDirective ? `<div style="color:#e67e22;">CSP: ${escapeHtml(e.violatedDirective)} → ${escapeHtml(e.blockedURI || "")}</div>` : ""}
+                    ${e.stack ? `<details style="margin-top:0.2rem;"><summary style="cursor:pointer; color:#888;">stack</summary><pre style="margin:0.2rem 0; padding:0.3rem; background:#f5f5f5; font-size:0.7rem; overflow:auto;">${escapeHtml(e.stack)}</pre></details>` : ""}
+                    ${e.ctx ? `<details style="margin-top:0.2rem;"><summary style="cursor:pointer; color:#888;">ctx</summary><pre style="margin:0.2rem 0; padding:0.3rem; background:#f5f5f5; font-size:0.7rem; overflow:auto;">${escapeHtml(JSON.stringify(e.ctx, null, 2))}</pre></details>` : ""}
+                  </div>`;
+                })
+                .join("");
+              return `
+                <div style="margin-bottom:0.8rem; padding:0.5rem; background:#faf7f2; border:1px solid #e8dfd5; border-radius:6px;">
+                  <div style="display:flex; gap:0.5rem; font-size:0.72rem; color:#555; margin-bottom:0.3rem;">
+                    <span>📅 ${t}</span>
+                    <span>📦 ${r.count}件</span>
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🌐 ${escapeHtml(ref)}</span>
+                  </div>
+                  <div style="font-size:0.7rem; color:#888;">${escapeHtml(ua)}</div>
+                  ${errors}
+                </div>`;
+            })
+            .join("");
+        } catch (err) {
+          info.textContent = "エラー: " + err.message;
+        }
+      }
+
+      // escapeHtml は下方で既定義のものを使用（重複宣言回避）
+      function _unusedEscapeHtmlStub(s) {
+        return String(s || "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
       }
 
       // --- 統計更新 ---
