@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="webp-conversion-all-images" />
+    <meta name="deer-build" content="lazy-loading-dynamic-imgs" />
     <script>
-      window.deerBuild = "webp-conversion-all-images";
+      window.deerBuild = "lazy-loading-dynamic-imgs";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -6482,7 +6482,7 @@
           <div class="lookbook-card" onclick="selectItemFromStyle('${key}')" id="is-${key}">
             <div class="check-badge">&#10003;</div>
             <div style="aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; background:var(--cream); padding:1.5rem;">
-              <img src="${PRODUCT_IMGS[key] || "img/product-hoodie.webp"}" alt="${prod.name}" style="max-width:100%;max-height:100%;object-fit:contain;">
+              <img src="${PRODUCT_IMGS[key] || "img/product-hoodie.webp"}" alt="${prod.name}" loading="lazy" decoding="async" style="max-width:100%;max-height:100%;object-fit:contain;">
             </div>
             <div class="lookbook-info">
               <div class="item-name">${prod.name}</div>
@@ -9588,24 +9588,24 @@
             : `selectStyleDirect('${s.id}')`;
 
         if (status === "sample") {
-          thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover">`;
+          thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">`;
           badgeHtml = `<span class="sample-badge">サンプル</span>`;
           // メインボタン：即選択。サブボタン：AI生成プレビュー
           btnHtml = `
             <button class="style-card-btn btn-decide" onclick="selectStyleDirect('${s.id}')">このスタイルで進む</button>
             <button class="style-card-btn btn-generate" onclick="generateStyleCard('${s.id}')" style="margin-top:0.4rem;font-size:0.72rem;background:transparent;color:var(--c-brand);border:1px solid var(--c-brand);padding:0.35rem">✨ AIプレビュー生成</button>`;
         } else if (status === "generating") {
-          thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover">
+          thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">
             <div class="loading-overlay"><div class="spinner-sm"></div><span>AI生成中…<br><small style="opacity:0.8">30〜60秒かかります</small></span></div>`;
           btnHtml = `<button class="style-card-btn btn-loading" disabled>⏳ 生成中... しばらくお待ちください</button>`;
           cardClass += " generating";
         } else if (status === "done") {
-          thumbContent = `<img src="${cs.url}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover">`;
+          thumbContent = `<img src="${cs.url}" alt="${s.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">`;
           badgeHtml = `<span class="done-badge">✓ AI生成済み</span>`;
           btnHtml = `<button class="style-card-btn btn-decide" onclick="decideStyle('${s.id}')">→ 決定する</button>`;
           cardClass += " generated";
         } else if (status === "error") {
-          thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(60%) brightness(0.7)">
+          thumbContent = `<img src="${s.sampleImg}" alt="${s.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;filter:grayscale(60%) brightness(0.7)">
             <div class="loading-overlay" style="background:rgba(0,0,0,0.5)"><span style="color:#fff;font-size:0.85rem;text-align:center">生成失敗<br>再試行してください</span></div>`;
           badgeHtml = `<span class="sample-badge" style="background:#e53e3e">失敗</span>`;
           btnHtml = `
@@ -9954,11 +9954,11 @@
         if (status === "sample") {
           if (b.sampleImg) {
             // AI生成済みサンプル画像を表示
-            thumbContent = `<img src="${b.sampleImg}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover">`;
+            thumbContent = `<img src="${b.sampleImg}" alt="${b.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">`;
           } else {
             // カスタム: 選択済みスタイル画像を縮小表示
             const thumbSrc = state.selectedStyleUrl || state.photoDataUrl;
-            thumbContent = `<div style="background:linear-gradient(145deg,#EDE7F6,#D1C4E9);width:100%;height:100%;display:flex;align-items:center;justify-content:center">${thumbSrc ? `<img src="${thumbSrc}" alt="" style="max-width:70%;max-height:70%;object-fit:contain;border-radius:6px">` : "🐶"}</div>`;
+            thumbContent = `<div style="background:linear-gradient(145deg,#EDE7F6,#D1C4E9);width:100%;height:100%;display:flex;align-items:center;justify-content:center">${thumbSrc ? `<img src="${thumbSrc}" alt="" loading="lazy" decoding="async" style="max-width:70%;max-height:70%;object-fit:contain;border-radius:6px">` : "🐶"}</div>`;
           }
           badgeHtml = `<span class="sample-badge">サンプル</span>`;
 
@@ -9972,19 +9972,19 @@
           }
         } else if (status === "generating") {
           const genThumb = b.sampleImg
-            ? `<img src="${b.sampleImg}" alt="" style="width:100%;height:100%;object-fit:cover">`
+            ? `<img src="${b.sampleImg}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">`
             : "";
           thumbContent = `<div style="width:100%;height:100%;position:relative">${genThumb}<div class="loading-overlay"><div class="spinner-sm"></div><span>生成中…約30秒</span></div></div>`;
           btnHtml = `<button class="style-card-btn btn-loading" disabled>⏳ 生成中...</button>`;
           cardClass += " generating";
         } else if (status === "done") {
-          thumbContent = `<img src="${cs.url}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover">`;
+          thumbContent = `<img src="${cs.url}" alt="${b.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">`;
           badgeHtml = `<span class="done-badge">✓ 生成完了</span>`;
           btnHtml = `<button class="style-card-btn btn-decide" onclick="decideBg('${b.id}')">→ 決定する</button>`;
           cardClass += " generated";
         } else if (status === "error") {
           thumbContent = b.sampleImg
-            ? `<img src="${b.sampleImg}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(60%) brightness(0.7)"><div class="loading-overlay" style="background:rgba(0,0,0,0.5)"><span style="color:#fff;font-size:0.85rem;text-align:center">生成失敗<br>再試行してください</span></div>`
+            ? `<img src="${b.sampleImg}" alt="${b.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;filter:grayscale(60%) brightness(0.7)"><div class="loading-overlay" style="background:rgba(0,0,0,0.5)"><span style="color:#fff;font-size:0.85rem;text-align:center">生成失敗<br>再試行してください</span></div>`
             : `<div style="background:#888;width:100%;height:100%;display:flex;align-items:center;justify-content:center"><span style="color:#fff;font-size:0.85rem">生成失敗</span></div>`;
           badgeHtml = `<span class="sample-badge" style="background:#e53e3e">失敗</span>`;
           btnHtml = `<button class="style-card-btn btn-generate" onclick="generateBgCard('${b.id}')">🔄 再試行</button>`;
