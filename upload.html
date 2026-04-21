@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-inner-ratio-fit" />
+    <meta name="deer-build" content="frame-fill-canvas" />
     <script>
-      window.deerBuild = "frame-inner-ratio-fit";
+      window.deerBuild = "frame-fill-canvas";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -5757,16 +5757,17 @@
       }
 
       // 各フレーム/ワッペンの内側透明領域の大きさ (canvas に対する割合)。
-      // 実画像を走査して測定済みの値を元に、少し余裕を持たせた値を設定。
+      // フレーム画像を opaque bbox で切り抜いて canvas 一杯に拡大済みなので、
+      // 残りの透明領域 (inner_w, inner_h) を実測した値を設定。
       // frame 型: 内側矩形、wappen 型: 内側円の直径。
       const FRAME_INNER_RATIO = {
-        "frame-gold": 0.44,
-        "frame-wood": 0.46,
-        "frame-antique": 0.48,
-        "wappen-laurel-navy": 0.52,
-        "wappen-laurel-gold": 0.56,
-        "wappen-rope-red": 0.5,
-        "wappen-zigzag-green": 0.58,
+        "frame-gold": 0.55,
+        "frame-wood": 0.6,
+        "frame-antique": 0.56,
+        "wappen-laurel-navy": 0.7,
+        "wappen-laurel-gold": 0.65,
+        "wappen-rope-red": 0.62,
+        "wappen-zigzag-green": 0.74,
       };
 
       async function compositeFrameOnArt(artUrl, frameOpt) {
@@ -5782,15 +5783,15 @@
           throw new Error("invalid art image dimensions");
         }
 
-        // 共通マット (frame 外周やワッペン外) には淡いクリーム色を敷く
-        ctx.fillStyle = "#f5f0e8";
-        ctx.fillRect(0, 0, SIZE, SIZE);
-
-        const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.5;
+        // 外周は透明のまま残す。黒 T シャツ等の濃色商品に印刷する際、
+        // クリーム色マットが地色と衝突して不細工になるのを防ぐ。
+        // フレーム画像自体を bbox crop+resize で canvas 一杯に拡大済みなので
+        // 画像の opaque 領域が canvas 端まで届く＝外周に何も描かなくて良い。
+        const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.55;
         const innerSize = SIZE * innerRatio;
 
         if (frameOpt.type === "wappen") {
-          // ワッペン中央の円内にアートを配置。外周はクリーム色マット。
+          // ワッペン中央の円内にアートを配置
           ctx.save();
           ctx.beginPath();
           ctx.arc(SIZE / 2, SIZE / 2, innerSize / 2, 0, Math.PI * 2);
