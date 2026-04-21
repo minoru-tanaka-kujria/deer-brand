@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="case-finish-swatch" />
+    <meta name="deer-build" content="review-v10-reuse-progress" />
     <script>
-      window.deerBuild = "case-finish-swatch";
+      window.deerBuild = "review-v10-reuse-progress";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -9254,12 +9254,23 @@
         const product = state.selectedItem
           ? PRODUCTS[state.selectedItem]
           : null;
+        // 再利用フロー等で既にアート確定済みならアートまわりの 3 ステップは非表示に
+        const artAlreadyDone =
+          !!state.finalArtUrl &&
+          typeof state.finalArtUrl === "string" &&
+          !state.finalArtUrl.startsWith("data:");
         return STEP_ORDER.filter((s) => {
           if (s === "lookbook" && state.fromStylePage) return false;
           if (s === "item-select" && !state.fromStylePage) return false;
           if (s === "placement" && product && product.placements.length <= 1)
             return false;
           if (s === "size" && product && !product.hasSize && !product.hasModel)
+            return false;
+          // 再利用フロー: photo / style-select / bg-select は不要
+          if (
+            artAlreadyDone &&
+            (s === "photo" || s === "style-select" || s === "bg-select")
+          )
             return false;
           // Hide old "preview" step from progress when new flow is active
           if (s === "preview") return false;
@@ -10985,13 +10996,16 @@
           return;
         }
         try {
+          // auth-config.js が v10.12.0 で initializeApp 済み。v11.5.0 を動的 import すると
+          // 別モジュール空間扱いで「No Firebase App '[DEFAULT]'」例外になるため、
+          // 同じ v10.12.0 を使い window._deerFirebaseDb を再利用する。
           const {
-            getFirestore: gfs,
             collection: col,
             addDoc: add,
             serverTimestamp: ts,
-          } = await import("https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js");
-          const db = gfs();
+          } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const db = window._deerFirebaseDb;
+          if (!db) throw new Error("Firestore (v10) 未初期化");
           const user = window._currentUser;
           await add(col(db, "reviews"), {
             uid: user?.uid || "anonymous",
