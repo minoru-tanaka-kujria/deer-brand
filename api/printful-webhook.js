@@ -74,8 +74,11 @@ function verifyPrintfulSignature(rawBody, signature, secret) {
 // ステータス変更メール送信
 // ---------------------------------------------------------------------------
 async function sendStatusEmail(order, orderId, status, extra = {}) {
-  const apiKey = process.env.SENDGRID_API_KEY;
-  if (!apiKey || !order.email) return;
+  // Resend / SendGrid 自動切替の統一ヘルパ。env に RESEND_API_KEY しか無かったため
+  // 従来の SENDGRID_API_KEY 参照では実送信されていなかった。
+  const { sendEmail } = await import("./_lib/email.js");
+  if (!order.email) return;
+  // 以降 apiKey は未使用（sendEmail が内部で env を見る）
 
   const name = order.shippingAddress?.fullName || "お客様";
   const templates = {
@@ -118,24 +121,19 @@ ${extra.trackingUrl ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="pa
 <p style="margin:0;color:#a08979;font-size:10px">Deer Brand ｜ support@deer.gift</p>
 </div></div></body></html>`;
 
-  try {
-    const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: order.email }] }],
-        from: { email: "noreply@deer.gift", name: "Deer Brand" },
-        subject: tmpl.subject,
-        content: [{ type: "text/html", value: htmlBody }],
-      }),
-    });
-    if (!res.ok) console.warn("[printful-webhook] email failed:", res.status);
-    else console.log("[printful-webhook] status email sent:", status);
-  } catch (e) {
-    console.warn("[printful-webhook] email error:", e.message);
+  const result = await sendEmail({
+    to: order.email,
+    subject: tmpl.subject,
+    html: htmlBody,
+  });
+  if (!result.ok) {
+    console.warn(
+      "[printful-webhook] email failed:",
+      result.status,
+      result.error,
+    );
+  } else {
+    console.log("[printful-webhook] status email sent:", status);
   }
 }
 

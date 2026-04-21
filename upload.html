@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="stripe-account-align-test" />
+    <meta name="deer-build" content="resend-email-quota-x-fix" />
     <script>
-      window.deerBuild = "stripe-account-align-test";
+      window.deerBuild = "resend-email-quota-x-fix";
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オーダー — Deer</title>
@@ -8880,14 +8880,13 @@
 
       async function shareOnX() {
         const shareUrl = buildShareUrl();
+        // X リブランド後、twitter.com/intent/tweet は廃止され x.com/intent/post へ移行。
+        // また、url= パラメータも非推奨になったため text に URL を埋め込む形式に変更。
         const text = encodeURIComponent(
-          "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾 #Deer #うちの子アート",
+          "愛犬・愛猫の写真をアートにしてオリジナルグッズを作りました🐾 #Deer #うちの子アート\n" +
+            shareUrl,
         );
-        const url = encodeURIComponent(shareUrl);
-        window.open(
-          `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-          "_blank",
-        );
+        window.open(`https://x.com/intent/post?text=${text}`, "_blank");
         const code = await issueShareCoupon();
         if (code) {
           document.getElementById("shareCouponCode").textContent = code;
@@ -10888,15 +10887,29 @@
       }
       // 同じアートで別商品を注文
       function reuseArtForNewProduct() {
-        // アートURLをsessionStorageに保持して、商品選択ステップにジャンプ
-        sessionStorage.setItem(
-          "deer_reuse_art",
-          JSON.stringify({
-            artUrl: state.finalArtUrl,
-            photoUrl: state.photoDataUrl || state.originalPhoto,
-            petNames: state.petNames || [],
-          }),
-        );
+        // アート URL (Replicate の https URL、数百 B) とペット名だけ保存。
+        // photoDataUrl (data: URL、数MB) を入れるとブラウザの sessionStorage quota (約5MB) を
+        // 即超過して QuotaExceededError になるため除外する。再注文時は state.finalArtUrl さえあれば
+        // 同じアートを使って別商品を選べる。元写真は再利用不要。
+        try {
+          sessionStorage.setItem(
+            "deer_reuse_art",
+            JSON.stringify({
+              artUrl: state.finalArtUrl,
+              petNames: state.petNames || [],
+            }),
+          );
+        } catch (e) {
+          console.warn("[reuseArt] sessionStorage write failed:", e.message);
+          // フォールバック: URL クエリで artUrl を渡す（最大 URL 長制限ありだが Replicate URL は短い）
+          if (state.finalArtUrl) {
+            const u = new URL("upload.html", location.href);
+            u.searchParams.set("reuse", "1");
+            u.searchParams.set("artUrl", state.finalArtUrl);
+            location.href = u.toString();
+            return;
+          }
+        }
         location.href = "upload.html?reuse=1";
       }
 

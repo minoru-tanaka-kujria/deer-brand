@@ -104,13 +104,15 @@ export async function issueRepeatCoupon(db, order, orderId) {
 
 // ── 注文確認メール送信（スタンプ+リピートクーポン込み） ──
 export async function sendOrderConfirmationEmail(db, order, orderId) {
-  const apiKey = process.env.SENDGRID_API_KEY;
+  // Resend/SendGrid どちらの env でも動く統一ヘルパーを使う（旧実装は SENDGRID_API_KEY
+  // のみ参照していたが Vercel 側には RESEND_API_KEY しか無く全件送信できていなかった）
+  const { sendEmail } = await import("./email.js");
   // ギフト注文時は注文者メールに送信、通常は配送先メールに送信
   const toEmail =
     order.isGift && order.ordererInfo?.email
       ? order.ordererInfo.email
       : order.email;
-  if (!apiKey || !toEmail) return;
+  if (!toEmail) return;
 
   // 冪等性: 既にメール送信済みならスキップ（Webhook と create-order から二重送信防止）
   if (order.confirmationEmailSentAt) {
@@ -194,37 +196,27 @@ ${repeatSection}
 </div>
 </body></html>`;
 
-  const body = {
-    personalizations: [{ to: [{ email: toEmail }] }],
-    from: { email: "noreply@deer.gift", name: "Deer Brand" },
+  const result = await sendEmail({
+    to: toEmail,
     subject: `【Deer Brand】ご注文ありがとうございます（${orderId}）`,
-    content: [{ type: "text/html", value: htmlBody }],
-  };
-  try {
-    const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      console.warn("[post-payment] email send failed:", res.status);
-    } else {
-      console.log("[post-payment] confirmation email sent to", toEmail);
-      // 冪等フラグを保存（二重送信防止）
-      try {
-        await db
-          .collection("orders")
-          .doc(orderId)
-          .update({ confirmationEmailSentAt: new Date() });
-      } catch (markErr) {
-        console.warn("[post-payment] mark email sent failed:", markErr.message);
-      }
+    html: htmlBody,
+  });
+  if (result.ok) {
+    // 冪等フラグを保存（二重送信防止）
+    try {
+      await db
+        .collection("orders")
+        .doc(orderId)
+        .update({ confirmationEmailSentAt: new Date() });
+    } catch (markErr) {
+      console.warn("[post-payment] mark email sent failed:", markErr.message);
     }
-  } catch (e) {
-    console.warn("[post-payment] email error:", e.message);
+  } else {
+    console.warn(
+      "[post-payment] email send failed:",
+      result.status,
+      result.error,
+    );
   }
 }
 
