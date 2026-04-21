@@ -23,8 +23,59 @@ const _stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res, "GET, OPTIONS");
+  setCorsHeaders(req, res, "GET, POST, OPTIONS");
   if (handlePreflight(req, res)) return;
+
+  // ── POST /api/get-user?type=error-report ─────────────────────────────
+  // ユーザー実機エラーの集約受信。Hobby plan の Function 上限(12)に達しているため
+  // 専用 endpoint を作らず get-user に相乗りする。
+  if (req.method === "POST" && req.query.type === "error-report") {
+    let body = req.body;
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        body = {};
+      }
+    }
+    const errors = Array.isArray(body?.errors) ? body.errors : [];
+    if (errors.length === 0) {
+      return res.status(400).json({ error: "errors 配列が必要です" });
+    }
+    // サイズ制限・サニタイズ（最大50件、各 message は 4KB まで）
+    const sanitized = errors.slice(0, 50).map((e) => ({
+      t: typeof e?.t === "number" ? e.t : Date.now(),
+      type: typeof e?.type === "string" ? e.type.slice(0, 40) : "error",
+      message: typeof e?.message === "string" ? e.message.slice(0, 4000) : "",
+      source: typeof e?.source === "string" ? e.source.slice(0, 500) : null,
+      line: typeof e?.line === "number" ? e.line : null,
+      col: typeof e?.col === "number" ? e.col : null,
+      stack: typeof e?.stack === "string" ? e.stack.slice(0, 4000) : null,
+      violatedDirective:
+        typeof e?.violatedDirective === "string"
+          ? e.violatedDirective.slice(0, 200)
+          : null,
+      blockedURI:
+        typeof e?.blockedURI === "string" ? e.blockedURI.slice(0, 500) : null,
+      ctx: e?.ctx || null,
+    }));
+    try {
+      const db = getFirestore(getAdminApp());
+      await db.collection("errorReports").add({
+        reportedAt: new Date(),
+        ip: req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || null,
+        userAgent: req.headers["user-agent"]?.slice(0, 500) || null,
+        referer: req.headers.referer?.slice(0, 500) || null,
+        errors: sanitized,
+        count: sanitized.length,
+      });
+      return res.json({ ok: true, stored: sanitized.length });
+    } catch (err) {
+      console.error("[error-report] Firestore write failed:", err.message);
+      // クライアントに詳細は返さない（PII漏洩防止）
+      return res.status(500).json({ error: "failed to store" });
+    }
+  }
 
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });

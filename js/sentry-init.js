@@ -42,7 +42,7 @@
     .then(function (cfg) {
       if (!cfg || !cfg.sentryDsn) {
         // DSN 未設定: 代替として軽量な error reporter を登録
-        //   → window._deerErrors に蓄積。定期的に /api/error-report へ送信
+        //   → window._deerErrors に蓄積。定期的に /api/get-user?type=error-report へ送信
         window._deerErrors = [];
         var lastFlushAt = 0;
         function flushErrors() {
@@ -50,7 +50,7 @@
           if (Date.now() - lastFlushAt < 3000) return; // 3秒デバウンス
           lastFlushAt = Date.now();
           var toSend = window._deerErrors.splice(0, 50);
-          fetch("/api/error-report", {
+          fetch("/api/get-user?type=error-report", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ errors: toSend }),
