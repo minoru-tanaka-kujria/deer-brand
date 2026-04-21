@@ -267,6 +267,34 @@ export default async function handler(req, res) {
         status: "pending_payment",
       });
 
+    // 配送先住所の自動保存 (サーバー側、Admin SDK で確実に実行)
+    // クライアント実装に依存しないようここで users.savedAddresses を merge 更新する。
+    // 重複判定 (zip + address1 完全一致) で既に登録済みならスキップ。
+    try {
+      const cleanAddr = orderData.shippingAddress;
+      if (cleanAddr && cleanAddr.address1) {
+        const userRef = db.collection("users").doc(authUser.uid);
+        const userSnap = await userRef.get();
+        const existing = userSnap.exists
+          ? userSnap.data().savedAddresses || []
+          : [];
+        const isDup = existing.some(
+          (a) =>
+            a && a.zip === cleanAddr.zip && a.address1 === cleanAddr.address1,
+        );
+        if (!isDup) {
+          const newAddresses = [cleanAddr, ...existing].slice(0, 5);
+          await userRef.set({ savedAddresses: newAddresses }, { merge: true });
+        }
+      }
+    } catch (addrErr) {
+      // 住所保存は best-effort、決済を止めない
+      console.warn(
+        "[stripe-payment-intent] savedAddresses update failed:",
+        addrErr.message,
+      );
+    }
+
     return res.status(200).json({
       clientSecret: paymentIntent.client_secret,
       orderId,
