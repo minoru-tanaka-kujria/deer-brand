@@ -38,9 +38,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <!-- ビルド情報 (キャッシュ確認用): ConsoleでdeerBuildと打てば表示 -->
-    <meta name="deer-build" content="frame-composite-storage-upload" />
+    <meta name="deer-build" content="regression-guard-composite-safe" />
     <script>
-      window.deerBuild = "frame-composite-storage-upload";
+      window.deerBuild = "regression-guard-composite-safe";
       // 5 分に 1 回、本番 HTML の build marker と比較して古くなっていれば自動リロード。
       // 長時間タブを開きっぱなしのお客様が古い JS のまま操作してエラーを踏む事故を防ぐ。
       (function () {
@@ -6449,10 +6449,12 @@
           const art = snap.data();
           // アートを state に設定し写真・生成ステップをスキップ
           state.generatedArtUrl = art.url;
+          state.rawArtUrl = art.url; // AI 生成済みのベース画像として記録
           state.selectedStyleUrl = art.url;
           setFinalArt(art.url);
           state.selectedStyle = art.style || "";
-          state.photoDataUrl = art.url;
+          // NOTE: photoDataUrl は生写真専用 (REGRESSION_GUARD が生写真検知に使う) なので
+          // マイアート再利用経路では設定しない。
           // スタイル選択済みとしてアイテム選択へ
           state.fromStylePage = true;
           buildItemSelect(art.style || "");
@@ -6516,9 +6518,12 @@
           } catch (_) {}
           if (reuseArtUrl && !reuseArtUrl.startsWith("data:")) {
             state.generatedArtUrl = reuseArtUrl;
+            state.rawArtUrl = reuseArtUrl; // AI 生成済みのベース画像として記録
             state.selectedStyleUrl = reuseArtUrl;
             setFinalArt(reuseArtUrl);
-            state.photoDataUrl = reuseArtUrl; // 写真ステップをスキップ判定用
+            // NOTE: photoDataUrl は生写真専用 (REGRESSION_GUARD が生写真検知に使う) なので
+            // ここでは設定しない。写真ステップのスキップは nextStepAfterSelection() が
+            // state.finalArtUrl を見て判定する。
             if (reusePetNames.length) state.petNames = reusePetNames;
             state.fromStylePage = true;
             // スタイルは前回のものが残っていれば使う（UI 表示用）
@@ -8719,38 +8724,9 @@
           );
           throw new Error("REGRESSION_GUARD: finalArtUrl is empty");
         }
-        if (
-          typeof state.finalArtUrl === "string" &&
-          state.finalArtUrl.startsWith("data:")
-        ) {
-          // data: URL でも、元の AI 生成が成功していれば「フレーム合成結果」として正当。
-          // generatedArtUrl / rawArtUrl が https で存在する = AI 生成済みの証拠。
-          // どちらも無い or data: なら AI 生成が走っていない生写真として弾く。
-          const hasAiGeneration =
-            (state.generatedArtUrl &&
-              typeof state.generatedArtUrl === "string" &&
-              !state.generatedArtUrl.startsWith("data:")) ||
-            (state.rawArtUrl &&
-              typeof state.rawArtUrl === "string" &&
-              !state.rawArtUrl.startsWith("data:"));
-          if (!hasAiGeneration) {
-            console.error(
-              "[REGRESSION_GUARD] finalArtUrl is data: URL — AI generation skipped",
-            );
-            showToast(
-              "AI生成がまだ完了していません。スタイルを選び直してください。",
-              "error",
-            );
-            throw new Error(
-              "REGRESSION_GUARD: finalArtUrl is a data: URL (raw photo)",
-            );
-          }
-          // AI 生成済みかつ data: URL はフレーム合成結果として許可
-          dlog("ORDER", "data: URL 許可 (フレーム合成済み)", {
-            genHttp: state.generatedArtUrl?.slice(0, 60),
-            dataLen: state.finalArtUrl.length,
-          });
-        }
+        // data: URL 自体は正当な経路 (フレーム合成結果・data URL キャッシュ) で
+        // 使われるため単独では弾かない。下の photoDataUrl 一致チェックで
+        // 「生写真が printFinalUrl に潜り込むパターン」を確実に捕捉する。
         if (state.photoDataUrl && state.finalArtUrl === state.photoDataUrl) {
           console.error(
             "[REGRESSION_GUARD] finalArtUrl === photoDataUrl",
