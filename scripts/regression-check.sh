@@ -63,12 +63,49 @@ if matches=$(grep -rnE 'artImageUrl\s*\|\|\s*(body\.|req\.|orderData\.)?(photo|p
 fi
 
 # ── パターン3: REGRESSION_GUARD を勝手に削除させない ───────────────────
-# upload.html に注文前 assertion が残っていることを確認
+# メインの注文フロー (upload.html) は必須。stamp/memorial は「photoDataUrl を
+# finalArtUrl として扱うフローが存在する場合のみ」チェック対象にする。
 if ! grep -q "REGRESSION_GUARD" upload.html; then
   echo "❌ upload.html から REGRESSION_GUARD assertion が削除されています"
   echo "   注文前に finalArtUrl === photoDataUrl を検知する致命バグ防壁を"
   echo "   勝手に外さないでください。仕様として削除するなら PR で明示議論を。"
   NG_FOUND=1
+fi
+
+# stamp/memorial は現時点では create-order フローを使わないので WARN 止まり。
+# もし将来 stamp/memorial でも create-order を呼ぶようになったら、REGRESSION_GUARD
+# を必ず追加して error に昇格させること。
+for target in stamp/index.html memorial/index.html; do
+  [ -f "$target" ] || continue
+  if grep -qE "finalArtUrl|photoDataUrl" "$target" && ! grep -q "REGRESSION_GUARD" "$target"; then
+    echo "⚠️  $target に finalArtUrl/photoDataUrl があるが REGRESSION_GUARD がありません（軽微: 将来 create-order を呼ぶなら追加してください）"
+  fi
+done
+
+# ── パターン4: Printful 製品 ID マッピングが products.js と同期していること ─
+# post-payment / admin-api / printful.js のキーが PRODUCTS キーと揃っているかを
+# ざっくり検査する。PRODUCTS 側で定義したキーが printful.js に存在すればOK。
+if [ -f api/_lib/products.js ] && [ -f api/_lib/printful.js ]; then
+  for key in hoodie tshirt mug case poster postcard sticker emb-cap emb-hoodie; do
+    if grep -q "^  \"\?${key}\"\?:" api/_lib/products.js 2>/dev/null; then
+      # printful.js にも存在するか
+      if ! grep -qE "[\"']?${key}[\"']?:\s*[0-9]" api/_lib/printful.js; then
+        echo "❌ api/_lib/printful.js の PRINTFUL_PRODUCT_IDS に \"${key}\" が未定義です"
+        echo "   api/_lib/products.js と定義が食い違うと Printful 発注がサイレントにスキップされます"
+        NG_FOUND=1
+      fi
+    fi
+  done
+fi
+
+# ── パターン5: data: URL スキーマ方針の説明コメント ─────────────────────
+# 現行方針: 「data:スキーム単体で拒否はしない。photoDataUrl と一致する data URL
+# だけ拒否する」。次の変更者が古いロジックに戻さないよう REGRESSION_GUARD 周辺に
+# 意図を示すコメント "data URL policy" を残しているか緩く確認する。
+if grep -q "REGRESSION_GUARD" upload.html; then
+  if ! grep -q "data URL" upload.html; then
+    echo "⚠️  REGRESSION_GUARD の data URL 方針コメントが見当たりません（軽微）"
+  fi
 fi
 
 if [ "$NG_FOUND" -eq 0 ]; then

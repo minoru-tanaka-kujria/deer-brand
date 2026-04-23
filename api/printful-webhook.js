@@ -27,10 +27,13 @@ export const config = {
 const STATUS_ORDER = {
   pending: 0,
   pending_payment: 0,
+  printful_failed: 0,
   paid: 1,
   preparing: 2,
+  printing: 2,
   shipped: 3,
   delivered: 4,
+  cancelled: 5,
 };
 
 function canAdvanceStatus(currentStatus, nextStatus) {
@@ -73,40 +76,59 @@ function verifyPrintfulSignature(rawBody, signature, secret) {
 // ---------------------------------------------------------------------------
 // ステータス変更メール送信
 // ---------------------------------------------------------------------------
-async function sendStatusEmail(order, orderId, status, extra = {}) {
-  // Resend / SendGrid 自動切替の統一ヘルパ。env に RESEND_API_KEY しか無かったため
-  // 従来の SENDGRID_API_KEY 参照では実送信されていなかった。
+async function sendStatusEmail(db, order, orderId, status, extra = {}) {
   const { sendEmail } = await import("./_lib/email.js");
   if (!order.email) return;
-  // 以降 apiKey は未使用（sendEmail が内部で env を見る）
 
   const name = order.shippingAddress?.fullName || "お客様";
+  const itemName =
+    (order.items?.[0]?.productName ?? order.productName ?? order.product) || "";
+  const amount = (order.total ?? order.amount ?? 0).toLocaleString();
+  const itemRow = itemName
+    ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">商品</td><td style="padding:8px">${itemName}</td></tr>`
+    : "";
+  const amountRow = amount
+    ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">合計金額</td><td style="padding:8px;font-weight:600">¥${amount}</td></tr>`
+    : "";
+
   const templates = {
     preparing: {
       subject: `【Deer Brand】制作を開始しました（${orderId}）`,
-      body: `<p>${name} 様</p>
-<p>ご注文いただいた商品の制作を開始いたしました。</p>
-<table style="border-collapse:collapse;margin:16px 0">
-<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">注文番号</td><td style="padding:8px;font-weight:600">${orderId}</td></tr>
-<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">ステータス</td><td style="padding:8px;color:#c4a265;font-weight:600">制作中 🎨</td></tr>
-</table>
-<p>完成まで通常2〜3営業日ほどお時間をいただきます。<br>発送準備が整い次第、改めてご連絡いたします。</p>`,
+      statusLabel: "制作中 🎨",
+      leadHtml: `<p>ご注文いただいた商品の制作を開始いたしました。</p>`,
+      footerHtml: `<p>完成まで通常2〜3営業日ほどお時間をいただきます。<br>発送準備が整い次第、改めてご連絡いたします。</p>`,
+      leadText: "ご注文いただいた商品の制作を開始いたしました。",
+      footerText:
+        "完成まで通常2〜3営業日ほどお時間をいただきます。発送準備が整い次第、改めてご連絡いたします。",
     },
     shipped: {
       subject: `【Deer Brand】発送しました（${orderId}）`,
-      body: `<p>${name} 様</p>
-<p>ご注文いただいた商品を発送いたしました！</p>
-<table style="border-collapse:collapse;margin:16px 0">
-<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">注文番号</td><td style="padding:8px;font-weight:600">${orderId}</td></tr>
-<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">ステータス</td><td style="padding:8px;color:#c4a265;font-weight:600">発送済み 📦</td></tr>
-${extra.trackingUrl ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">追跡</td><td style="padding:8px"><a href="${extra.trackingUrl}" style="color:#c4a265">${extra.trackingCarrier || "配送状況を確認"} →</a></td></tr>` : ""}
-</table>
-<p>お届けまで1〜3日ほどお待ちください。</p>`,
+      statusLabel: "発送済み 📦",
+      leadHtml: `<p>ご注文いただいた商品を発送いたしました！</p>`,
+      trackingRow: extra.trackingUrl
+        ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">追跡</td><td style="padding:8px"><a href="${extra.trackingUrl}" style="color:#c4a265">${extra.trackingCarrier || "配送状況を確認"} →</a></td></tr>`
+        : "",
+      footerHtml: `<p>お届けまで1〜3日ほどお待ちください。</p>`,
+      leadText: "ご注文いただいた商品を発送いたしました。",
+      footerText: extra.trackingUrl
+        ? `追跡URL: ${extra.trackingUrl}\nお届けまで1〜3日ほどお待ちください。`
+        : "お届けまで1〜3日ほどお待ちください。",
+    },
+    delivered: {
+      subject: `【Deer Brand】お届けが完了しました（${orderId}）`,
+      statusLabel: "お届け完了 🎁",
+      leadHtml: `<p>商品のお届けが完了しました。ご利用ありがとうございました。</p>`,
+      footerHtml: `<p>商品がお手元に届きましたら、ぜひ感想をレビュー投稿でお聞かせください。<br><a href="https://custom.deer.gift/#reviews" style="color:#c4a265">レビューを書く →</a></p>`,
+      leadText: "商品のお届けが完了しました。ご利用ありがとうございました。",
+      footerText:
+        "商品がお手元に届きましたら、ぜひ感想をレビュー投稿でお聞かせください: https://custom.deer.gift/#reviews",
     },
   };
 
   const tmpl = templates[status];
   if (!tmpl) return;
+
+  const trackingRow = tmpl.trackingRow || "";
 
   const htmlBody = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#f5f1eb;font-family:'Helvetica Neue',Arial,sans-serif">
@@ -114,17 +136,51 @@ ${extra.trackingUrl ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="pa
 <div style="background:#3e2c23;padding:20px;text-align:center">
 <h1 style="margin:0;color:#f5f1eb;font-size:20px;font-weight:300;letter-spacing:3px">DEER BRAND</h1>
 </div>
-<div style="padding:28px 24px">${tmpl.body}
+<div style="padding:28px 24px">
+<p>${name} 様</p>
+${tmpl.leadHtml}
+<table style="border-collapse:collapse;margin:16px 0;width:100%">
+<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999;width:100px">注文番号</td><td style="padding:8px;font-weight:600">${orderId}</td></tr>
+${itemRow}
+${amountRow}
+<tr style="border-bottom:1px solid #e8e0d4"><td style="padding:8px;color:#999">ステータス</td><td style="padding:8px;color:#c4a265;font-weight:600">${tmpl.statusLabel}</td></tr>
+${trackingRow}
+</table>
+${tmpl.footerHtml}
 <p style="color:#5d4037;margin-top:20px">ご不明な点はサポート（<a href="mailto:support@deer.gift" style="color:#c4a265">support@deer.gift</a>）までお問い合わせください。</p>
 </div>
 <div style="background:#3e2c23;padding:16px;text-align:center">
 <p style="margin:0;color:#a08979;font-size:10px">Deer Brand ｜ support@deer.gift</p>
+<p style="margin:4px 0 0;color:#6d5c52;font-size:10px"><a href="https://custom.deer.gift/privacy" style="color:#6d5c52">プライバシーポリシー</a></p>
 </div></div></body></html>`;
+
+  const textBody = [
+    `${name} 様`,
+    "",
+    tmpl.leadText,
+    "",
+    `注文番号: ${orderId}`,
+    itemName ? `商品: ${itemName}` : "",
+    amount ? `合計金額: ¥${amount}` : "",
+    `ステータス: ${tmpl.statusLabel}`,
+    "",
+    tmpl.footerText,
+    "",
+    "Deer Brand | support@deer.gift",
+    "https://custom.deer.gift/privacy",
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   const result = await sendEmail({
     to: order.email,
+    replyTo: "support@deer.gift",
     subject: tmpl.subject,
     html: htmlBody,
+    text: textBody,
+    headers: {
+      "List-Unsubscribe": "<mailto:support@deer.gift?subject=unsubscribe>",
+    },
   });
   if (!result.ok) {
     console.warn(
@@ -132,8 +188,41 @@ ${extra.trackingUrl ? `<tr style="border-bottom:1px solid #e8e0d4"><td style="pa
       result.status,
       result.error,
     );
+    if (db) {
+      try {
+        await db
+          .collection("orders")
+          .doc(orderId)
+          .update({
+            [`statusEmailError_${status}`]: {
+              status: result.status,
+              error: String(result.error || "").slice(0, 500),
+              at: new Date(),
+            },
+            updatedAt: new Date(),
+          });
+      } catch (markErr) {
+        console.warn(
+          "[printful-webhook] failed to mark email error:",
+          markErr.message,
+        );
+      }
+    }
   } else {
     console.log("[printful-webhook] status email sent:", status);
+    if (db) {
+      try {
+        await db
+          .collection("orders")
+          .doc(orderId)
+          .update({
+            [`statusEmailSentAt_${status}`]: new Date(),
+            updatedAt: new Date(),
+          });
+      } catch (_) {
+        // best-effort
+      }
+    }
   }
 }
 
@@ -219,6 +308,7 @@ export default async function handler(req, res) {
         eventId,
         type: eventType,
         processedAt: new Date(),
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
         ignored: true,
         reason: "ORDER_ID_MISSING",
       });
@@ -236,6 +326,7 @@ export default async function handler(req, res) {
         type: eventType,
         printfulOrderId,
         processedAt: new Date(),
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
         ignored: true,
         reason: "ORDER_NOT_FOUND",
       });
@@ -268,6 +359,7 @@ export default async function handler(req, res) {
           type: eventType,
           printfulOrderId,
           processedAt: now,
+          expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
           ignored: true,
           reason: "UNSUPPORTED_EVENT",
         });
@@ -284,6 +376,7 @@ export default async function handler(req, res) {
         type: eventType,
         printfulOrderId,
         processedAt: now,
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
         ignored: true,
         reason: "STATUS_REGRESSION",
       });
@@ -321,6 +414,7 @@ export default async function handler(req, res) {
           type: eventType,
           printfulOrderId,
           processedAt: now,
+          expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
           ignored: true,
           reason: "STATUS_REGRESSION",
         });
@@ -334,22 +428,29 @@ export default async function handler(req, res) {
         type: eventType,
         printfulOrderId,
         processedAt: now,
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
         statusApplied: nextStatus,
       });
     });
 
     // トランザクション外でメール送信（非同期・ノンブロッキング）
-    if (nextStatus === "preparing" || nextStatus === "shipped") {
+    if (
+      nextStatus === "preparing" ||
+      nextStatus === "shipped" ||
+      nextStatus === "delivered"
+    ) {
       const latestOrder = (await orderRef.get()).data();
       if (latestOrder) {
         const extra =
           nextStatus === "shipped"
             ? {
-                trackingUrl: updatePayload.trackingUrl,
-                trackingCarrier: updatePayload.trackingCarrier,
+                trackingUrl:
+                  updatePayload.trackingUrl ?? latestOrder.trackingUrl,
+                trackingCarrier:
+                  updatePayload.trackingCarrier ?? latestOrder.trackingCarrier,
               }
             : {};
-        sendStatusEmail(latestOrder, orderRef.id, nextStatus, extra).catch(
+        sendStatusEmail(db, latestOrder, orderRef.id, nextStatus, extra).catch(
           (e) => console.warn("[printful-webhook] email error:", e.message),
         );
       }

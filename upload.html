@@ -79,8 +79,13 @@
         setInterval(checkStaleBuild, 5 * 60 * 1000); // 以後 5 分ごと
       })();
     </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>オーダー — Deer</title>
+    <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
+    <link rel="shortcut icon" href="/img/logo.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -201,7 +206,7 @@
         transition: color 0.3s;
       }
       .nav-back:hover {
-        color: var(--cream);
+        color: var(--gold, var(--text-mid, #c4a265));
       }
       .nav-login-btn {
         display: flex;
@@ -391,6 +396,27 @@
       .custom-bg-input input:focus {
         outline: none;
         border-color: var(--c-brand);
+      }
+
+      /*
+       * Focus indicator policy:
+       *   - :focus { outline: none } を部分的に使用しているが、キーボードナビ
+       *     ユーザーが現在地を失う問題があるため focus-visible では必ず可視化する。
+       *   - マウスクリックでの focus は outline を消したまま、キーボード操作時だけ
+       *     リングを表示する (focus-visible のデフォルト挙動)。
+       */
+      :focus-visible {
+        outline: 2px solid var(--gold, #c4a265);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--gold, #c4a265);
+        outline-offset: 2px;
       }
 
       /* active/feedback for all buttons */
@@ -2490,7 +2516,7 @@
             <p class="section-label" style="margin-top: 0.8rem">文字スタイル</p>
             <div style="display: flex; gap: 0.5rem">
               <button
-                id="btnBold"
+                data-role="btnBold"
                 onclick="toggleFontBold()"
                 style="
                   padding: 0.45rem 1.1rem;
@@ -2508,7 +2534,7 @@
                 B
               </button>
               <button
-                id="btnItalic"
+                data-role="btnItalic"
                 onclick="toggleFontItalic()"
                 style="
                   padding: 0.45rem 1.1rem;
@@ -3830,7 +3856,7 @@
               </p>
               <div style="display: flex; gap: 0.5rem">
                 <button
-                  id="btnBold"
+                  data-role="btnBold"
                   onclick="toggleFontBold()"
                   style="
                     padding: 0.45rem 1.1rem;
@@ -3848,7 +3874,7 @@
                   B
                 </button>
                 <button
-                  id="btnItalic"
+                  data-role="btnItalic"
                   onclick="toggleFontItalic()"
                   style="
                     padding: 0.45rem 1.1rem;
@@ -4091,23 +4117,43 @@
         </div>
         <div class="form-group">
           <label>メールアドレス<span class="req">*</span></label>
-          <input type="email" id="email" placeholder="hanako@example.com" />
+          <input
+            type="email"
+            id="email"
+            placeholder="hanako@example.com"
+            autocomplete="email"
+            inputmode="email"
+          />
           <div class="field-error" id="email-error"></div>
         </div>
         <div class="form-group">
           <label>電話番号<span class="req">*</span></label>
-          <input type="tel" id="phone" placeholder="090-1234-5678" />
+          <input
+            type="tel"
+            id="phone"
+            placeholder="090-1234-5678"
+            autocomplete="tel-national"
+            inputmode="tel"
+          />
           <div class="field-error" id="phone-error"></div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>郵便番号<span class="req">*</span></label>
-            <input type="text" id="zip" placeholder="123-4567" />
+            <input
+              type="tel"
+              id="zip"
+              placeholder="123-4567"
+              autocomplete="postal-code"
+              inputmode="numeric"
+              pattern="[0-9\-]*"
+              maxlength="8"
+            />
             <div class="field-error" id="zip-error"></div>
           </div>
           <div class="form-group">
             <label>都道府県<span class="req">*</span></label>
-            <select id="prefecture">
+            <select id="prefecture" autocomplete="address-level1">
               <option value="">選択してください</option>
               <option>北海道</option>
               <option>青森県</option>
@@ -4162,7 +4208,12 @@
         </div>
         <div class="form-group">
           <label>市区町村・番地<span class="req">*</span></label>
-          <input type="text" id="address1" placeholder="渋谷区神南1-2-3" />
+          <input
+            type="text"
+            id="address1"
+            placeholder="渋谷区神南1-2-3"
+            autocomplete="address-line1"
+          />
           <div class="field-error" id="address1-error"></div>
         </div>
         <div class="form-group">
@@ -4171,6 +4222,7 @@
             type="text"
             id="address2"
             placeholder="ABCマンション 101号室"
+            autocomplete="address-line2"
           />
         </div>
 
@@ -5140,8 +5192,8 @@
       onclick="toggleFaqPanel()"
       style="
         position: fixed;
-        bottom: 24px;
-        right: 24px;
+        bottom: max(24px, calc(24px + env(safe-area-inset-bottom)));
+        right: max(24px, calc(24px + env(safe-area-inset-right)));
         width: 48px;
         height: 48px;
         background: var(--gold);
@@ -5154,7 +5206,7 @@
         font-weight: bold;
         cursor: pointer;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        z-index: 100;
+        z-index: 110;
         transition: transform 0.2s;
       "
       title="よくある質問"
@@ -5167,12 +5219,11 @@
         position: fixed;
         top: 0;
         right: -380px;
-        width: 360px;
-        max-width: 90vw;
-        height: 100vh;
+        width: min(360px, 90vw);
+        height: 100dvh;
         background: #fff;
         box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
-        z-index: 101;
+        z-index: 200;
         transition: right 0.3s ease;
         overflow-y: auto;
         padding: 0;
@@ -5884,8 +5935,21 @@
         } catch (e) {
           if (gen !== _applyFrameGen) return;
           console.warn("[frame] composite failed:", e);
+          // 合成失敗時に裸アートを setFinalArt してしまうと、ユーザーはフレーム付きの
+          // つもりで裸の商品を購入してしまう。ここでは合成前の選択状態を破棄し、
+          // プレビューを更新しないことで「フレーム未適用」であることを視覚的に明示する。
+          state.selectedFrame = "none";
+          document.querySelectorAll(".frame-option-card").forEach((card) => {
+            card.classList.toggle("selected", card.dataset.frameId === "none");
+          });
           if (mockupImg) mockupImg.src = rawUrl;
           setFinalArt(rawUrl);
+          if (typeof showToast === "function") {
+            showToast(
+              "フレームの合成に失敗しました。別のフレームを選ぶか、ページを再読込してください。",
+              "error",
+            );
+          }
         }
         // text-order ステップの canvas プレビューを即座に更新
         if (
@@ -7700,27 +7764,27 @@
 
       function toggleFontBold() {
         state.fontBold = !state.fontBold;
-        const btn = document.getElementById("btnBold");
-        if (btn) {
+        // step-preview と step-text-order に同一ボタンが 2 箇所あるため、
+        // 両方のフィードバックを同期する。id は衝突するので data-role で選択。
+        document.querySelectorAll('[data-role="btnBold"]').forEach((btn) => {
           btn.style.background = state.fontBold ? "var(--charcoal)" : "#fff";
           btn.style.color = state.fontBold ? "#fff" : "var(--text)";
           btn.style.borderColor = state.fontBold
             ? "var(--charcoal)"
             : "var(--border)";
-        }
+        });
         updatePositionPreview();
       }
 
       function toggleFontItalic() {
         state.fontItalic = !state.fontItalic;
-        const btn = document.getElementById("btnItalic");
-        if (btn) {
+        document.querySelectorAll('[data-role="btnItalic"]').forEach((btn) => {
           btn.style.background = state.fontItalic ? "var(--charcoal)" : "#fff";
           btn.style.color = state.fontItalic ? "#fff" : "var(--text)";
           btn.style.borderColor = state.fontItalic
             ? "var(--charcoal)"
             : "var(--border)";
-        }
+        });
         updatePositionPreview();
       }
 

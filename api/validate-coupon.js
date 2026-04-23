@@ -1,18 +1,10 @@
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
 
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60 * 1000;
-const BUSINESS_ERROR_MESSAGES = new Set([
-  "クーポンが見つかりません",
-  "このクーポンは現在使用できません",
-  "このクーポンは使用上限に達しています",
-  "このクーポンはすでに使用済みです",
-  "このクーポンの有効期限が切れています",
-  "このクーポンは条件を満たしていません",
-]);
 
 function toDate(value) {
   if (!value) return null;
@@ -136,56 +128,17 @@ export default async function handler(req, res) {
       .json({ error: "リクエストが多すぎます。時間をおいてお試しください" });
   }
 
-  // ── action: "use" → クーポン使用確定（旧 /api/use-coupon）
+  // ── action: "use" は廃止 ──
+  // 以前は決済前にクーポンを消費していたが、決済キャンセル時にクーポンが消費済み
+  // のまま残る問題があったため、使用確定は create-order.js (決済成立後) に一本化。
+  // クライアントが誤って古いパスを呼んだ場合は検証だけ行って success を返さない。
   if (body.action === "use") {
-    const { code, subtotal } = body;
-    if (!code?.trim())
-      return res
-        .status(400)
-        .json({ success: false, error: "クーポンを適用できませんでした" });
-    if (typeof subtotal !== "number") {
-      return res
-        .status(400)
-        .json({ success: false, error: "クーポンを適用できませんでした" });
-    }
-    const upperCode = String(code).trim().toUpperCase();
-    try {
-      const couponRef = db.collection("coupons").doc(upperCode);
-      const userRef = db.collection("users").doc(authUser.uid);
-      await db.runTransaction(async (tx) => {
-        const [couponSnap, userSnap] = await Promise.all([
-          tx.get(couponRef),
-          tx.get(userRef),
-        ]);
-        const coupon = couponSnap.data();
-        assertCouponUsable(coupon, subtotal);
-        if (
-          userSnap.exists &&
-          (userSnap.data().appliedCoupons ?? []).includes(upperCode)
-        )
-          throw new Error("このクーポンはすでに使用済みです");
-        tx.update(couponRef, {
-          usedCount: FieldValue.increment(1),
-          updatedAt: new Date(),
-        });
-        tx.set(
-          userRef,
-          { appliedCoupons: FieldValue.arrayUnion(upperCode) },
-          { merge: true },
-        );
-      });
-      console.log(
-        `[validate-coupon/use] ${upperCode} 使用済み (uid: ${authUser.uid})`,
-      );
-      return res.status(200).json({ success: true });
-    } catch (err) {
-      console.error("[validate-coupon/use] エラー:", err);
-      const isBusinessError = BUSINESS_ERROR_MESSAGES.has(err.message);
-      return res.status(isBusinessError ? 400 : 500).json({
-        success: false,
-        error: isBusinessError ? err.message : "クーポンを適用できませんでした",
-      });
-    }
+    return res.status(410).json({
+      success: false,
+      error:
+        "このエンドポイントは廃止されました。クーポンは注文確定時に自動適用されます。",
+      deprecated: true,
+    });
   }
 
   // ── デフォルト: クーポン検証

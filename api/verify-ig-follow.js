@@ -10,6 +10,15 @@
 import { createIgDiscountToken } from "./_lib/discounts.js";
 import { verifyAuth } from "./_lib/auth.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAdminApp } from "./_lib/auth.js";
+import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
+
+// OpenRouter Vision 課金と DoS 防止のため、画像サイズの上限を設ける。
+// 8MB の元画像 → base64 約 10.7MB → data URL 全体で約 11.2M 文字。
+const MAX_IMAGE_LENGTH = 11_500_000;
+const RATE_LIMIT = 6;
+const RATE_WINDOW_MS = 60 * 1000;
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -24,6 +33,12 @@ export default async function handler(req, res) {
     return res
       .status(400)
       .json({ verified: false, message: "画像データが不正です" });
+  }
+  if (image.length > MAX_IMAGE_LENGTH) {
+    return res.status(413).json({
+      verified: false,
+      message: "画像サイズが大きすぎます（8MB以下にしてください）",
+    });
   }
 
   // base64部分を抽出
@@ -43,6 +58,31 @@ export default async function handler(req, res) {
       return res
         .status(401)
         .json({ verified: false, message: "認証が必要です" });
+    }
+
+    // OpenRouter は 1 リクエストにつき課金が発生する。UID + IP 両方で絞る。
+    try {
+      const db = getFirestore(getAdminApp());
+      await Promise.all([
+        consumeRateLimit(
+          db,
+          `ig_verify_uid_${authUser.uid}`,
+          RATE_LIMIT,
+          RATE_WINDOW_MS,
+        ),
+        consumeRateLimit(
+          db,
+          `ig_verify_ip_${getClientIp(req)}`,
+          RATE_LIMIT,
+          RATE_WINDOW_MS,
+        ),
+      ]);
+    } catch (rateErr) {
+      console.warn("[verify-ig-follow] rate limit:", rateErr.message);
+      return res.status(429).json({
+        verified: false,
+        message: "リクエストが多すぎます。時間をおいてお試しください",
+      });
     }
 
     const openrouterKey = process.env.OPENROUTER_API_KEY;

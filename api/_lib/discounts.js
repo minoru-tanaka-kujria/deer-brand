@@ -134,6 +134,7 @@ export async function resolveIgDiscount({
   // db を渡しつつ consume=true なら、jti を使用済みに記録（二重適用防止）
   if (db && consume && parsed.jti) {
     const tokenRef = db.collection("usedIgTokens").doc(parsed.jti);
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30日 TTL
     await db.runTransaction(async (tx) => {
       const existing = await tx.get(tokenRef);
       if (existing.exists) {
@@ -142,7 +143,7 @@ export async function resolveIgDiscount({
       tx.set(tokenRef, {
         uid,
         usedAt: new Date(),
-        // TTL設定推奨: 30日後に自動削除
+        expiresAt, // Firestore TTL ポリシー用
       });
     });
   } else if (db && parsed.jti) {
@@ -154,4 +155,22 @@ export async function resolveIgDiscount({
   }
 
   return 500;
+}
+
+/**
+ * IG 割引トークンの消費を取り消す (決済失敗時のロールバック用)。
+ * payment-intent 作成失敗後などに呼び出すことで、トークンを再利用可能にする。
+ */
+export async function rollbackIgDiscount({ token, db }) {
+  if (!token || !db) return;
+  try {
+    const [encodedPayload] = String(token).split(".");
+    if (!encodedPayload) return;
+    const payload = Buffer.from(encodedPayload, "base64url").toString("utf8");
+    const parsed = JSON.parse(payload);
+    if (!parsed?.jti) return;
+    await db.collection("usedIgTokens").doc(parsed.jti).delete();
+  } catch (e) {
+    console.warn("[discounts] rollbackIgDiscount failed:", e?.message || e);
+  }
 }

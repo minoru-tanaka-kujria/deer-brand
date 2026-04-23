@@ -44,17 +44,40 @@ export async function uploadDataUrlToStorage(dataUrl, { uid, orderId } = {}) {
       validation: "md5",
       metadata: { cacheControl: "public, max-age=31536000" },
     });
-    // 公開 URL 化 (ACL 経由)
+
+    // 公開 URL 化 (ACL 経由)。Uniform bucket-level access が有効なバケットでは
+    // makePublic() が失敗するため、その場合は長期 signed URL を返す。
+    let madePublic = false;
     try {
       await file.makePublic();
-    } catch (_) {
-      // ACL 設定無しでも getSignedUrl でアクセス可能
+      madePublic = true;
+    } catch (aclErr) {
+      console.warn(
+        "[art-upload] makePublic failed, will fall back to signed URL:",
+        aclErr?.message || aclErr,
+      );
     }
-    // 公開 URL
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${encodeURI(objectName)}`;
-    return publicUrl;
+
+    if (madePublic) {
+      return `https://storage.googleapis.com/${bucket.name}/${encodeURI(objectName)}`;
+    }
+
+    // Signed URL フォールバック (7日間有効)。Printful は短期間ダウンロードするため十分。
+    try {
+      const [signedUrl] = await file.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+      });
+      return signedUrl;
+    } catch (signErr) {
+      console.error(
+        "[art-upload] getSignedUrl failed:",
+        signErr?.message || signErr,
+      );
+      throw new Error("ART_UPLOAD_URL_UNAVAILABLE");
+    }
   } catch (err) {
-    console.error("[art-upload] upload failed:", err.message);
-    return null;
+    console.error("[art-upload] upload failed:", err?.message || err);
+    throw err instanceof Error ? err : new Error(String(err));
   }
 }

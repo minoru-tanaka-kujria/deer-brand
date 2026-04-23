@@ -22,8 +22,10 @@ const _stripe = process.env.STRIPE_SECRET_KEY
 
 const STATUS_ORDER = {
   pending_payment: 0,
+  printful_failed: 0,
   paid: 1,
   preparing: 2,
+  printing: 2,
   shipped: 3,
   delivered: 4,
 };
@@ -78,38 +80,77 @@ function sanitizeArtImageUrl(url) {
     const u = new URL(url);
     if (u.protocol !== "https:") return null;
     if (!ALLOWED_ART_HOSTS.has(u.hostname)) return null;
-    // Replicate サブドメインを許可（*.replicate.delivery）
     return url;
   } catch (_e) {
     return null;
   }
 }
 
+// ストレージ系 URL については uid 所有確認を行う。
+// art-composites/{uid}/... のパスに uid が含まれるべき。
+// 他人のアップロード済みアートを横取りして注文する攻撃を防ぐ。
+function isArtUrlOwnedBy(url, uid) {
+  if (!url || !uid) return false;
+  try {
+    const u = new URL(url);
+    const pathname = decodeURIComponent(u.pathname);
+    if (
+      u.hostname === "storage.googleapis.com" ||
+      u.hostname === "firebasestorage.googleapis.com"
+    ) {
+      return pathname.includes(`/${uid}/`);
+    }
+    // replicate.delivery の URL はハッシュベースでリンクが分からないため
+    // 所有確認できない。この場合は "owned" とは判定せず false を返す。
+    return false;
+  } catch (_e) {
+    return false;
+  }
+}
+
 // data: URL を Firebase Storage にアップロードして https URL 化。
 // フレーム/ワッペン合成結果はブラウザ canvas で作られた data URL で届くため、
 // Printful 等が要求する public URL に変換する必要がある。
+// 戻り値: { url, source: "direct-https"|"data-upload"|"none"|"reserved" }
 async function resolveArtImageUrl(rawUrl, { uid, orderId }) {
-  if (typeof rawUrl !== "string") return null;
+  if (typeof rawUrl !== "string") {
+    return { url: null, source: "none", error: null };
+  }
   // まずは https として直接受理できるか
   const directHttps = sanitizeArtImageUrl(rawUrl);
-  if (directHttps) return directHttps;
+  if (directHttps) return { url: directHttps, source: "direct-https" };
   // data: URL なら Storage にアップロードして https 化
   if (rawUrl.startsWith("data:")) {
+    const { uploadDataUrlToStorage } = await import("./_lib/art-upload.js");
     try {
-      const { uploadDataUrlToStorage } = await import("./_lib/art-upload.js");
       const uploaded = await uploadDataUrlToStorage(rawUrl, { uid, orderId });
       if (uploaded) {
         const sanitized = sanitizeArtImageUrl(uploaded);
-        if (sanitized) return sanitized;
+        if (sanitized) return { url: sanitized, source: "data-upload" };
+        return {
+          url: null,
+          source: "none",
+          error: "UPLOADED_URL_REJECTED_BY_SANITIZER",
+        };
       }
+      return {
+        url: null,
+        source: "none",
+        error: "UPLOAD_RETURNED_NULL",
+      };
     } catch (e) {
-      console.warn(
+      console.error(
         "[create-order] data URL upload failed:",
         e && e.message ? e.message : e,
       );
+      return {
+        url: null,
+        source: "none",
+        error: `UPLOAD_FAILED:${e?.message || "unknown"}`,
+      };
     }
   }
-  return null;
+  return { url: null, source: "none", error: "UNSUPPORTED_ART_URL_SCHEME" };
 }
 
 function sanitizeShipping(shipping) {
@@ -196,10 +237,47 @@ export default async function handler(req, res) {
 
     // data: URL の場合は Firebase Storage にアップロードして https 化してから
     // transaction に入る。トランザクション内で非同期 upload を走らせると競合する。
-    const resolvedArtImageUrl = await resolveArtImageUrl(artImageUrl, {
+    const artResolution = await resolveArtImageUrl(artImageUrl, {
       uid: authUser.uid,
       orderId,
     });
+    const resolvedArtImageUrl = artResolution.url;
+
+    // クライアントが artImageUrl を送ってきたのに null に解決された場合は、
+    // 「data URL upload 失敗」「URL が許可ドメイン外」等の障害を意味する。
+    // reservedOrder.artImageUrl が無い状態でそのまま確定すると、生写真未確定のまま
+    // Printful に流れる or 永久保留となるため 500 で拒否する。
+    if (
+      typeof artImageUrl === "string" &&
+      artImageUrl.length > 0 &&
+      !resolvedArtImageUrl
+    ) {
+      console.error(
+        "[create-order] art image resolution failed:",
+        artResolution.error,
+      );
+      return res.status(500).json({
+        error: "ART_IMAGE_UNAVAILABLE",
+        detail: artResolution.error,
+      });
+    }
+
+    // direct-https の場合のみ所有確認を行う。data-upload はサーバ側で path を
+    // 組み立てているので uid 付与されており安全。replicate.delivery はハッシュ
+    // ベースで所有確認できないため許容（実被害低め、Replicate が生成URLを推測困難）。
+    if (
+      artResolution.source === "direct-https" &&
+      resolvedArtImageUrl &&
+      (resolvedArtImageUrl.includes("storage.googleapis.com") ||
+        resolvedArtImageUrl.includes("firebasestorage.googleapis.com")) &&
+      !isArtUrlOwnedBy(resolvedArtImageUrl, authUser.uid)
+    ) {
+      console.error(
+        "[create-order] art image ownership mismatch:",
+        authUser.uid,
+      );
+      return res.status(403).json({ error: "ART_IMAGE_NOT_OWNED" });
+    }
 
     const result = await db.runTransaction(async (tx) => {
       const orderSnap = await tx.get(orderRef);
@@ -278,7 +356,13 @@ export default async function handler(req, res) {
           size: item.size,
           petCount: item.petCount,
           petNames: item.petNames,
-          artImageUrl: resolvedArtImageUrl ?? reservedOrder.artImageUrl ?? null,
+          // reservedOrder.artImageUrl は Stripe intent 作成時に書かれた可能性があるが、
+          // その URL が期限切れ (Replicate delivery の署名付き等) の場合がある。
+          // 新しく解決した URL を常に優先する。
+          artImageUrl:
+            resolvedArtImageUrl ??
+            sanitizeArtImageUrl(reservedOrder.artImageUrl) ??
+            null,
           total: expectedAmount,
           amount: expectedAmount,
           paymentIntentId,

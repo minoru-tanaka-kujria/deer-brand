@@ -26,8 +26,10 @@ export const config = {
 
 const STATUS_ORDER = {
   pending_payment: 0,
+  printful_failed: 0,
   paid: 1,
   preparing: 2,
+  printing: 2,
   shipped: 3,
   delivered: 4,
 };
@@ -138,6 +140,8 @@ export default async function handler(req, res) {
         eventId: event.id,
         type: event.type,
         processedAt: new Date(),
+        // Firestore TTL: 90 日後に自動削除 (コレクションに TTL ポリシー設定要)
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
       });
     });
 

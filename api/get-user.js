@@ -119,8 +119,31 @@ export default async function handler(req, res) {
   // ?type=share で動的OGPページを返す（認証不要）
   // 例: /api/get-user?type=share&art=https://...&name=ポチ
   if (type === "share") {
-    const artUrl = req.query.art || "https://custom.deer.gift/img/hero-dog.jpg";
-    const petName = req.query.name || "愛犬";
+    const ALLOWED_SHARE_HOSTS = new Set([
+      "custom.deer.gift",
+      "deer.gift",
+      "firebasestorage.googleapis.com",
+      "storage.googleapis.com",
+      "replicate.delivery",
+      "pbxt.replicate.delivery",
+      "tjzk.replicate.delivery",
+    ]);
+    const rawArt = req.query.art;
+    const defaultArt = "https://custom.deer.gift/img/hero-dog.jpg";
+    let artUrl = defaultArt;
+    if (rawArt && typeof rawArt === "string") {
+      try {
+        const u = new URL(rawArt);
+        if (u.protocol === "https:" && ALLOWED_SHARE_HOSTS.has(u.hostname)) {
+          artUrl = rawArt;
+        }
+      } catch (_) {
+        // 不正な URL はデフォルトにフォールバック
+      }
+    }
+    // 長すぎるペット名はフィッシング OGP 用の攻撃面になるため 30 文字に制限
+    const rawName = typeof req.query.name === "string" ? req.query.name : "";
+    const petName = rawName.replace(/[<>"'&]/g, "").slice(0, 30) || "愛犬";
     const title = `${petName}のオリジナルアート｜Deer Brand`;
     const desc = `${petName}の写真からAIが生成したアート。あなたも愛犬・愛猫のオリジナルグッズを作りませんか？`;
     const safeTitle = title.replace(/"/g, "&quot;").replace(/</g, "&lt;");

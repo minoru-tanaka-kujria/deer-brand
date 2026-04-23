@@ -8,6 +8,13 @@
 
 import crypto from "node:crypto";
 import { FieldValue } from "firebase-admin/firestore";
+import {
+  PRINTFUL_PRODUCT_IDS,
+  COLOR_MAP,
+  fetchVariantId,
+  buildRecipient,
+  resolveFileType,
+} from "./printful.js";
 
 // ── クーポンコード生成ヘルパー ──
 function generateCouponCode(prefix) {
@@ -137,8 +144,15 @@ export async function sendOrderConfirmationEmail(db, order, orderId) {
   const itemName =
     (order.items?.[0]?.productName ?? order.productName ?? order.product) || "";
   const s = order.shippingAddress || {};
-  const shippingBlock = s.fullName
-    ? `<p style="margin:0;line-height:1.6">〒${s.zip || ""}<br>${s.prefecture || ""}${s.address1 || ""}${s.address2 || ""}<br>${s.fullName}</p>`
+  const hasShipping = !!(
+    s.fullName ||
+    s.zip ||
+    s.prefecture ||
+    s.address1 ||
+    s.address2
+  );
+  const shippingBlock = hasShipping
+    ? `<p style="margin:0;line-height:1.6">${s.zip ? `〒${s.zip}<br>` : ""}${s.prefecture || ""}${s.address1 || ""}${s.address2 || ""}${s.fullName ? `<br>${s.fullName}` : ""}</p>`
     : "";
   // ギフト注文時の追加セクション
   const giftInfoBlock = order.isGift
@@ -220,12 +234,73 @@ ${repeatSection}
   }
 }
 
+// ── Printful 発注エラー記録 ──
+async function markPrintfulFailed(db, orderId, reason, detail = null) {
+  try {
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({
+        printfulFailed: true,
+        printfulError: String(reason).slice(0, 500),
+        printfulErrorDetail: detail ? String(detail).slice(0, 2000) : null,
+        printfulFailedAt: new Date(),
+        status: "printful_failed",
+        updatedAt: new Date(),
+      });
+    console.error(
+      `[post-payment] Printful FAILED marker set orderId=${orderId} reason=${reason}`,
+    );
+  } catch (markErr) {
+    console.error(
+      "[post-payment] failed to mark printfulFailed:",
+      markErr.message,
+    );
+  }
+  // 管理者通知（best-effort）
+  try {
+    const { sendEmail } = await import("./email.js");
+    const adminEmail = process.env.ADMIN_ALERT_EMAIL;
+    if (adminEmail) {
+      await sendEmail({
+        to: adminEmail,
+        subject: `[Deer Brand] Printful 発注失敗 (${orderId})`,
+        html: `<p>注文 <strong>${orderId}</strong> の Printful 自動発注が失敗しました。</p>
+<p><strong>理由:</strong> ${String(reason).slice(0, 500)}</p>
+<pre style="background:#f5f5f5;padding:12px;white-space:pre-wrap">${(detail ? String(detail) : "(no detail)").slice(0, 2000)}</pre>
+<p>管理画面から手動発注してください。</p>`,
+        text: `Printful 発注失敗 orderId=${orderId} reason=${reason}`,
+      });
+    }
+  } catch (_) {
+    // 通知失敗は処理本筋に影響させない
+  }
+}
+
 // ── Printful 発注 ──
 export async function triggerPrintfulOrder(db, order, orderId) {
   const apiKey = process.env.PRINTFUL_API_KEY;
-  if (!apiKey) return;
+  if (!apiKey) {
+    console.warn("[post-payment] Printful skip: PRINTFUL_API_KEY 未設定");
+    return;
+  }
   if (!order.artImageUrl) {
-    console.warn("[post-payment] Printful skip: no artImageUrl for", orderId);
+    console.warn("[post-payment] Printful defer: no artImageUrl for", orderId);
+    try {
+      await db
+        .collection("orders")
+        .doc(orderId)
+        .update({
+          pendingArtRecovery: true,
+          pendingArtRecoverySince: order.pendingArtRecoverySince ?? new Date(),
+          updatedAt: new Date(),
+        });
+    } catch (markErr) {
+      console.warn(
+        "[post-payment] pendingArtRecovery mark failed:",
+        markErr.message,
+      );
+    }
     return;
   }
   if (order.printfulOrderId) {
@@ -233,60 +308,33 @@ export async function triggerPrintfulOrder(db, order, orderId) {
     return;
   }
 
-  const PRINTFUL_PRODUCT_IDS = {
-    poster: 1,
-    "tshirt-unisex": 71,
-    "hoodie-pullover": 146,
-    "mug-11oz": 19,
-    "tote-bag": 587,
-    "phone-case": 31,
-    "canvas-wrap": 3,
-    "sticker-sheet": 505,
-    "emb-cap": 167,
-    "emb-hoodie": 212,
-  };
-  const COLOR_MAP = {
-    white: "White",
-    black: "Black",
-    navy: "Navy",
-    gray: "Sport Gray",
-  };
-  const PLACEMENT_FILE_TYPE = {
-    front: "front",
-    back: "back",
-    "left-chest": "front",
-  };
-
   const productId = PRINTFUL_PRODUCT_IDS[order.product];
   if (!productId) {
-    console.warn("[post-payment] Printful: unknown product", order.product);
+    await markPrintfulFailed(
+      db,
+      orderId,
+      `UNSUPPORTED_PRODUCT:${order.product}`,
+    );
     return;
   }
 
   try {
-    // バリアントID取得
-    const varRes = await fetch(
-      `https://api.printful.com/products/${productId}`,
-      {
-        headers: { Authorization: `Bearer ${apiKey}` },
-      },
+    const colorName = COLOR_MAP[order.color || ""] || COLOR_MAP.default;
+    const variantId = await fetchVariantId(
+      productId,
+      colorName,
+      order.size || "",
+      apiKey,
     );
-    const varData = await varRes.json();
-    const colorName = COLOR_MAP[order.color || ""] || "White";
-    const variant = (varData.result?.variants || []).find(
-      (v) => v.color === colorName && (!order.size || v.size === order.size),
-    );
-    if (!variant) {
-      console.warn("[post-payment] Printful: no variant found");
+    if (!variantId) {
+      await markPrintfulFailed(db, orderId, "VARIANT_NOT_FOUND");
       return;
     }
 
-    const isEmb = order.product === "emb-cap" || order.product === "emb-hoodie";
-    const fileType = isEmb
-      ? "embroidery"
-      : PLACEMENT_FILE_TYPE[order.placementId || ""] || "front";
+    const fileType = resolveFileType(order);
     const fileEntry = { url: order.artImageUrl, type: fileType };
-    if (!isEmb)
+    const isEmb = order.product === "emb-cap" || order.product === "emb-hoodie";
+    if (!isEmb) {
       fileEntry.position = {
         area_width: 1800,
         area_height: 2400,
@@ -295,23 +343,13 @@ export async function triggerPrintfulOrder(db, order, orderId) {
         top: 300,
         left: 0,
       };
+    }
 
-    const s = order.shippingAddress || {};
     const printfulBody = {
-      recipient: {
-        name: s.fullName || "",
-        address1: s.address1 || "",
-        address2: s.address2 || "",
-        city: s.prefecture || "Tokyo",
-        country_code: "JP",
-        zip: s.zip || "",
-        phone: s.phone || "",
-        email: s.email || order.email || "",
-      },
-      items: [{ variant_id: variant.id, quantity: 1, files: [fileEntry] }],
+      recipient: buildRecipient(order.shippingAddress),
+      items: [{ variant_id: variantId, quantity: 1, files: [fileEntry] }],
       retail_costs: { currency: "JPY", subtotal: String(order.total ?? 0) },
     };
-    // ギフト注文: 金額非表示納品書 + メッセージ
     if (order.isGift) {
       printfulBody.gift = {
         subject: "Deer Brand からのギフト",
@@ -334,13 +372,24 @@ export async function triggerPrintfulOrder(db, order, orderId) {
       },
       body: JSON.stringify(printfulBody),
     });
-    const pfData = await pfRes.json();
+    const pfText = await pfRes.text();
+    let pfData = null;
+    try {
+      pfData = JSON.parse(pfText);
+    } catch (_) {
+      // non-JSON response
+    }
     if (!pfRes.ok) {
-      console.error("[post-payment] Printful order failed:", pfData);
+      await markPrintfulFailed(
+        db,
+        orderId,
+        `PRINTFUL_HTTP_${pfRes.status}`,
+        pfText,
+      );
       return;
     }
 
-    const printfulOrderId = pfData.result?.id ?? null;
+    const printfulOrderId = pfData?.result?.id ?? null;
     await db
       .collection("orders")
       .doc(orderId)
@@ -349,11 +398,14 @@ export async function triggerPrintfulOrder(db, order, orderId) {
         printfulOrderUrl: printfulOrderId
           ? `https://www.printful.com/dashboard/orders/${printfulOrderId}`
           : null,
+        printfulFailed: false,
+        printfulError: null,
+        pendingArtRecovery: false,
         status: "printing",
         updatedAt: new Date(),
       });
     console.log("[post-payment] Printful order created:", printfulOrderId);
   } catch (e) {
-    console.error("[post-payment] Printful error:", e.message);
+    await markPrintfulFailed(db, orderId, "EXCEPTION", e?.message || String(e));
   }
 }

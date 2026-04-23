@@ -75,9 +75,19 @@ export async function pollPrediction({ token, id }) {
     outputUrl = Array.isArray(data.output) ? data.output[0] : data.output;
   }
 
+  // Replicate が返す原因文字列 (safety filter, invalid image, model error 等) を
+  // 定型メッセージで上書きせず、ユーザーに伝わる形で渡す。
+  let errorMessage = null;
+  if (data.error) {
+    errorMessage =
+      typeof data.error === "string"
+        ? data.error.slice(0, 200)
+        : JSON.stringify(data.error).slice(0, 200);
+  }
+
   return {
     status: data.status,
     outputUrl,
-    error: data.error ? "処理に失敗しました" : null,
+    error: errorMessage,
   };
 }

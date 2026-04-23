@@ -15,6 +15,13 @@ import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp } from "./_lib/auth.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
+import {
+  PRINTFUL_PRODUCT_IDS,
+  COLOR_MAP,
+  PLACEMENT_FILE_TYPE,
+  fetchVariantId,
+  buildRecipient,
+} from "./_lib/printful.js";
 
 // ---------------------------------------------------------------------------
 // TOTP (RFC 6238) 実装 — 外部ライブラリ不要
@@ -132,121 +139,17 @@ function sanitizeStr(v) {
   return v.trim().slice(0, 500);
 }
 
-// ---------------------------------------------------------------------------
-// Printful 商品マッピング
-// ---------------------------------------------------------------------------
-const PRINTFUL_PRODUCT_IDS = {
-  tshirt: 71, // Bella+Canvas 3001
-  hoodie: 380, // Cotton Heritage M2580
-  mug: 19, // White Glossy Mug
-  case: 601, // Tough Case for iPhone®
-  poster: 1, // Enhanced Matte Paper Poster
-  postcard: 433, // Standard Postcard
-  "emb-cap": 206, // Classic Dad Hat Yupoong 6245CM
-  "emb-hoodie": 380, // Cotton Heritage M2580（刺繍）
-  sticker: 358, // Kiss-Cut Stickers
-};
-
-const COLOR_MAP = {
-  // tshirt (Bella+Canvas 3001)
-  white: "White",
-  black: "Black",
-  gray: "Carbon Grey", // hoodie用。tshirtは"Sport Grey"だがvariantルックアップで自動マッチ
-  navy: "Navy Blazer", // hoodie用。tshirtは"Navy"だがvariantルックアップで自動マッチ
-  pink: "Pink", // tshirt="Pink", hoodie="Light Pink"
-  beige: "Natural",
-  // emb-cap (Yupoong 6245CM)
-  khaki: "Khaki",
-  // poster
-  natural: "Natural",
-  // case (Tough Case for iPhone)
-  glossy: "Glossy",
-  matte: "Matte",
-  // fallback
-  default: "White",
-};
-
-const PLACEMENT_FILE_TYPE = {
-  "left-chest": "front",
-  center: "front",
-  back: "back",
-  wrap: "front",
-  full: "front",
-  front: "front",
-};
-
 const VALID_STATUSES = [
   "pending",
+  "pending_payment",
+  "paid",
   "preparing",
+  "printing",
   "shipped",
   "delivered",
   "cancelled",
-  "printing",
+  "printful_failed",
 ];
-
-// ---------------------------------------------------------------------------
-// Printful variant_id 動的ルックアップ
-// ---------------------------------------------------------------------------
-async function fetchVariantId(productId, colorName, size, apiKey) {
-  const res = await fetch(
-    `https://api.printful.com/products/${productId}/variants`,
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  if (!res.ok)
-    throw new Error(
-      `Printful variant取得失敗 (productId: ${productId}): HTTP ${res.status}`,
-    );
-  const { result: variants = [] } = await res.json();
-  const lColor = (colorName || "").toLowerCase();
-  const lSize = (size || "").toUpperCase();
-  // 1. 色+サイズ完全一致
-  const exact = variants.find(
-    (v) => v.color?.toLowerCase() === lColor && v.size?.toUpperCase() === lSize,
-  );
-  if (exact) return exact.id;
-  // 2. 色の部分一致+サイズ完全一致（例: "navy" → "Navy Blazer"）
-  const partial = variants.find(
-    (v) =>
-      v.color?.toLowerCase().includes(lColor) &&
-      v.size?.toUpperCase() === lSize,
-  );
-  if (partial) return partial.id;
-  // 3. 色完全一致のみ
-  const colorOnly = variants.find((v) => v.color?.toLowerCase() === lColor);
-  if (colorOnly) return colorOnly.id;
-  // 4. 色部分一致のみ
-  const colorPartial = variants.find((v) =>
-    v.color?.toLowerCase().includes(lColor),
-  );
-  if (colorPartial) return colorPartial.id;
-  // 5. フォールバック
-  if (variants[0]?.id) return variants[0].id;
-  throw new Error(
-    `variant未発見: productId=${productId} color=${colorName} size=${size}`,
-  );
-}
-
-// ---------------------------------------------------------------------------
-// 日本住所フォーマット
-// ---------------------------------------------------------------------------
-function buildRecipient(addr = {}) {
-  return {
-    name: addr.name || "",
-    address1: addr.address1 || addr.street || "",
-    address2: addr.address2 || "",
-    city: addr.city || "",
-    state_code: addr.prefecture || addr.state || "",
-    country_code: "JP",
-    zip: (addr.zip || addr.postalCode || "").replace("-", ""),
-    phone: addr.phone || "",
-    email: addr.email || "",
-  };
-}
 
 // ---------------------------------------------------------------------------
 // アクション: 注文一覧取得
@@ -447,6 +350,75 @@ async function actionCreatePrintfulOrder(db, body) {
   return { success: true, printfulOrderId, printfulOrderUrl };
 }
 
+// ---------------------------------------------------------------------------
+// アクション: 要救済注文の一覧取得 & 自動再発注
+//   pendingArtRecovery=true の注文 / printful_failed ステータスの注文を洗い出す
+// ---------------------------------------------------------------------------
+async function actionListPendingOrders(db, _body) {
+  const snap = await db
+    .collection("orders")
+    .where("status", "in", ["paid", "printful_failed"])
+    .orderBy("createdAt", "desc")
+    .limit(100)
+    .get();
+  const pending = [];
+  for (const doc of snap.docs) {
+    const d = doc.data();
+    if (
+      (d.pendingArtRecovery === true || d.printfulFailed === true) &&
+      !d.printfulOrderId
+    ) {
+      pending.push({
+        orderId: doc.id,
+        uid: d.uid,
+        email: d.email,
+        product: d.product,
+        productName: d.productName,
+        artImageUrl: d.artImageUrl || null,
+        hasArtImage: !!d.artImageUrl,
+        pendingArtRecovery: !!d.pendingArtRecovery,
+        printfulFailed: !!d.printfulFailed,
+        printfulError: d.printfulError || null,
+        status: d.status,
+        amount: d.amount ?? d.total ?? 0,
+        createdAt:
+          d.createdAt?.toDate?.()?.toISOString() ?? d.createdAt ?? null,
+        updatedAt:
+          d.updatedAt?.toDate?.()?.toISOString() ?? d.updatedAt ?? null,
+      });
+    }
+  }
+  return { pending };
+}
+
+async function actionRetryPrintful(db, body) {
+  const orderId = sanitizeStr(body.orderId);
+  if (!orderId)
+    throw Object.assign(new Error("orderId は必須です"), { status: 400 });
+  const orderRef = db.collection("orders").doc(orderId);
+  const orderSnap = await orderRef.get();
+  if (!orderSnap.exists)
+    throw Object.assign(new Error("注文が見つかりません"), { status: 404 });
+  const order = orderSnap.data();
+  if (order.printfulOrderId)
+    throw Object.assign(new Error("既にPrintful発注済みです"), { status: 409 });
+  if (!order.artImageUrl)
+    throw Object.assign(
+      new Error("artImageUrl が未確定のため自動リトライできません"),
+      { status: 400 },
+    );
+
+  const { triggerPrintfulOrder } = await import("./_lib/post-payment.js");
+  await triggerPrintfulOrder(db, order, orderId);
+  const after = (await orderRef.get()).data();
+  return {
+    success: !!after.printfulOrderId,
+    printfulOrderId: after.printfulOrderId || null,
+    status: after.status,
+    printfulError: after.printfulError || null,
+  };
+}
+
 function getPublicErrorMessage(status) {
   if (status === 400) return "リクエストが不正です";
   if (status === 404) return "対象が見つかりません";
@@ -550,6 +522,10 @@ export default async function handler(req, res) {
       result = await actionCreatePrintfulOrder(db, body);
     } else if (action === "get-error-reports") {
       result = await actionGetErrorReports(db, body);
+    } else if (action === "list-pending-orders") {
+      result = await actionListPendingOrders(db, body);
+    } else if (action === "retry-printful") {
+      result = await actionRetryPrintful(db, body);
     } else {
       return res.status(400).json({ error: `不明な action: ${action}` });
     }

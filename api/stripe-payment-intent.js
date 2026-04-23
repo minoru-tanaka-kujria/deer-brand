@@ -9,7 +9,11 @@ import crypto from "node:crypto";
 import Stripe from "stripe";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp, verifyAuth } from "./_lib/auth.js";
-import { resolveCouponDiscount, resolveIgDiscount } from "./_lib/discounts.js";
+import {
+  resolveCouponDiscount,
+  resolveIgDiscount,
+  rollbackIgDiscount,
+} from "./_lib/discounts.js";
 import { PRODUCTS, calculateTotal } from "./_lib/products.js";
 import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
@@ -167,13 +171,13 @@ export default async function handler(req, res) {
         code: couponCode,
         subtotal,
       });
-    // IG割引トークン: ここで consume=true にして jti を Firestore に記録
-    // （並列リクエストによる二重適用をトランザクションで防止）
+    // まずは consume=false で検証だけ行い、PI 作成が成功してから消費する。
+    // PI 作成失敗で IG トークンだけ消費される事故を防ぐ。
     const igDiscount = await resolveIgDiscount({
       token: igDiscountToken,
       uid: authUser.uid,
       db,
-      consume: true,
+      consume: false,
     });
     const amount = calculateTotal({
       item: normalizedItem.item,
@@ -258,14 +262,49 @@ export default async function handler(req, res) {
       },
     );
 
-    await db
-      .collection("orders")
-      .doc(orderId)
-      .set({
-        ...orderData,
-        paymentIntentId: paymentIntent.id,
-        status: "pending_payment",
-      });
+    // PI 作成が成功してから IG トークンを正式消費する。
+    // ここで失敗 (二重消費) した場合は PI を cancel してロールバック。
+    if (igDiscount > 0 && igDiscountToken) {
+      try {
+        await resolveIgDiscount({
+          token: igDiscountToken,
+          uid: authUser.uid,
+          db,
+          consume: true,
+        });
+      } catch (igErr) {
+        try {
+          await stripe.paymentIntents.cancel(paymentIntent.id);
+        } catch (_cancelErr) {
+          // best-effort cancel
+        }
+        console.error(
+          "[stripe-payment-intent] IG token consume failed post-PI:",
+          igErr,
+        );
+        return res.status(400).json({ error: "INVALID_IG_DISCOUNT" });
+      }
+    }
+
+    try {
+      await db
+        .collection("orders")
+        .doc(orderId)
+        .set({
+          ...orderData,
+          paymentIntentId: paymentIntent.id,
+          status: "pending_payment",
+        });
+    } catch (saveErr) {
+      // 注文保存失敗 → PI と IG トークンをロールバック
+      try {
+        await stripe.paymentIntents.cancel(paymentIntent.id);
+      } catch (_) {
+        // best-effort
+      }
+      await rollbackIgDiscount({ token: igDiscountToken, db });
+      throw saveErr;
+    }
 
     // 配送先住所の自動保存 (サーバー側、Admin SDK で確実に実行)
     // クライアント実装に依存しないようここで users.savedAddresses を merge 更新する。

@@ -935,18 +935,28 @@
                 orders.length === 0
                   ? `<p class="empty-state">まだ注文がありません。<br><a href="upload" style="color:var(--terracotta)">はじめての注文をする →</a></p>`
                   : orders
-                      .slice(0, 5)
                       .map((o, idx) => {
                         const statusLabel =
-                          o.status === "preparing"
-                            ? "制作中"
-                            : o.status === "shipped"
-                              ? "発送済み"
-                              : o.status === "delivered"
-                                ? "配達完了"
-                                : o.status === "pending"
-                                  ? "受付中"
-                                  : escHtml(o.status || "処理中");
+                          o.status === "paid"
+                            ? "決済完了"
+                            : o.status === "printing"
+                              ? "印刷中"
+                              : o.status === "preparing"
+                                ? "制作中"
+                                : o.status === "shipped"
+                                  ? "発送済み"
+                                  : o.status === "delivered"
+                                    ? "配達完了"
+                                    : o.status === "cancelled"
+                                      ? "キャンセル済み"
+                                      : o.status === "printful_failed"
+                                        ? "要対応"
+                                        : o.status === "pending"
+                                          ? "受付中"
+                                          : escHtml(o.status || "処理中");
+                        const trackingBlock = o.trackingUrl
+                          ? `<div style="margin-top:0.3rem;font-size:0.7rem"><a href="${escHtml(o.trackingUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--terracotta);text-decoration:underline">📦 ${escHtml(o.trackingCarrier || "配送を追跡")} →</a></div>`
+                          : "";
                         const item0 = (o.items && o.items[0]) || {};
                         const productName =
                           item0.productName ||
@@ -992,6 +1002,7 @@
                       })()}</div>
                       <div class="order-price" style="margin-top:0">¥${Number(o.total || 0).toLocaleString()}</div>
                     </div>
+                    ${trackingBlock}
                     <div style="margin-top:0.35rem;font-size:0.68rem;color:var(--terracotta);text-align:right">詳細を見る →</div>
                   </div>`;
                       })
@@ -1069,9 +1080,27 @@
             <div style="display:grid;grid-template-columns:auto 1fr;gap:0.5rem 1rem;font-size:0.85rem;padding:0.5rem 0">
               ${rows.map(([k, v]) => `<div style="color:var(--text-light)">${safe(k)}</div><div>${safe(v)}</div>`).join("")}
             </div>
+            ${
+              o.trackingUrl
+                ? `<div style="margin-top:0.75rem;padding:0.75rem;background:#fff8e1;border:1px solid #c8956c;border-radius:8px;text-align:center">
+                     <a href="${safe(o.trackingUrl)}" target="_blank" rel="noopener" style="color:#8d6e63;font-weight:600;text-decoration:none">📦 ${safe(o.trackingCarrier || "配送状況")} を追跡 →</a>
+                     ${o.trackingNumber ? `<div style="font-size:0.7rem;color:#999;margin-top:0.25rem">追跡番号: ${safe(o.trackingNumber)}</div>` : ""}
+                   </div>`
+                : ""
+            }
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:1rem">
               <button id="btnOrderReuseSame" style="padding:0.75rem;border:1px solid var(--terracotta);background:var(--terracotta);color:#fff;border-radius:8px;cursor:pointer;font-size:0.85rem">同じものを再注文</button>
               <button id="btnOrderReuseArt" style="padding:0.75rem;border:1px solid var(--terracotta);background:#fff;color:var(--terracotta);border-radius:8px;cursor:pointer;font-size:0.85rem">このアートで別商品</button>
+            </div>
+            <div style="margin-top:1rem;padding-top:0.75rem;border-top:1px dashed #e8e0d4;text-align:center">
+              <a href="mailto:support@deer.gift?subject=${encodeURIComponent(`[Deer Brand] 注文${o.orderId || ""}についての問い合わせ`)}" style="font-size:0.8rem;color:var(--text-light);text-decoration:underline">この注文について問い合わせる</a>
+              ${
+                o.status === "pending" ||
+                o.status === "paid" ||
+                o.status === "printful_failed"
+                  ? ` ・ <a href="mailto:support@deer.gift?subject=${encodeURIComponent(`[Deer Brand] 注文キャンセル希望 ${o.orderId || ""}`)}&body=${encodeURIComponent("下記の注文をキャンセルしたいです。\n\n注文番号: " + (o.orderId || "") + "\n理由: ")}" style="font-size:0.8rem;color:var(--text-light);text-decoration:underline">キャンセル申請</a>`
+                  : ""
+              }
             </div>
           `;
           modal.style.display = "flex";

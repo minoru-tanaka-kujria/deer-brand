@@ -206,15 +206,21 @@ export default async function handler(req, res) {
     if (!id || typeof id !== "string")
       return res.status(400).json({ error: "不正なリクエストです" });
 
-    // 他人の生成結果を覗き見できないよう、予測ID → uid 紐付けを検証
+    // 他人の生成結果を覗き見できないよう、予測ID → uid 紐付けを検証。
+    // fail-closed: Firestore 障害時は 503 を返し、他人の予測結果を覗き見される
+    // リスク経路を作らない。
     try {
       const db = getFirestore(getAdminApp());
       const ownerSnap = await db.collection("artPredictions").doc(id).get();
-      if (ownerSnap.exists && ownerSnap.data().uid !== authUser.uid) {
+      if (!ownerSnap.exists) {
+        return res.status(404).json({ error: "NOT_FOUND" });
+      }
+      if (ownerSnap.data().uid !== authUser.uid) {
         return res.status(403).json({ error: "FORBIDDEN" });
       }
     } catch (authErr) {
-      console.warn("[generate-art] ownership check error:", authErr.message);
+      console.error("[generate-art] ownership check error:", authErr.message);
+      return res.status(503).json({ error: "サービスを利用できません" });
     }
 
     try {
@@ -289,12 +295,18 @@ export default async function handler(req, res) {
               mode: "stamp",
               expression: expression || null,
               createdAt: new Date(),
+              // TTL: 60 日後に自動削除
+              expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
             });
         } catch (markErr) {
-          console.warn(
+          console.error(
             "[generate-art/stamp] prediction owner mark failed:",
             markErr.message,
           );
+          // fail-closed: owner mark 失敗すると GET で 404 扱いとなりユーザーが結果を取得できなくなる
+          return res
+            .status(503)
+            .json({ error: "サービスを利用できません（owner mark 失敗）" });
         }
         return res.json({ predictionId: id });
       } catch (error) {
@@ -449,12 +461,17 @@ export default async function handler(req, res) {
             mode: "style",
             styleId: styleId || null,
             createdAt: new Date(),
+            // TTL: 60 日後に自動削除
+            expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
           });
       } catch (markErr) {
-        console.warn(
+        console.error(
           "[generate-art] prediction owner mark failed:",
           markErr.message,
         );
+        return res
+          .status(503)
+          .json({ error: "サービスを利用できません（owner mark 失敗）" });
       }
       return res.json({ predictionId: id });
     } catch (error) {

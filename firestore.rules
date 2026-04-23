@@ -45,14 +45,23 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // レビュー: 誰でも投稿可（ログイン不要）。approved=false強制・rating範囲チェック。読み書き更新は Admin SDK のみ
+    // レビュー: ログイン必須で投稿可。approved=false 強制・rating 範囲・text 長制限。
+    // 読み書き更新は Admin SDK のみ。以前は誰でも投稿可だったためボットによる大量
+    // 書き込みでコストが膨らむリスクがあった。
     // NOTE: Web SDK は数値を常に double として送るため `is int` は false になる。
     //       `is number` + 1..5 の範囲チェックで同等の保護を行う。
     match /reviews/{reviewId} {
-      allow create: if request.resource.data.approved == false
+      allow create: if request.auth != null
+        && request.resource.data.approved == false
         && request.resource.data.rating is number
         && request.resource.data.rating >= 1
-        && request.resource.data.rating <= 5;
+        && request.resource.data.rating <= 5
+        && (!("text" in request.resource.data)
+            || (request.resource.data.text is string
+                && request.resource.data.text.size() <= 500))
+        && (!("name" in request.resource.data)
+            || (request.resource.data.name is string
+                && request.resource.data.name.size() <= 80));
       allow read, update, delete: if false;
     }
   }

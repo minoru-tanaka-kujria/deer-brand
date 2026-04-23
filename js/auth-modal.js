@@ -134,6 +134,14 @@
                onmouseout="this.style.borderColor='#e8dfd5';this.style.color='#2c2824'">
               新規登録
             </button>
+            <button onclick="DeerAuth.resetPassword()" id="authResetPwBtn" style="
+              width:100%; padding:0.5rem; margin-top:0.5rem;
+              background:transparent; color:#9b9490; border:none;
+              font-family:'Zen Maru Gothic',sans-serif; font-size:0.78rem;
+              cursor:pointer; text-decoration:underline; transition:color 0.3s;
+            " onmouseover="this.style.color='#c4a265'" onmouseout="this.style.color='#9b9490'">
+              パスワードを忘れた場合
+            </button>
           </div>
 
           <!-- 注意書き -->
@@ -672,6 +680,52 @@
           (mod) => {
             _firebaseAuthModule = mod;
             doSignup(mod);
+          },
+        );
+      }
+    },
+
+    // ------ パスワードリセット ------
+    resetPassword() {
+      const email = document.getElementById("authEmail")?.value?.trim();
+      if (!email) {
+        this.showError(
+          "メールアドレス欄にメールアドレスを入力してから「パスワードを忘れた場合」を押してください",
+        );
+        return;
+      }
+      const doReset = (mod) => {
+        const { sendPasswordResetEmail } = mod;
+        sendPasswordResetEmail(window._deerFirebaseAuth, email)
+          .then(() => {
+            this.showError(""); // エラークリア
+            const errEl = document.getElementById("authError");
+            if (errEl) {
+              errEl.style.color = "#2f855a";
+              errEl.style.display = "block";
+              errEl.textContent =
+                "パスワード再設定メールを送信しました。メールをご確認ください。";
+            }
+          })
+          .catch((e) => {
+            const msgs = {
+              "auth/invalid-email": "メールアドレスの形式が正しくありません",
+              "auth/user-not-found": "このメールアドレスは登録されていません",
+              "auth/too-many-requests":
+                "リクエストが多すぎます。時間をおいてお試しください",
+            };
+            this.showError(
+              msgs[e.code] || "再設定メールを送信できませんでした",
+            );
+          });
+      };
+      if (_firebaseAuthModule) {
+        doReset(_firebaseAuthModule);
+      } else {
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(
+          (mod) => {
+            _firebaseAuthModule = mod;
+            doReset(mod);
           },
         );
       }
