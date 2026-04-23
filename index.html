@@ -30,8 +30,13 @@
       gtag("config", "G-C8X82GD6DK");
     </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>Deer — 愛犬・愛猫をアートに。世界にひとつのオリジナルグッズ</title>
+    <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
+    <link rel="shortcut icon" href="/img/logo.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -122,6 +127,7 @@
         right: 0;
         z-index: 100;
         background: rgba(250, 247, 242, 0.88);
+        -webkit-backdrop-filter: blur(20px) saturate(1.2);
         backdrop-filter: blur(20px) saturate(1.2);
         border-bottom: 1px solid rgba(196, 162, 101, 0.15);
         padding: 0 3rem;
@@ -1076,6 +1082,7 @@
         left: 0;
         right: 0;
         background: rgba(255, 248, 243, 0.98);
+        -webkit-backdrop-filter: blur(8px);
         backdrop-filter: blur(8px);
         border-bottom: 1px solid var(--border);
         padding: 1.2rem 1.5rem 1.5rem;
@@ -1472,7 +1479,11 @@
           style="transition-delay: 0.05s"
           onclick="location.href = 'upload?style=oil-baroque'"
         >
-          <img loading="lazy" src="img/styles/oil-baroque.webp" alt="バロック" />
+          <img
+            loading="lazy"
+            src="img/styles/oil-baroque.webp"
+            alt="バロック"
+          />
           <div class="overlay">
             <div class="s-name">バロック</div>
             <div class="s-desc">レンブラント風の荘厳さ</div>

@@ -26,6 +26,89 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res, "GET, POST, OPTIONS");
   if (handlePreflight(req, res)) return;
 
+  // ── POST /api/get-user?type=delete-account ───────────────────────────
+  // 退会フロー: Firebase Auth アカウント削除 + Firestore のユーザーデータを削除。
+  // 注文履歴は法的保管義務があるため残すが、個人情報 (shippingAddress / email)
+  // は匿名化する。クライアントが confirm="DELETE" を送った時だけ実行。
+  if (req.method === "POST" && req.query.type === "delete-account") {
+    let body = req.body;
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        body = {};
+      }
+    }
+    if (body?.confirm !== "DELETE") {
+      return res.status(400).json({ error: "CONFIRM_REQUIRED" });
+    }
+    const authHeader = req.headers.authorization ?? "";
+    const idToken = authHeader.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : null;
+    if (!idToken) {
+      return res.status(401).json({ error: "認証が必要です" });
+    }
+    try {
+      const app = getAdminApp();
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      let decoded;
+      try {
+        decoded = await auth.verifyIdToken(idToken);
+      } catch {
+        return res.status(401).json({ error: "認証トークンが無効です" });
+      }
+      const uid = decoded.uid;
+
+      // 1. ユーザー注文の個人情報を匿名化 (注文自体は法的義務で保持)
+      const ordersSnap = await db
+        .collection("orders")
+        .where("uid", "==", uid)
+        .get();
+      const batch = db.batch();
+      for (const doc of ordersSnap.docs) {
+        batch.update(doc.ref, {
+          email: "[deleted]",
+          shippingAddress: null,
+          ordererInfo: null,
+          petNames: [],
+          anonymizedAt: new Date(),
+          deletedByUser: true,
+        });
+      }
+
+      // 2. users/{uid} ドキュメントを削除 (Admin SDK は rules をバイパス)
+      batch.delete(db.collection("users").doc(uid));
+      await batch.commit();
+
+      // 3. 関連コレクションの孤児データ削除 (アート履歴等)
+      try {
+        const artsSnap = await db
+          .collection("users")
+          .doc(uid)
+          .collection("arts")
+          .get();
+        const artsBatch = db.batch();
+        artsSnap.docs.forEach((d) => artsBatch.delete(d.ref));
+        await artsBatch.commit();
+      } catch (e) {
+        console.warn("[delete-account] arts cleanup failed:", e.message);
+      }
+
+      // 4. Firebase Auth アカウント削除 (最後に実行)
+      await auth.deleteUser(uid);
+
+      return res.status(200).json({
+        ok: true,
+        anonymizedOrders: ordersSnap.size,
+      });
+    } catch (err) {
+      console.error("[delete-account] error:", err);
+      return res.status(500).json({ error: "退会処理に失敗しました" });
+    }
+  }
+
   // ── POST /api/get-user?type=error-report ─────────────────────────────
   // ユーザー実機エラーの集約受信。Hobby plan の Function 上限(12)に達しているため
   // 専用 endpoint を作らず get-user に相乗りする。
@@ -89,6 +172,33 @@ export default async function handler(req, res) {
     return res.status(200).json({
       stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
       sentryDsn: process.env.SENTRY_DSN || null,
+    });
+  }
+
+  // /api/health 代替: 外部監視サービス (UptimeRobot 等) から叩いて疎通確認。
+  // env 有無 / 主要サービス接続チェックだけで secret は返さない。
+  if (type === "health") {
+    res.setHeader("Cache-Control", "no-store");
+    const checks = {
+      stripe: !!process.env.STRIPE_SECRET_KEY,
+      firebase:
+        !!process.env.FIREBASE_ADMIN_KEY || !!process.env.FIREBASE_PROJECT_ID,
+      replicate: !!process.env.REPLICATE_API_TOKEN,
+      printful: !!process.env.PRINTFUL_API_KEY,
+      printful_webhook_secret: !!process.env.PRINTFUL_WEBHOOK_SECRET,
+      stripe_webhook_secret: !!process.env.STRIPE_WEBHOOK_SECRET,
+      resend: !!process.env.RESEND_API_KEY || !!process.env.SENDGRID_API_KEY,
+    };
+    const missing = Object.entries(checks)
+      .filter(([, ok]) => !ok)
+      .map(([k]) => k);
+    const ok = missing.length === 0;
+    return res.status(ok ? 200 : 503).json({
+      ok,
+      checks,
+      missing,
+      commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || null,
+      deployedAt: process.env.VERCEL_DEPLOY_TIME || null,
     });
   }
 

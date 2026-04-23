@@ -1541,7 +1541,9 @@
         font-weight: 500;
         color: var(--charcoal);
         text-align: right;
-        word-break: break-all;
+        /* 日本語は禁則処理があるので break-all を使わず anywhere で URL 等だけ折る */
+        word-break: normal;
+        overflow-wrap: anywhere;
       }
       .confirm-total {
         background: var(--charcoal);
@@ -1776,7 +1778,8 @@
         /* 注文確認テーブル */
         .order-id {
           font-size: 0.78rem;
-          word-break: break-all;
+          word-break: normal;
+          overflow-wrap: anywhere;
         }
         /* シェアボタン縦並び */
         #shareSection > div > div {
@@ -8091,6 +8094,9 @@
       //  ART GENERATION (Replicate img2img)
       // ============================================================
       let _generationPollTimer = null;
+      // スタイルカードを連打すると複数の生成 POST が並列で走る。最後にクリック
+      // したスタイルの結果だけを state に反映するため、世代番号でレースを止める。
+      let _generationGen = 0;
 
       // 画像をAPI送信用にリサイズ（最大1024px・JPEG変換）
       function resizeForAPI(dataUrl) {
@@ -8113,6 +8119,7 @@
       }
 
       async function simulateMockup() {
+        const myGen = ++_generationGen; // この呼び出しの世代番号
         // UI: ローディング表示
         document.getElementById("mockupLoader").style.display = "block";
         document.getElementById("artResultArea").style.display = "none";
@@ -8192,7 +8199,17 @@
               useGlobalTimer: true,
             },
           );
+          // 後続のスタイル選択で先を越されていたら結果を破棄する。
+          // これを怠ると「選んだスタイルと違うアートが最終的に表示される」事故になる。
+          if (myGen !== _generationGen) {
+            console.log("[simulateMockup] 世代切替で破棄 gen:", myGen);
+            return;
+          }
         } catch (err) {
+          if (myGen !== _generationGen) {
+            // 既に別の生成が走っているのでエラー表示もスキップ
+            return;
+          }
           console.error("Art generation failed:", err);
           // ── エラー表示 ────────────────────────────────────────
           // 元写真フォールバックは廃止: 元写真を商品にそのまま印刷すると
@@ -8854,38 +8871,37 @@
           });
           const data = await res.json().catch(() => ({}));
           if (!res.ok) {
-            console.warn("[completeOrder] API error:", data.error);
-            throw new Error(
-              "注文情報の保存に失敗しました。サポートにご連絡ください。",
-            );
-          }
-          serverOrderId = data.orderId || null;
-          // クーポン使用確定（P0-3）
-          if (state.couponVerified && state.couponCode) {
-            try {
-              const product = PRODUCTS[state.selectedItem] || {};
-              const placementPrice = state.selectedPlacement?.price || 0;
-              const subtotal =
-                (product.base || 0) + placementPrice + (state.optionPrice || 0);
-              const authHeadersCoupon = await buildAuthHeaders({
-                "Content-Type": "application/json",
-              });
-              await fetch("/api/validate-coupon", {
-                method: "POST",
-                headers: authHeadersCoupon,
-                body: JSON.stringify({
-                  action: "use",
-                  code: state.couponCode,
-                  subtotal,
-                }),
-              });
-            } catch (couponErr) {
+            // ORDER_ALREADY_FINALIZED / PAYMENT_INTENT_ALREADY_USED:
+            // 戻るボタン or 2 タブ同時操作で create-order を二重に呼んだケース。
+            // サーバ側では「既に注文済み」が true なので、UI は完了画面を見せる。
+            if (
+              data.error === "ORDER_ALREADY_FINALIZED" ||
+              data.error === "PAYMENT_INTENT_ALREADY_USED"
+            ) {
               console.warn(
-                "[completeOrder] coupon use mark failed:",
-                couponErr,
+                "[completeOrder] order already finalized, skipping:",
+                data.error,
+              );
+              serverOrderId = reservedOrderId;
+            } else if (data.error === "ART_IMAGE_UNAVAILABLE") {
+              throw new Error(
+                "アート画像を保存できませんでした。もう一度アートを生成してください。",
+              );
+            } else if (data.error === "ART_IMAGE_NOT_OWNED") {
+              throw new Error(
+                "アート画像の権限エラーです。新しくアートを生成してください。",
+              );
+            } else {
+              console.warn("[completeOrder] API error:", data.error);
+              throw new Error(
+                "注文情報の保存に失敗しました。サポートにご連絡ください。",
               );
             }
+          } else {
+            serverOrderId = data.orderId || null;
           }
+          // クーポン使用確定は create-order がサーバ側で冪等実行するため、
+          // ここからの action=use 呼び出しは廃止（サーバ 410 Gone を返す）。
         } catch (e) {
           console.warn("[completeOrder] 注文保存失敗:", e.message);
           const errEl = document.getElementById("card-errors");

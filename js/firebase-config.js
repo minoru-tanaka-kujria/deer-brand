@@ -38,11 +38,14 @@ if (isLiveHostname && !STRIPE_PUBLISHABLE_KEY_LIVE) {
   );
 }
 
-// ⚠ 一時的に TEST mode に統一（サーバー側 STRIPE_SECRET_KEY も同アカウント TEST に合わせてある）
-// 本番決済 (LIVE mode) に切り替える際は、以下の FORCE_TEST を false に戻し、かつ
-// Vercel env STRIPE_SECRET_KEY を sk_live_51Qmtxa... に更新する必要がある。
-// 参照: 2026-04-21 の決済 404 調査で、サーバー側の別アカウント sk_test_51THFru と
-// クライアント側の pk_live_51Qmtxa が食い違って PaymentIntent が成立しなかった。
+// ⚠⚠⚠ 重要: 現在 Stripe は TEST mode に強制固定されている ⚠⚠⚠
+// 本番リリース時は必ず以下3点を同時に対応すること (ひとつ欠けても決済失敗):
+//   1. FORCE_TEST_MODE を false に変更
+//   2. Vercel env STRIPE_SECRET_KEY を sk_live_51Qmtxa... に差し替え
+//   3. Vercel env STRIPE_WEBHOOK_SECRET を Live Webhook のものに差し替え
+// 参照: 2026-04-21 の決済 404 調査で、サーバー側 sk_test_51THFru と
+// クライアント側 pk_live_51Qmtxa が食い違って PaymentIntent が成立しなかった事故。
+// TODO: 本番リリース前に必ず false にすること。
 const FORCE_TEST_MODE = true;
 export const STRIPE_PUBLISHABLE_KEY =
   isLiveHostname && !FORCE_TEST_MODE
