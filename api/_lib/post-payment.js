@@ -369,6 +369,7 @@ export async function triggerPrintfulOrder(db, order, orderId) {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "X-PF-Store-Id": process.env.PRINTFUL_STORE_ID || "",
       },
       body: JSON.stringify(printfulBody),
     });

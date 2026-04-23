@@ -10,8 +10,9 @@
  *   - order_delivered   → orders/{orderId}.status = "delivered"
  *
  * 認証:
- *   X-Printful-Signature ヘッダー（HMAC-SHA256）を PRINTFUL_WEBHOOK_SECRET で検証。
- *   env が未設定の場合は署名検証をスキップ（開発用途）。
+ *   Printful v1 webhooks は HMAC 署名ヘッダーを送らないため、
+ *   webhook 登録時に URL クエリ文字列に ?key=<PRINTFUL_WEBHOOK_SECRET> を含め、
+ *   受信時に req.query.key が env と一致するかで検証する。
  */
 
 import crypto from "crypto";
@@ -52,25 +53,14 @@ function readRawBody(req) {
 }
 
 // ---------------------------------------------------------------------------
-// Printful Webhook 署名検証
+// Printful Webhook 認証: URL query string の key を env と timing-safe 比較
 // ---------------------------------------------------------------------------
-function verifyPrintfulSignature(rawBody, signature, secret) {
-  if (!signature) {
-    console.warn(
-      "[printful-webhook] X-Printful-Signature ヘッダーが存在しません",
-    );
-    return false;
-  }
-  const computed = crypto
-    .createHmac("sha256", secret)
-    .update(rawBody)
-    .digest("hex");
-  const expectedBuffer = Buffer.from(computed, "hex");
-  const receivedBuffer = Buffer.from(signature, "hex");
-  if (expectedBuffer.length !== receivedBuffer.length) {
-    return false;
-  }
-  return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+function verifyWebhookKey(receivedKey, secret) {
+  if (!receivedKey || !secret) return false;
+  const a = Buffer.from(String(receivedKey));
+  const b = Buffer.from(String(secret));
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
 }
 
 // ---------------------------------------------------------------------------
@@ -255,19 +245,18 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: "SERVICE_UNAVAILABLE" });
   }
 
+  const receivedKey = req.query?.key || "";
+  if (!verifyWebhookKey(receivedKey, webhookSecret)) {
+    console.error("[printful-webhook] key 不一致");
+    return res.status(401).json({ error: "Invalid key" });
+  }
+
   let rawBody;
   try {
     rawBody = await readRawBody(req);
   } catch (error) {
     console.error("[printful-webhook] read body error:", error);
     return res.status(400).json({ error: "INVALID_BODY" });
-  }
-
-  const signature = req.headers["x-printful-signature"] || "";
-
-  if (!verifyPrintfulSignature(rawBody, signature, webhookSecret)) {
-    console.error("[printful-webhook] 署名検証失敗");
-    return res.status(401).json({ error: "Invalid signature" });
   }
 
   let event;

@@ -323,6 +323,7 @@ async function actionCreatePrintfulOrder(db, body) {
     headers: {
       Authorization: `Bearer ${printfulApiKey}`,
       "Content-Type": "application/json",
+      "X-PF-Store-Id": process.env.PRINTFUL_STORE_ID || "",
     },
     body: JSON.stringify(printfulBody),
   });
