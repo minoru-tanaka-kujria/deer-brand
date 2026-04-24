@@ -69,6 +69,43 @@ function buildEmailHtml({ id, sig, route, message, stack, context }) {
        </p>
        <p style="font-size:11px;color:#999">クリックで Mac mini 上の Claude が修正PRを自動作成します</p>`
     : `<p style="font-size:12px;color:#c00">⚠ FIX_DISPATCH_SECRET が未設定のため自動修正ボタンは無効です</p>`;
+
+  // Claude Code にコピペで貼ればそのまま修正に着手できるプロンプト本体。
+  // メールクライアントによっては <pre> の選択範囲が壊れることがあるため、
+  // 改行を <br> 化せず生の改行を保ったまま <pre> で出力する。
+  const ctxBlockText = context
+    ? Object.entries(context)
+        .map(
+          ([k, v]) =>
+            `- ${k}: ${typeof v === "string" ? v : JSON.stringify(v)}`,
+        )
+        .join("\n")
+    : "(なし)";
+  const stackBlockText = stack ? stack.slice(0, 4000) : "(なし)";
+  const promptText = `以下の Deer 本番エラーを調査・修正してください。
+
+【エンドポイント】 ${route || "(unknown)"}
+【エラーメッセージ】 ${message || ""}
+【発生日時】 ${new Date().toISOString()}
+【エラーID】 ${id}
+
+【発生時のコンテキスト】
+${ctxBlockText}
+
+【スタックトレース】
+${stackBlockText}
+
+【お願い】
+1. 該当ファイルとコード行を特定して根本原因を説明してください。
+2. 修正パッチを当てて、関連する既存テスト・スモークテストを実行してください。
+3. 問題なければ main へ push してください（自動デプロイされます）。
+4. 完了したら何を直したか・なぜ起きたかを 5 行以内で要約してください。
+5. 同じエラーの再発防止策（型・バリデーション・テスト等）も提案してください。`;
+  const promptBlock = `<div style="margin:24px 0;border:2px solid #1a3a52;border-radius:8px;background:#fff;overflow:hidden">
+      <div style="background:#1a3a52;color:#fff;padding:8px 12px;font-size:13px;font-weight:600">📋 Claude Code に貼り付け用（全文選択 → コピー → チャットに貼る）</div>
+      <pre style="margin:0;padding:14px;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;line-height:1.55;white-space:pre-wrap;word-break:break-word;background:#fafafa;color:#222;user-select:all;-webkit-user-select:all">${escapeHtml(promptText)}</pre>
+     </div>`;
+
   return `<!doctype html><html><body style="font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;color:#222;max-width:680px;margin:0 auto;padding:24px">
     <h2 style="color:#c0392b;margin:0 0 8px">🚨 Deer 本番エラー</h2>
     <p style="color:#666;font-size:13px;margin:0 0 16px">${escapeHtml(new Date().toISOString())}</p>
@@ -78,6 +115,7 @@ function buildEmailHtml({ id, sig, route, message, stack, context }) {
       ${ctxRows}
     </table>
     ${stackHtml}
+    ${promptBlock}
     ${button}
     <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
     <p style="font-size:11px;color:#aaa">エラーID: ${escapeHtml(id)}</p>
