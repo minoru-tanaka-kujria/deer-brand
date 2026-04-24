@@ -11077,6 +11077,24 @@
               drawText();
               const panel = document.getElementById("artReloadPanel");
               if (panel) panel.style.display = "block";
+              // サーバー側エラー通知（メール）に明示送信。
+              // sentry-init.js が無効な場合は no-op。
+              try {
+                if (typeof window.__deerReportError === "function") {
+                  window.__deerReportError("art-image-load-failed", {
+                    message:
+                      "アート画像のロードに失敗（CORS有り/無しの両方で失敗）",
+                    artUrlHost: (function () {
+                      try {
+                        return new URL(artUrl).host;
+                      } catch (_) {
+                        return artUrl.slice(0, 60);
+                      }
+                    })(),
+                    needsCors: !!needsCors,
+                  });
+                }
+              } catch (_) {}
             };
             img.src = artUrl;
           };

@@ -154,31 +154,62 @@ export default async function handler(req, res) {
         errors: sanitized,
         count: sanitized.length,
       });
-      // 本当のエラー (runtime error / unhandled rejection / CSP違反) だけ
-      // Slack に即時通知する。console.log/info の単なるトレースは無視。
+      // 本当のエラー (runtime error / unhandled rejection / CSP違反 /
+      // フロントから __deerReportError() で明示送信された manual エラー) だけ
+      // Slack + メール (notifyError) に即時通知する。
+      // console.log/info の単なるトレースは無視。
       try {
         const critical = sanitized.filter((e) =>
-          ["error", "rejection", "csp"].includes(e.type),
+          ["error", "rejection", "csp", "manual"].includes(e.type),
         );
         if (critical.length > 0) {
-          const { notifySlack } = await import("./slack-notify.js");
           const first = critical[0];
+          const path = req.headers.referer || "unknown";
+          const userAgent = (req.headers["user-agent"] || "").slice(0, 120);
+          const stepOrUid =
+            first.ctx?.current_step || first.ctx?.user_uid || "anon";
+          const messageText =
+            first.message ||
+            first.violatedDirective ||
+            first.tag ||
+            "(no message)";
+
+          // Slack 併用（既存）
+          const { notifySlack } = await import("./slack-notify.js");
           await notifySlack({
             level: "error",
             title: `実機エラー発生 (${critical.length}件)`,
-            text: `${first.type}: ${first.message || first.violatedDirective || "(no message)"}`,
-            context: {
-              path: req.headers.referer || "unknown",
-              userAgent: (req.headers["user-agent"] || "").slice(0, 120),
-              stepOrUid:
-                first.ctx?.current_step || first.ctx?.user_uid || "anon",
-            },
-            dedupeKey: `client-error:${(first.message || first.violatedDirective || "").slice(0, 80)}`,
+            text: `${first.type}: ${messageText}`,
+            context: { path, userAgent, stepOrUid },
+            dedupeKey: `client-error:${messageText.slice(0, 80)}`,
           });
+
+          // メール通知 (修正依頼ボタン + コピペ用プロンプト枠付き)
+          const { notifyError } = await import("./error-notifier.js");
+          const fakeErr = new Error(`[${first.type}] ${messageText}`);
+          if (first.stack) fakeErr.stack = first.stack;
+          notifyError({
+            err: fakeErr,
+            route: `CLIENT ${first.type} @ ${path}`,
+            context: {
+              type: first.type,
+              tag: first.tag || null,
+              path,
+              userAgent,
+              stepOrUid,
+              uid: first.ctx?.user_uid || null,
+              source: first.source || null,
+              line: first.line || null,
+              col: first.col || null,
+              violatedDirective: first.violatedDirective || null,
+              blockedURI: first.blockedURI || null,
+              count: critical.length,
+            },
+          }).catch(() => undefined);
         }
       } catch (notifyErr) {
         console.warn(
-          "[error-report] slack notify failed:",
+          "[error-report] notify failed:",
           notifyErr?.message || notifyErr,
         );
       }
