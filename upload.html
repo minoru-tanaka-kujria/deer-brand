@@ -5818,20 +5818,22 @@
         "frame-gold": 0.72,
         "frame-wood": 0.6,
         "frame-antique": 0.69,
-        "wappen-laurel-navy": 0.7,
-        "wappen-laurel-gold": 0.65,
+        "wappen-laurel-navy": 0.8,
+        "wappen-laurel-gold": 0.76,
         "wappen-rope-red": 0.62,
         "wappen-zigzag-green": 0.74,
       };
 
       // 枠を細く見せるため PNG を canvas より大きく描画し外周を crop する設定。
-      // 1.0 なら従来通り。wood は素直な木目なので crop しても違和感なし。
-      // gold / antique は装飾付きなので crop すると角が切れて不自然になるため、
-      // 代わりに PNG 自体を「細枠で角の装飾が完結する」デザインに作り直している。
+      // 1.0 なら従来通り。wood は素直な木目、rope-red は一様編み模様なので
+      // crop しても違和感なし。gold / antique は装飾付きなので crop すると角が
+      // 切れて不自然になるため、代わりに PNG 自体を「細枠で角の装飾が完結する」
+      // デザインに作り直している。
       const FRAME_BORDER_OVERFLOW = {
         "frame-gold": 1.0,
         "frame-wood": 1.32,
         "frame-antique": 1.0,
+        "wappen-rope-red": 1.35,
       };
 
       async function compositeFrameOnArt(artUrl, frameOpt) {
@@ -5852,10 +5854,7 @@
         // フレーム画像自体を bbox crop+resize で canvas 一杯に拡大済みなので
         // 画像の opaque 領域が canvas 端まで届く＝外周に何も描かなくて良い。
         const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.55;
-        const borderOverflow =
-          frameOpt.type === "frame"
-            ? FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0
-            : 1.0;
+        const borderOverflow = FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0;
         const innerSize = SIZE * innerRatio * borderOverflow;
 
         // innerSize より少し大きめ (10%) に描画して、枠の透明穴が小さい方向に
@@ -6005,10 +6004,7 @@
           if (!artImg.naturalWidth || !artImg.naturalHeight)
             throw new Error("zero dimensions");
           const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.5;
-          const borderOverflow =
-            frameOpt.type === "frame"
-              ? FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0
-              : 1.0;
+          const borderOverflow = FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0;
           const coverSize = SIZE * innerRatio * borderOverflow * 1.1;
           const frameDrawSize = SIZE * borderOverflow;
           const frameDrawOffset = (SIZE - frameDrawSize) / 2;
@@ -6065,9 +6061,7 @@
             try {
               const frameImg = await loadFrameImg(frameOpt.src);
               const fallbackOverflow =
-                frameOpt.type === "frame"
-                  ? FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0
-                  : 1.0;
+                FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0;
               const fds = SIZE * fallbackOverflow;
               const fdo = (SIZE - fds) / 2;
               ctx.drawImage(frameImg, fdo, fdo, fds, fds);
