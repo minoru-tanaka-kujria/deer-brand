@@ -209,13 +209,15 @@ export default async function handler(req, res) {
     // 他人の生成結果を覗き見できないよう、予測ID → uid 紐付けを検証。
     // fail-closed: Firestore 障害時は 503 を返し、他人の予測結果を覗き見される
     // リスク経路を作らない。
+    const db = getFirestore(getAdminApp());
+    let predictionDoc = null;
     try {
-      const db = getFirestore(getAdminApp());
       const ownerSnap = await db.collection("artPredictions").doc(id).get();
       if (!ownerSnap.exists) {
         return res.status(404).json({ error: "NOT_FOUND" });
       }
-      if (ownerSnap.data().uid !== authUser.uid) {
+      predictionDoc = ownerSnap.data();
+      if (predictionDoc.uid !== authUser.uid) {
         return res.status(403).json({ error: "FORBIDDEN" });
       }
     } catch (authErr) {
@@ -225,6 +227,58 @@ export default async function handler(req, res) {
 
     try {
       const result = await pollPrediction({ token, id });
+      // 成功時、Replicate URL を Storage に恒久化し、
+      // users/{uid}/arts/ コレクションに記録する（マイアート一覧用）。
+      // 同じ prediction を複数回 poll しても 1 回だけ保存。
+      if (
+        result.status === "succeeded" &&
+        result.outputUrl &&
+        !predictionDoc.persistedUrl
+      ) {
+        try {
+          const { uploadRemoteUrlToStorage } =
+            await import("./_lib/art-upload.js");
+          const persisted = await uploadRemoteUrlToStorage(result.outputUrl, {
+            uid: authUser.uid,
+            orderId: `art-${id}`,
+          });
+          if (persisted) {
+            // マイアート一覧に登録。doc id = prediction id で再poll時の重複防止
+            await db
+              .collection("users")
+              .doc(authUser.uid)
+              .collection("arts")
+              .doc(id)
+              .set(
+                {
+                  url: persisted,
+                  originalReplicateUrl: result.outputUrl,
+                  style: predictionDoc.styleId || null,
+                  mode: predictionDoc.mode || null,
+                  createdAt: new Date(),
+                },
+                { merge: true },
+              );
+            // artPredictions にも保存済みマークを書いて以後の重複 upload を防ぐ
+            await db
+              .collection("artPredictions")
+              .doc(id)
+              .set({ persistedUrl: persisted }, { merge: true });
+            // クライアントには恒久 URL を返す
+            result.outputUrl = persisted;
+          }
+        } catch (persistErr) {
+          // 保存に失敗してもユーザー体験を止めないため、原 URL のまま返す。
+          // 失敗ログは残し後日リカバリー可能にする。
+          console.warn(
+            "[generate-art] persist-on-success failed:",
+            persistErr?.message || persistErr,
+          );
+        }
+      } else if (predictionDoc.persistedUrl) {
+        // 既に保存済みなら常に恒久 URL を返す
+        result.outputUrl = predictionDoc.persistedUrl;
+      }
       return res.json(result);
     } catch (error) {
       console.error("[generate-art] poll error:", error);
