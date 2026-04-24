@@ -47,7 +47,7 @@ function signId(id) {
 function buildEmailHtml({ id, sig, route, message, stack, context }) {
   const baseUrl = process.env.PUBLIC_BASE_URL || "https://custom.deer.gift";
   const fixUrl = sig
-    ? `${baseUrl}/api/dispatch-fix?id=${encodeURIComponent(id)}&sig=${sig}`
+    ? `${baseUrl}/api/get-user?type=fix-dispatch&id=${encodeURIComponent(id)}&sig=${sig}`
     : "";
   const ctxRows = context
     ? Object.entries(context)

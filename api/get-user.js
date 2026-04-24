@@ -9,11 +9,13 @@
  * - Stripe APIでsavedPaymentMethods取得
  */
 
+import crypto from "node:crypto";
 import Stripe from "stripe";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { getAdminApp } from "./_lib/auth.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -188,11 +190,216 @@ export default async function handler(req, res) {
     }
   }
 
+  // ── POST /api/get-user?type=test-error-notify ────────────────────────
+  // 管理者専用: error-notifier.js の動作確認用。adminKey 認証で notifyError() を発火。
+  if (req.method === "POST" && req.query.type === "test-error-notify") {
+    let body = req.body;
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        body = {};
+      }
+    }
+    const adminKey = String(body?.adminKey || "").trim();
+    const expected = String(process.env.ADMIN_SECRET_KEY || "").trim();
+    const a = Buffer.from(adminKey);
+    const b = Buffer.from(expected);
+    const ok =
+      expected.length > 0 &&
+      a.length === b.length &&
+      crypto.timingSafeEqual(a, b);
+    if (!ok) return res.status(401).json({ error: "UNAUTHORIZED" });
+
+    const msg =
+      String(body?.message || "").trim() ||
+      `テスト通知 ${new Date().toISOString()} — error-notifier 動作確認`;
+    const fakeErr = new Error(msg);
+    fakeErr.stack = `TestError: ${msg}\n    at get-user (test-error-notify)\n    at admin request`;
+    const result = await notifyError({
+      err: fakeErr,
+      route: "POST /api/get-user?type=test-error-notify (manual)",
+      context: {
+        triggeredBy: "test-error-notify",
+        timestamp: new Date().toISOString(),
+      },
+    });
+    return res.status(200).json({ ok: true, result });
+  }
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { uid, type } = req.query;
+
+  // ── GET /api/get-user?type=fix-dispatch&id=...&sig=... ──────────────
+  // エラー通知メール内「Claudeに自動修正させる」ボタンの遷移先。
+  // HMAC 検証 → Firestore からエラー詳細取得 → Slack に bot メンション付き投稿
+  // → Mac mini 常駐ボットが app_mention 受信 → Claude が自動修正 PR 作成。
+  if (type === "fix-dispatch") {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    const id = String(req.query?.id || "").trim();
+    const sig = String(req.query?.sig || "").trim();
+    const fixSecret = process.env.FIX_DISPATCH_SECRET;
+    const verifySig = () => {
+      if (!fixSecret || !sig || !id) return false;
+      const expected = crypto
+        .createHmac("sha256", fixSecret)
+        .update(id)
+        .digest("hex")
+        .slice(0, 32);
+      try {
+        const a = Buffer.from(expected);
+        const b = Buffer.from(sig);
+        if (a.length !== b.length) return false;
+        return crypto.timingSafeEqual(a, b);
+      } catch {
+        return false;
+      }
+    };
+    const htmlPage = ({ title, body, color = "#1a3a52" }) =>
+      `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
+      <meta name="viewport" content="width=device-width,initial-scale=1"></head>
+      <body style="font-family:-apple-system,'Hiragino Kaku Gothic ProN',sans-serif;color:#222;max-width:560px;margin:48px auto;padding:24px;text-align:center">
+      <h1 style="color:${color};margin:0 0 16px;font-size:22px">${title}</h1>
+      <div style="font-size:14px;line-height:1.7;color:#444">${body}</div>
+      </body></html>`;
+
+    if (!verifySig()) {
+      return res.status(403).send(
+        htmlPage({
+          title: "🚫 認証エラー",
+          body: "リンクが改ざんされているか、期限切れです。",
+          color: "#c0392b",
+        }),
+      );
+    }
+    let report;
+    try {
+      const db = getFirestore(getAdminApp());
+      const snap = await db.collection("apiErrorReports").doc(id).get();
+      if (!snap.exists) {
+        return res.status(404).send(
+          htmlPage({
+            title: "エラー記録が見つかりません",
+            body: "古い通知メールの可能性があります。",
+            color: "#c0392b",
+          }),
+        );
+      }
+      report = snap.data();
+      if (report.status === "dispatched") {
+        return res.status(200).send(
+          htmlPage({
+            title: "✅ 既に修正依頼済み",
+            body: `このエラーは既にClaudeに依頼済みです。<br><br>Slack「deerペットフード鹿」チャンネルで進捗を確認してください。<br><br><small style="color:#999">エラーID: ${id}</small>`,
+          }),
+        );
+      }
+    } catch (e) {
+      return res.status(500).send(
+        htmlPage({
+          title: "サーバーエラー",
+          body: `Firestoreアクセス失敗: ${e?.message || ""}`,
+          color: "#c0392b",
+        }),
+      );
+    }
+
+    const botToken = process.env.SLACK_BOT_TOKEN;
+    const channel = process.env.SLACK_DISPATCH_CHANNEL;
+    if (!botToken || !channel) {
+      return res.status(500).send(
+        htmlPage({
+          title: "Slack設定が未完了",
+          body: "SLACK_BOT_TOKEN または SLACK_DISPATCH_CHANNEL が未設定です。<br>Vercel env を確認してください。",
+          color: "#c0392b",
+        }),
+      );
+    }
+    const botUserId = process.env.SLACK_BOT_USER_ID;
+    const mention = botUserId ? `<@${botUserId}>` : "@Claude Code Notify";
+    const ctxLines = report.context
+      ? Object.entries(report.context)
+          .map(
+            ([k, v]) =>
+              `• *${k}*: ${typeof v === "string" ? v : JSON.stringify(v)}`,
+          )
+          .join("\n")
+      : "";
+    const stackTrim = String(report.stack || "").slice(0, 1500);
+    const slackText = [
+      `${mention} 以下のDeer本番エラーを修正してください。`,
+      "",
+      `*エンドポイント*: \`${report.route || "?"}\``,
+      `*メッセージ*: ${report.message}`,
+      ctxLines ? `\n*Context*:\n${ctxLines}` : "",
+      stackTrim ? `\n*Stack*:\n\`\`\`${stackTrim}\`\`\`` : "",
+      "",
+      `_エラーID: ${id} / 発生: ${report.createdAt}_`,
+      "",
+      "原因を特定し、修正PRをmainブランチに対して作成してください。",
+      "テストが通ったら自動でpushして構いません。",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    let slackResp;
+    try {
+      const r = await fetch("https://slack.com/api/chat.postMessage", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${botToken}`,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({
+          channel,
+          text: slackText,
+          unfurl_links: false,
+          unfurl_media: false,
+        }),
+      });
+      slackResp = await r.json();
+      if (!slackResp.ok) {
+        return res.status(502).send(
+          htmlPage({
+            title: "Slack投稿失敗",
+            body: `理由: <code>${slackResp.error || "unknown"}</code>`,
+            color: "#c0392b",
+          }),
+        );
+      }
+    } catch (e) {
+      return res.status(502).send(
+        htmlPage({
+          title: "Slack接続失敗",
+          body: e?.message || "",
+          color: "#c0392b",
+        }),
+      );
+    }
+    try {
+      const db = getFirestore(getAdminApp());
+      await db
+        .collection("apiErrorReports")
+        .doc(id)
+        .update({
+          status: "dispatched",
+          dispatchedAt: new Date().toISOString(),
+          slackTs: slackResp.ts || null,
+          slackChannel: slackResp.channel || channel,
+        });
+    } catch (e) {
+      console.warn("[fix-dispatch] status update failed:", e?.message);
+    }
+    return res.status(200).send(
+      htmlPage({
+        title: "✅ 修正依頼を送信しました",
+        body: `Mac mini上のClaudeが原因調査と修正PR作成を開始します。<br><br>進捗はSlack「deerペットフード鹿」チャンネルで確認できます。<br><br>修正PR完成後は別途メールでお知らせします。<br><br><small style="color:#999">エラーID: ${id}</small>`,
+      }),
+    );
+  }
 
   // /api/config の代替: ?type=config で公開設定を返す（認証不要）
   if (type === "config") {
