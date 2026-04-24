@@ -16,6 +16,7 @@ import { getAdminApp, verifyAuth } from "./_lib/auth.js";
 import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
 import { createPrediction, pollPrediction } from "./_lib/replicate.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 const RATE_LIMIT = 6;
 const RATE_WINDOW_MS = 60 * 1000;
@@ -530,6 +531,14 @@ export default async function handler(req, res) {
       return res.json({ predictionId: id });
     } catch (error) {
       console.error("[generate-art] Replicate error:", error);
+      notifyError({
+        err: error,
+        route: "POST /api/generate-art",
+        context: {
+          styleId: req.body?.styleId || null,
+          uid: req.body?.uid || null,
+        },
+      }).catch(() => undefined);
       return res.status(502).json({ error: "画像を生成できませんでした" });
     }
   }

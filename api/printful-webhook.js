@@ -18,6 +18,7 @@
 import crypto from "crypto";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAdminApp } from "./_lib/auth.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 export const config = {
   api: {
@@ -448,6 +449,13 @@ export default async function handler(req, res) {
     return res.status(200).json({ received: true });
   } catch (err) {
     console.error("[printful-webhook] エラー:", err);
+    notifyError({
+      err,
+      route: "POST /api/printful-webhook",
+      context: {
+        eventType: req.body?.type || null,
+      },
+    }).catch(() => undefined);
     return res.status(500).json({ error: "WEBHOOK_PROCESSING_FAILED" });
   }
 }

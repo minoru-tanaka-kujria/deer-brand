@@ -12,6 +12,7 @@ import {
   sendOrderConfirmationEmail,
   triggerPrintfulOrder,
 } from "./_lib/post-payment.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -521,6 +522,16 @@ export default async function handler(req, res) {
     if (error.message === "ORDER_ALREADY_FINALIZED") {
       return res.status(409).json({ error: "ORDER_ALREADY_FINALIZED" });
     }
+
+    notifyError({
+      err: error,
+      route: "POST /api/create-order",
+      context: {
+        uid: req.body?.uid || null,
+        orderId: req.body?.orderId || null,
+        amount: req.body?.amount ?? null,
+      },
+    }).catch(() => undefined);
 
     return res.status(500).json({ error: "ORDER_CREATE_FAILED" });
   }

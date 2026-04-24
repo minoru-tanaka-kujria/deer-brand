@@ -22,6 +22,7 @@ import {
   fetchVariantId,
   buildRecipient,
 } from "./_lib/printful.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 // ---------------------------------------------------------------------------
 // TOTP (RFC 6238) 実装 — 外部ライブラリ不要
@@ -533,6 +534,13 @@ export default async function handler(req, res) {
     return res.status(200).json(result);
   } catch (err) {
     console.error(`[admin-api/${action}] エラー:`, err);
+    if ((err.status || 500) >= 500) {
+      notifyError({
+        err,
+        route: `POST /api/admin-api (${action || "?"})`,
+        context: { action: action || null },
+      }).catch(() => undefined);
+    }
     return res
       .status(err.status || 500)
       .json({ error: getPublicErrorMessage(err.status || 500) });

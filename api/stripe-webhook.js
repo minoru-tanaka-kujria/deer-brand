@@ -10,6 +10,7 @@ import {
   sendOrderConfirmationEmail,
   triggerPrintfulOrder,
 } from "./_lib/post-payment.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 // モジュールスコープでキャッシュ
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -162,6 +163,13 @@ export default async function handler(req, res) {
     return res.status(200).json({ received: true });
   } catch (error) {
     console.error("[stripe-webhook] event processing error:", error);
+    notifyError({
+      err: error,
+      route: "POST /api/stripe-webhook",
+      context: {
+        type: req.body?.type || null,
+      },
+    }).catch(() => undefined);
     return res.status(500).json({ error: "WEBHOOK_PROCESSING_FAILED" });
   }
 }

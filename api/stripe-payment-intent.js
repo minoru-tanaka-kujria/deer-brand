@@ -17,6 +17,7 @@ import {
 import { PRODUCTS, calculateTotal } from "./_lib/products.js";
 import { consumeRateLimit, getClientIp } from "./_lib/rate-limit.js";
 import { setCorsHeaders, handlePreflight } from "./_lib/cors.js";
+import { notifyError } from "./_lib/error-notifier.js";
 
 // モジュールスコープでキャッシュ（ウォームインスタンスで再生成コスト不要）
 const _stripe = process.env.STRIPE_SECRET_KEY
@@ -350,6 +351,14 @@ export default async function handler(req, res) {
     ) {
       return res.status(400).json({ error: error.message });
     }
+    notifyError({
+      err: error,
+      route: "POST /api/stripe-payment-intent",
+      context: {
+        uid: req.body?.uid || null,
+        items: Array.isArray(req.body?.items) ? req.body.items.length : null,
+      },
+    }).catch(() => undefined);
     return res.status(500).json({ error: "PAYMENT_INTENT_CREATE_FAILED" });
   }
 }
