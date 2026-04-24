@@ -135,10 +135,14 @@ export async function notifyError({
     }
 
     // メール送信
+    // from は ERROR_REPORT_FROM か、なければ Resend 検証済みの onboarding@resend.dev を使う。
+    // deer.gift ドメインは未verify状態なので、デフォルトの DEFAULT_FROM では 403 になる。
     const to = process.env.ERROR_REPORT_EMAIL || DEFAULT_REPORT_EMAIL;
+    const from =
+      process.env.ERROR_REPORT_FROM || "Deer Error <onboarding@resend.dev>";
     const subject = `[Deer 本番エラー] ${route || "?"} — ${String(message).slice(0, 80)}`;
     const html = buildEmailHtml({ id, sig, route, message, stack, context });
-    const mail = await sendEmail({ to, subject, html }).catch((e) => ({
+    const mail = await sendEmail({ to, subject, html, from }).catch((e) => ({
       ok: false,
       error: e?.message || String(e),
     }));
