@@ -5815,13 +5815,23 @@
       // 残りの透明領域 (inner_w, inner_h) を実測した値を設定。
       // frame 型: 内側矩形、wappen 型: 内側円の直径。
       const FRAME_INNER_RATIO = {
-        "frame-gold": 0.55,
+        "frame-gold": 0.72,
         "frame-wood": 0.6,
-        "frame-antique": 0.56,
+        "frame-antique": 0.69,
         "wappen-laurel-navy": 0.7,
         "wappen-laurel-gold": 0.65,
         "wappen-rope-red": 0.62,
         "wappen-zigzag-green": 0.74,
+      };
+
+      // 枠を細く見せるため PNG を canvas より大きく描画し外周を crop する設定。
+      // 1.0 なら従来通り。wood は素直な木目なので crop しても違和感なし。
+      // gold / antique は装飾付きなので crop すると角が切れて不自然になるため、
+      // 代わりに PNG 自体を「細枠で角の装飾が完結する」デザインに作り直している。
+      const FRAME_BORDER_OVERFLOW = {
+        "frame-gold": 1.0,
+        "frame-wood": 1.32,
+        "frame-antique": 1.0,
       };
 
       async function compositeFrameOnArt(artUrl, frameOpt) {
@@ -5842,7 +5852,11 @@
         // フレーム画像自体を bbox crop+resize で canvas 一杯に拡大済みなので
         // 画像の opaque 領域が canvas 端まで届く＝外周に何も描かなくて良い。
         const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.55;
-        const innerSize = SIZE * innerRatio;
+        const borderOverflow =
+          frameOpt.type === "frame"
+            ? FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0
+            : 1.0;
+        const innerSize = SIZE * innerRatio * borderOverflow;
 
         // innerSize より少し大きめ (10%) に描画して、枠の透明穴が小さい方向に
         // 揺らいでもアートの白背景が露出しないようにする。はみ出たアートは
@@ -5875,9 +5889,12 @@
           ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
         }
 
-        // フレーム/ワッペンPNGをオーバーレイ (透明中央 + 不透明フレーム本体)
+        // フレーム/ワッペンPNGをオーバーレイ。frame 型は枠を細く見せるため
+        // overflow 分だけ拡大描画して外周装飾を crop する。
         const frameImg = await loadFrameImg(frameOpt.src);
-        ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+        const drawSize = SIZE * borderOverflow;
+        const drawOffset = (SIZE - drawSize) / 2;
+        ctx.drawImage(frameImg, drawOffset, drawOffset, drawSize, drawSize);
 
         return canvas.toDataURL("image/png");
       }
@@ -5988,7 +6005,13 @@
           if (!artImg.naturalWidth || !artImg.naturalHeight)
             throw new Error("zero dimensions");
           const innerRatio = FRAME_INNER_RATIO[frameOpt.id] || 0.5;
-          const coverSize = SIZE * innerRatio * 1.1; // 内側を完全に覆うため +10%
+          const borderOverflow =
+            frameOpt.type === "frame"
+              ? FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0
+              : 1.0;
+          const coverSize = SIZE * innerRatio * borderOverflow * 1.1;
+          const frameDrawSize = SIZE * borderOverflow;
+          const frameDrawOffset = (SIZE - frameDrawSize) / 2;
           if (frameOpt.type === "none") {
             const scale = Math.min(
               SIZE / artImg.naturalWidth,
@@ -6028,14 +6051,26 @@
             const dh = artImg.naturalHeight * scale;
             ctx.drawImage(artImg, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
             const frameImg = await loadFrameImg(frameOpt.src);
-            ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+            ctx.drawImage(
+              frameImg,
+              frameDrawOffset,
+              frameDrawOffset,
+              frameDrawSize,
+              frameDrawSize,
+            );
           }
         } catch (e) {
           // アート読込失敗時はフレームのみ表示
           if (frameOpt.src) {
             try {
               const frameImg = await loadFrameImg(frameOpt.src);
-              ctx.drawImage(frameImg, 0, 0, SIZE, SIZE);
+              const fallbackOverflow =
+                frameOpt.type === "frame"
+                  ? FRAME_BORDER_OVERFLOW[frameOpt.id] || 1.0
+                  : 1.0;
+              const fds = SIZE * fallbackOverflow;
+              const fdo = (SIZE - fds) / 2;
+              ctx.drawImage(frameImg, fdo, fdo, fds, fds);
             } catch (e2) {
               // noop
             }
