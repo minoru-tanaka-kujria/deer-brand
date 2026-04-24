@@ -6622,6 +6622,22 @@
             // state.finalArtUrl を見て判定する。
             if (reusePetNames.length) state.petNames = reusePetNames;
             state.fromStylePage = true;
+            // アート画像が実際に読めるか非同期で検証。ダメなら案内を出す。
+            verifyArtUrlReachable(reuseArtUrl).then((ok) => {
+              if (!ok) {
+                showToast(
+                  "前回のアート画像が期限切れです。写真をアップロードして作り直してください。",
+                  "error",
+                );
+                state.generatedArtUrl = null;
+                state.rawArtUrl = null;
+                state.selectedStyleUrl = null;
+                setFinalArt(null);
+                state.fromStylePage = false;
+                showStep("lookbook");
+                buildProgress();
+              }
+            });
             // スタイルは前回のものが残っていれば使う（UI 表示用）
             buildItemSelect(state.selectedStyle || "");
             showStep("item-select");
@@ -6632,9 +6648,13 @@
             );
             return;
           }
-          // artUrl が取れなかった場合はフォールバックでルックブックへ
+          // artUrl が取れなかった場合は明示的に通知してルックブックへ
           console.warn("[reuse] artUrl missing — falling back to lookbook");
           showStep("lookbook");
+          showToast(
+            "前回のアートが見つかりませんでした。写真をアップロードして新しく作ってください。",
+            "warn",
+          );
           return;
         }
 
@@ -6680,6 +6700,14 @@
             if ((product.hasSize || product.hasModel) && !state.selectedSize) {
               state.currentStep = "size";
               state.history = ["lookbook"];
+            } else if (
+              state.finalArtUrl &&
+              !state.finalArtUrl.startsWith("data:")
+            ) {
+              // 再注文経路で既にアートが確定しているなら写真 UI は飛ばして名前入れへ
+              state.currentStep = "text-order";
+              state.history = ["lookbook"];
+              buildTextOrderStep();
             } else {
               state.currentStep = "photo";
               state.history = ["lookbook"];
@@ -9719,6 +9747,27 @@
           const draft = drafts[0]; // most recent
           if (!draft.selectedItem) return;
 
+          // 7日以上古い下書きは「再開しても生成URLが切れていて使い物にならない」
+          // 可能性が高い。ユーザー混乱を防ぐため自動的にバナーを出さず破棄する。
+          const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+          const savedAt =
+            typeof draft.savedAt === "number"
+              ? draft.savedAt
+              : Date.parse(draft.savedAt || draft.createdAt || "") || 0;
+          if (savedAt && Date.now() - savedAt > SEVEN_DAYS) {
+            try {
+              localStorage.removeItem(LOCAL_DRAFT_KEY);
+              const remaining = drafts.filter((_, i) => i !== 0);
+              localStorage.setItem(DRAFTS_KEY, JSON.stringify(remaining));
+            } catch (_) {}
+            return;
+          }
+
+          // 再注文フローで遷移してきた場合（URL に reuse=1 or artId がある）は
+          // 下書きバナーを出さない（再注文と途中保存の2つの文脈が混ざって混乱を生むため）
+          const params = new URLSearchParams(window.location.search);
+          if (params.get("reuse") === "1" || params.get("artId")) return;
+
           const banner = document.getElementById("draftResumeBanner");
           const desc = document.getElementById("draftResumeDesc");
           if (!banner) return;
@@ -10856,6 +10905,28 @@
           });
         } catch (_) {
           return null;
+        }
+      }
+
+      // アートURLが実際にダウンロードできるか検証。
+      // 再注文フローで Replicate 発行URLが24hで失効している場合の検知用。
+      // CORS やネットワーク障害は「到達不能」として false を返す（保守的判定）。
+      async function verifyArtUrlReachable(url) {
+        if (!url || typeof url !== "string") return false;
+        if (url.startsWith("data:")) return true;
+        try {
+          // HEADだと CORS ヘッダを返さない CDN が多いので Image 経由で判定。
+          // 画像として decode 成功 → 到達可能とみなす。
+          return await new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = url;
+            // 7秒タイムアウト
+            setTimeout(() => resolve(false), 7000);
+          });
+        } catch (_) {
+          return false;
         }
       }
 

@@ -1162,8 +1162,18 @@
 
           // 同じものを再注文: item, placement, color, size をクエリで渡し、アートは sessionStorage で
           document.getElementById("btnOrderReuseSame").onclick = () => {
-            try {
-              if (o.artImageUrl) {
+            // artImageUrl が無い（保管庫導入前の古い注文）場合は、写真から
+            // 作り直さないと同じ仕上がりにならない。誤解を避けるため明示的に案内する。
+            if (!o.artImageUrl) {
+              if (
+                !confirm(
+                  "この注文にはアート画像が保存されていません。\n写真をアップロードしてもう一度作り直す必要があります。続けますか？",
+                )
+              ) {
+                return;
+              }
+            } else {
+              try {
                 sessionStorage.setItem(
                   "deer_reuse_art",
                   JSON.stringify({
@@ -1171,8 +1181,8 @@
                     petNames: item0.petNames || [],
                   }),
                 );
-              }
-            } catch (_) {}
+              } catch (_) {}
+            }
             const u = new URL("upload", window.location.origin);
             if (item0.item) u.searchParams.set("item", item0.item);
             if (item0.placementId)
@@ -1184,16 +1194,21 @@
           };
           // このアートで別商品: reuse=1 で item 指定せず item-select へ
           document.getElementById("btnOrderReuseArt").onclick = () => {
+            if (!o.artImageUrl) {
+              alert(
+                "この注文にはアート画像が保存されていません。\nまず写真をアップロードしてアートを作り直してください。",
+              );
+              window.location.href = "upload";
+              return;
+            }
             try {
-              if (o.artImageUrl) {
-                sessionStorage.setItem(
-                  "deer_reuse_art",
-                  JSON.stringify({
-                    artUrl: o.artImageUrl,
-                    petNames: item0.petNames || [],
-                  }),
-                );
-              }
+              sessionStorage.setItem(
+                "deer_reuse_art",
+                JSON.stringify({
+                  artUrl: o.artImageUrl,
+                  petNames: item0.petNames || [],
+                }),
+              );
             } catch (_) {}
             window.location.href = "upload?reuse=1";
           };
