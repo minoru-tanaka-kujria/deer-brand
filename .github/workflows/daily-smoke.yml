@@ -1,0 +1,20 @@
+name: daily-smoke-check
+
+# 毎日 JST 朝3時 (UTC 18:00 前日) に本番 API の疎通確認を実施。
+# 失敗したら SLACK_WEBHOOK_URL (GitHub Secrets) に通知。
+on:
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run smoke check
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash scripts/smoke-check.sh

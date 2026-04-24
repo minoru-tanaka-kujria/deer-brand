@@ -152,6 +152,34 @@ export default async function handler(req, res) {
         errors: sanitized,
         count: sanitized.length,
       });
+      // 本当のエラー (runtime error / unhandled rejection / CSP違反) だけ
+      // Slack に即時通知する。console.log/info の単なるトレースは無視。
+      try {
+        const critical = sanitized.filter((e) =>
+          ["error", "rejection", "csp"].includes(e.type),
+        );
+        if (critical.length > 0) {
+          const { notifySlack } = await import("./slack-notify.js");
+          const first = critical[0];
+          await notifySlack({
+            level: "error",
+            title: `実機エラー発生 (${critical.length}件)`,
+            text: `${first.type}: ${first.message || first.violatedDirective || "(no message)"}`,
+            context: {
+              path: req.headers.referer || "unknown",
+              userAgent: (req.headers["user-agent"] || "").slice(0, 120),
+              stepOrUid:
+                first.ctx?.current_step || first.ctx?.user_uid || "anon",
+            },
+            dedupeKey: `client-error:${(first.message || first.violatedDirective || "").slice(0, 80)}`,
+          });
+        }
+      } catch (notifyErr) {
+        console.warn(
+          "[error-report] slack notify failed:",
+          notifyErr?.message || notifyErr,
+        );
+      }
       return res.json({ ok: true, stored: sanitized.length });
     } catch (err) {
       console.error("[error-report] Firestore write failed:", err.message);

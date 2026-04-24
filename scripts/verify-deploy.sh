@@ -146,6 +146,18 @@ if [ "$ALL_OK" = true ]; then
     IFS='|' read -r FILE URL KW <<< "$t"
     echo "  ✓ $FILE → $URL"
   done
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "デプロイ後スモーク検査"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  if [ -x "$(dirname "$0")/smoke-check.sh" ]; then
+    if ! bash "$(dirname "$0")/smoke-check.sh"; then
+      echo ""
+      echo "⚠️  デプロイは反映されましたが、スモーク検査で失敗があります。"
+      echo "    本番 API のどれかが壊れている可能性があるので Vercel ログを確認してください。"
+      exit 2
+    fi
+  fi
 else
   echo "❌ ${MAX_WAIT}秒待っても反映されないターゲットがあります"
   for t in "${TARGETS[@]}"; do
