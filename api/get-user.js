@@ -241,7 +241,8 @@ export default async function handler(req, res) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     const id = String(req.query?.id || "").trim();
     const sig = String(req.query?.sig || "").trim();
-    const fixSecret = process.env.FIX_DISPATCH_SECRET;
+    // Vercel env pull で末尾改行が混ざるケースがあるため必ず trim する。
+    const fixSecret = process.env.FIX_DISPATCH_SECRET?.trim();
     const verifySig = () => {
       if (!fixSecret || !sig || !id) return false;
       const expected = crypto
@@ -307,8 +308,8 @@ export default async function handler(req, res) {
       );
     }
 
-    const botToken = process.env.SLACK_BOT_TOKEN;
-    const channel = process.env.SLACK_DISPATCH_CHANNEL;
+    const botToken = process.env.SLACK_BOT_TOKEN?.trim();
+    const channel = process.env.SLACK_DISPATCH_CHANNEL?.trim();
     if (!botToken || !channel) {
       return res.status(500).send(
         htmlPage({
@@ -318,7 +319,7 @@ export default async function handler(req, res) {
         }),
       );
     }
-    const botUserId = process.env.SLACK_BOT_USER_ID;
+    const botUserId = process.env.SLACK_BOT_USER_ID?.trim();
     const mention = botUserId ? `<@${botUserId}>` : "@Claude Code Notify";
     const ctxLines = report.context
       ? Object.entries(report.context)
