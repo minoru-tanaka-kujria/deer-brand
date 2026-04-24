@@ -108,17 +108,59 @@ function isArtUrlOwnedBy(url, uid) {
   }
 }
 
+// Replicate の配信 URL は ~24h で失効するため、そのまま注文に保存すると
+// 後日マイページやサポート対応で画像が表示できなくなる。
+// 恒久保存対象として検出し、Storage に fetch→upload しておく。
+const EPHEMERAL_ART_HOSTS = new Set([
+  "replicate.delivery",
+  "pbxt.replicate.delivery",
+  "tjzk.replicate.delivery",
+]);
+function isEphemeralArtUrl(url) {
+  try {
+    return EPHEMERAL_ART_HOSTS.has(new URL(url).hostname);
+  } catch (_e) {
+    return false;
+  }
+}
+
 // data: URL を Firebase Storage にアップロードして https URL 化。
 // フレーム/ワッペン合成結果はブラウザ canvas で作られた data URL で届くため、
 // Printful 等が要求する public URL に変換する必要がある。
-// 戻り値: { url, source: "direct-https"|"data-upload"|"none"|"reserved" }
+// 戻り値: { url, source: "direct-https"|"data-upload"|"remote-upload"|"none" }
 async function resolveArtImageUrl(rawUrl, { uid, orderId }) {
   if (typeof rawUrl !== "string") {
     return { url: null, source: "none", error: null };
   }
   // まずは https として直接受理できるか
   const directHttps = sanitizeArtImageUrl(rawUrl);
-  if (directHttps) return { url: directHttps, source: "direct-https" };
+  if (directHttps) {
+    // Replicate 等の短命 URL は注文保存前に Storage に fetch+upload して恒久化。
+    // 失敗したら direct-https のまま返す（注文自体は続行、画像だけ将来切れる）。
+    if (isEphemeralArtUrl(directHttps)) {
+      try {
+        const { uploadRemoteUrlToStorage } =
+          await import("./_lib/art-upload.js");
+        const persisted = await uploadRemoteUrlToStorage(directHttps, {
+          uid,
+          orderId,
+        });
+        if (persisted) {
+          const sanitized = sanitizeArtImageUrl(persisted);
+          if (sanitized) return { url: sanitized, source: "remote-upload" };
+        }
+        console.warn(
+          "[create-order] remote persist produced unusable url, keeping original",
+        );
+      } catch (e) {
+        console.warn(
+          "[create-order] remote persist failed, keeping ephemeral url:",
+          e?.message || e,
+        );
+      }
+    }
+    return { url: directHttps, source: "direct-https" };
+  }
   // data: URL なら Storage にアップロードして https 化
   if (rawUrl.startsWith("data:")) {
     const { uploadDataUrlToStorage } = await import("./_lib/art-upload.js");

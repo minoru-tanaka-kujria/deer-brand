@@ -23,6 +23,27 @@ import { getAdminApp } from "./auth.js";
  * @param {string} [opts.orderId] - 注文 ID (無ければタイムスタンプ)
  * @returns {Promise<string|null>} 公開 https URL、失敗時 null
  */
+// 短命な外部 URL (Replicate 等、~24h で失効) を fetch して Storage に
+// 恒久保存し、安定 URL を返す。失敗時は null。
+export async function uploadRemoteUrlToStorage(srcUrl, { uid, orderId } = {}) {
+  if (typeof srcUrl !== "string" || !srcUrl.startsWith("https://")) return null;
+  const resp = await fetch(srcUrl);
+  if (!resp.ok) {
+    throw new Error(`REMOTE_FETCH_FAILED:${resp.status}`);
+  }
+  const contentType = resp.headers.get("content-type") || "image/png";
+  if (!contentType.startsWith("image/")) {
+    throw new Error(`REMOTE_FETCH_NON_IMAGE:${contentType}`);
+  }
+  const buffer = Buffer.from(await resp.arrayBuffer());
+  if (!buffer.length) throw new Error("REMOTE_FETCH_EMPTY");
+  const b64 = buffer.toString("base64");
+  return uploadDataUrlToStorage(`data:${contentType};base64,${b64}`, {
+    uid,
+    orderId,
+  });
+}
+
 export async function uploadDataUrlToStorage(dataUrl, { uid, orderId } = {}) {
   if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) return null;
   const m = /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/.exec(dataUrl);
